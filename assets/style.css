@@ -160,15 +160,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .paper h2 .chapter { font-family: var(--font-pixel); font-size: .78rem; letter-spacing: .15em; color: var(--ink-soft); }
 .paper p, .paper li { line-height: 2; }
 .paper .corner-sticker { position: absolute; right: 14px; top: -26px; height: 70px; }
-.member-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 14px 0 4px; }
-.member {
-  display: flex; gap: 12px; align-items: center; padding: 14px; border-radius: 12px; border: 1.5px dashed var(--sand);
-  background: var(--paper);
+.name-card {
+  position: relative; margin: 18px 0 4px; padding: 16px 18px 12px; background: var(--paper);
+  border: 1.5px solid var(--sand); border-radius: 8px;
+  background-image: repeating-linear-gradient(transparent 0 27px, rgba(242, 195, 185, .45) 27px 28px);
 }
-.member img { height: 76px; flex: 0 0 auto; }
-.member b { display: block; font-size: 1.1rem; color: var(--teal-ink); }
-.member small { color: var(--ink-soft); line-height: 1.6; display: block; }
-.member.bday-dog { border-color: var(--coral); }
+.name-card::before { content: ''; position: absolute; left: 0; right: 0; top: 34px; border-top: 2px solid var(--coral); }
+.name-card-label { display: block; font-family: var(--font-pixel); font-size: .78rem; letter-spacing: .15em; color: var(--coral-deep); margin-bottom: 10px; }
+.name-formula { margin: 0; font-family: var(--font-title); font-size: 1.08rem; color: var(--teal-ink); line-height: 2; overflow-wrap: anywhere; }
 .disclaimer { font-size: .85rem; color: var(--ink-soft); background: var(--ivory); border-radius: 10px; padding: 10px 14px; line-height: 1.8; }
 .team-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
 .team-card {
@@ -188,7 +187,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 @media (max-width: 640px) {
   .paper { padding: 18px 16px; }
   .paper .corner-sticker { height: 52px; top: -20px; }
-  .member-pair { grid-template-columns: 1fr; }
+  .paper:has(.corner-sticker) h2 { padding-right: 48px; }
   .team-card { grid-template-columns: 64px minmax(0, 1fr); }
   .team-card .avatar { height: 60px; }
   .team-card .x-link { grid-column: 2; justify-self: start; }
