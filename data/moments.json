@@ -6,9 +6,16 @@
       "date": "2021-12-01",
       "title": "Fallderz moments 的第一天",
       "content": "這是一則範例片段，代表時間軸的起點。\n\n到「後台」可以編輯或刪除它，換成你真正的第一個生活片段。",
-      "tags": ["範例", "紀念日"],
+      "tags": [
+        "範例",
+        "紀念日"
+      ],
       "media": [
-        { "type": "image", "src": "media/samples/first-day.svg", "caption": "範例插圖" }
+        {
+          "type": "image",
+          "src": "media/samples/first-day.svg",
+          "caption": "範例插圖"
+        }
       ],
       "cover": 0,
       "createdAt": "2026-10-03T00:00:00.000Z",
@@ -19,9 +26,16 @@
       "date": "2022-05-14",
       "title": "午後的一杯茶",
       "content": "範例片段：可以上傳照片、影片，也能貼上 Google 雲端硬碟、YouTube、X、Instagram 的連結。\n標籤可以用來分類，例如「日常」「旅行」。",
-      "tags": ["範例", "日常"],
+      "tags": [
+        "範例",
+        "日常"
+      ],
       "media": [
-        { "type": "image", "src": "media/samples/tea-time.svg", "caption": "" }
+        {
+          "type": "image",
+          "src": "media/samples/tea-time.svg",
+          "caption": ""
+        }
       ],
       "cover": 0,
       "createdAt": "2026-10-03T00:00:00.000Z",
@@ -32,11 +46,33 @@
       "date": "2023-10-08",
       "title": "只有文字的一天",
       "content": "範例片段：沒有照片的時候，便利貼會顯示標題字樣。",
-      "tags": ["範例", "隨筆"],
+      "tags": [
+        "範例",
+        "隨筆"
+      ],
       "media": [],
       "cover": 0,
       "createdAt": "2026-10-03T00:00:00.000Z",
       "updatedAt": "2026-10-03T00:00:00.000Z"
+    },
+    {
+      "id": "m-20251003-mclx1h",
+      "date": "2025-10-03",
+      "title": "《犯罪現場》直播",
+      "content": "把《犯罪現場》當戀愛喜劇看的兩人...\n小狗悄悄地靠，然後光明正大、炫耀似地笑",
+      "tags": [
+        "youtube"
+      ],
+      "media": [
+        {
+          "type": "video",
+          "src": "media/2025/20251003-0hnwca.mp4",
+          "caption": ""
+        }
+      ],
+      "cover": 0,
+      "createdAt": "2026-10-03T13:27:13.134Z",
+      "updatedAt": "2026-10-03T13:27:13.134Z"
     }
   ]
 }
