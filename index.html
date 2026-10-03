@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610031947">
+  <link rel="stylesheet" href="assets/style.css?v=202610032004">
 </head>
 <body>
   <header class="site-header">
@@ -51,7 +51,11 @@
     </div>
     <div class="catalog-row">
       <span class="row-label">分類</span>
-      <div class="tag-filter" id="tag-filter" aria-label="分類篩選"></div>
+      <div class="tag-filter scroll-row" id="tag-filter" aria-label="分類篩選"></div>
+    </div>
+    <div class="catalog-row" id="series-row" hidden>
+      <span class="row-label">系列</span>
+      <div class="tag-filter scroll-row series-filter" id="series-filter" aria-label="系列篩選"></div>
     </div>
     <nav class="catalog-row timeline-nav" aria-label="時間軸">
       <span class="row-label">年份</span>
@@ -107,6 +111,6 @@
     <a id="lightbox-link" target="_blank" rel="noopener">在 Google 雲端硬碟開啟 ↗</a>
   </dialog>
 
-  <script type="module" src="assets/app.js?v=202610031947"></script>
+  <script type="module" src="assets/app.js?v=202610032004"></script>
 </body>
 </html>

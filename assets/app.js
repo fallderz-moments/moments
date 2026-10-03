@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, STICKERS,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet,
-} from './common.js?v=202610031947';
+} from './common.js?v=202610032004';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -11,6 +11,7 @@ const state = {
   view: storageGet('fm.view', 'notes'),
   sort: storageGet('fm.sort', 'desc'),
   tag: null,
+  series: null,  // 選擇的系列：顯示該系列全部紀錄（不受年份／月份限制）
   q: '',
   // 目前瀏覽的期間：預設為「本月」；year 為 'all' 時顯示全部
   year: todayStr().slice(0, 4),
@@ -34,14 +35,20 @@ function inPeriod(m) {
 function filtered() {
   const q = state.q.trim().toLowerCase();
   const list = byTag(state.all).filter((m) => {
-    // 有輸入搜尋時搜尋全部時間；否則只顯示選擇的年份／月份
-    if (!q) return inPeriod(m);
-    return [m.title, m.content, m.series, ...(m.tags || []), m.date].join(' ').toLowerCase().includes(q);
+    if (state.series) {
+      // 選了系列：顯示整個系列（跨年份月份）
+      if (m.series !== state.series) return false;
+    } else if (!q) {
+      return inPeriod(m);
+    }
+    // 有輸入搜尋時搜尋全部時間
+    return !q || [m.title, m.content, m.series, ...(m.tags || []), m.date].join(' ').toLowerCase().includes(q);
   });
   return sortMoments(list, state.sort);
 }
 
 function periodLabel() {
+  if (state.series) return `系列「${state.series}」`;
   if (state.year === 'all') return '全部時間';
   if (state.month) return `${state.month.slice(0, 4)} 年 ${Number(state.month.slice(5))} 月`;
   return `${state.year} 年`;
@@ -165,6 +172,7 @@ function render() {
 
 /* ---------- 分類篩選（預設分類永遠顯示） ---------- */
 function renderTags() {
+  renderSeriesFilter();
   const counts = new Map(PRESET_TAGS.map((t) => [t, 0]));
   for (const m of state.all) for (const t of m.tags || []) counts.set(t, (counts.get(t) || 0) + 1);
   const tags = sortTags([...counts.keys()]);
@@ -174,6 +182,34 @@ function renderTags() {
       return `<button type="button" data-tag="${escapeHtml(t)}" class="${c ? '' : 'empty'}" aria-pressed="${state.tag === t}">${escapeHtml(t)}<span class="count">${c}</span></button>`;
     }))
     .join('');
+}
+
+/* ---------- 系列篩選（最近更新的系列排前面，可左右滑動） ---------- */
+function renderSeriesFilter() {
+  const info = new Map();
+  for (const m of state.all) {
+    if (!m.series) continue;
+    const s = info.get(m.series) || { count: 0, latest: '' };
+    s.count++;
+    if (m.date > s.latest) s.latest = m.date;
+    info.set(m.series, s);
+  }
+  $('#series-row').hidden = info.size === 0;
+  if (state.series && !info.has(state.series)) state.series = null;
+  const names = [...info.keys()].sort((a, b) => info.get(b).latest.localeCompare(info.get(a).latest) || a.localeCompare(b, 'zh-Hant'));
+  $('#series-filter').innerHTML = [`<button type="button" data-series="" aria-pressed="${!state.series}">全部系列</button>`]
+    .concat(names.map((n) => `<button type="button" data-series="${escapeHtml(n)}" aria-pressed="${state.series === n}">📚 ${escapeHtml(n)}<span class="count">${info.get(n).count}</span></button>`))
+    .join('');
+  updateScrollHints();
+}
+
+/** 可橫向捲動的列：依捲動位置顯示左右漸層提示 */
+function updateScrollHints() {
+  document.querySelectorAll('.scroll-row').forEach((row) => {
+    const max = row.scrollWidth - row.clientWidth;
+    row.classList.toggle('more-right', max > 2 && row.scrollLeft < max - 2);
+    row.classList.toggle('more-left', row.scrollLeft > 2);
+  });
 }
 
 /* ---------- 時間軸導覽（2021.12 至今天，換日自動更新） ---------- */
@@ -205,10 +241,14 @@ function renderTimeline() {
     const cls = [n && 'has', bdays.has(k) && 'bday'].filter(Boolean).join(' ');
     return `<button type="button" data-month="${k}" class="${cls}" aria-pressed="${state.month === k}">${bdays.has(k) ? '🎂' : ''}${Number(k.slice(5))}月<small>${n ? `${n} 則` : '—'}</small></button>`;
   }).join('');
+  // 系列檢視時，年份／月份不顯示為選取中
+  if (state.series) document.querySelectorAll('#years [aria-pressed="true"], #months [aria-pressed="true"]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
   $('#today').textContent = formatDate(todayStr());
 }
 
 function setPeriod(year, month = null) {
+  state.series = null; // 選年份／月份時離開系列檢視
+  renderSeriesFilter();
   state.year = year;
   state.month = month;
   state.periodPicked = true;
@@ -361,6 +401,7 @@ function openById(id) {
   if (!target) return;
   if (!state.visible.includes(target)) {
     state.tag = null;
+    state.series = null;
     state.q = '';
     $('#search').value = '';
     state.year = target.date.slice(0, 4);
@@ -395,10 +436,16 @@ function bindEvents() {
     if (t.dataset.view) { state.view = t.dataset.view; storageSet('fm.view', state.view); render(); }
     else if (t.dataset.sort) { state.sort = t.dataset.sort; storageSet('fm.sort', state.sort); render(); }
     else if ('tag' in t.dataset) { state.tag = t.dataset.tag || null; renderTags(); render(); }
+    else if ('series' in t.dataset) {
+      state.series = t.dataset.series || null;
+      renderSeriesFilter();
+      render();
+      if (state.series) document.querySelector('.toolbar')?.scrollIntoView({ block: 'start' });
+    }
     else if (t.dataset.year) { setPeriod(t.dataset.year); }
     else if (t.dataset.month) {
       // 再按一次已選的月份 → 回到整年
-      setPeriod(state.year, state.month === t.dataset.month ? null : t.dataset.month);
+      setPeriod(state.year, !state.series && state.month === t.dataset.month ? null : t.dataset.month);
     }
     else if (t.dataset.goto) { setPeriod(t.dataset.goto.slice(0, 4), t.dataset.goto); }
     else if (t.dataset.gotoId) { openById(t.dataset.gotoId); }
@@ -408,6 +455,17 @@ function bindEvents() {
     else if ('close' in t.dataset) { closeDetail(); }
     else if ('closeLightbox' in t.dataset) { $('#lightbox').close(); }
   });
+
+  document.querySelectorAll('.scroll-row').forEach((row) => {
+    row.addEventListener('scroll', updateScrollHints, { passive: true });
+    // 電腦版：在列上滾動滑鼠滾輪即可左右捲動
+    row.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX) || row.scrollWidth <= row.clientWidth) return;
+      e.preventDefault();
+      row.scrollLeft += e.deltaY;
+    }, { passive: false });
+  });
+  window.addEventListener('resize', updateScrollHints);
 
   let timer;
   $('#search').addEventListener('input', (e) => {

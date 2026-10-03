@@ -12,7 +12,7 @@
 
 | 檔案 | 用途 |
 | --- | --- |
-| `index.html` + `assets/app.js` | 前台（便利貼／列表、年份月份篩選、詳細內容、系列、貼圖） |
+| `index.html` + `assets/app.js` | 前台（便利貼／列表、分類與系列篩選列、年份月份篩選、詳細內容、系列串接、貼圖） |
 | `admin.html` + `assets/admin.js` | 館員後台：透過 GitHub Contents API 寫 `data/moments.json`；照片影片以 Google Drive API 上傳到擁有者的資料夾 |
 | `assets/common.js` | 共用設定：`PRESET_TAGS`、`BIRTHDAYS`、`STICKERS`、日期（台北時間）與媒體工具 |
 | `about.html`、`team.html` | 關於、協作者名單 |
@@ -55,4 +55,4 @@
 
 ## 待決事項
 
-- 互動留言：目前「關於」頁底部以按鈕連到 odaibako 匿名提問箱。若要內嵌留言服務（Cusdis / Giscus 等），需擁有者註冊並提供 ID。
+- 匿名留言：「關於」頁底部內嵌擁有者的 Google 表單（目前用短網址 `forms.gle/…`，附「新分頁開啟」備援）。若擁有者提供「傳送 → 嵌入」的完整網址（`docs.google.com/forms/…/viewform?embedded=true`），請替換 `about.html` 中的 iframe src。
