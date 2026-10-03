@@ -172,7 +172,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .form-embed {
   margin-top: 10px; border-radius: 12px; overflow: hidden; background: var(--white); border: 1.5px solid var(--line);
 }
-.form-embed iframe { display: block; width: 100%; height: 860px; border: 0; }
+.form-embed iframe { display: block; width: 100%; height: 1023px; border: 0; }
 .form-fallback { margin: 8px 0 0; font-size: .85rem; color: var(--ink-soft); }
 .disclaimer { font-size: .85rem; color: var(--ink-soft); background: var(--ivory); border-radius: 10px; padding: 10px 14px; line-height: 1.8; }
 .team-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
@@ -194,7 +194,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .paper { padding: 18px 16px; }
   .paper .corner-sticker { height: 52px; top: -20px; }
   .paper:has(.corner-sticker) h2 { padding-right: 48px; }
-  .form-embed iframe { width: 1px; min-width: 100%; height: 980px; }
+  .form-embed iframe { width: 1px; min-width: 100%; height: 1150px; }
   .team-card { grid-template-columns: 64px minmax(0, 1fr); }
   .team-card .avatar { height: 60px; }
   .team-card .x-link { grid-column: 2; justify-self: start; }

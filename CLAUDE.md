@@ -53,6 +53,6 @@
 - 上傳需要：雲端資料夾「編輯者」＋ Google Cloud OAuth「測試使用者」名單。
 - 新增協作者、分享資料夾、Google Cloud 設定都必須由擁有者本人操作。
 
-## 待決事項
+## 備註
 
-- 匿名留言：「關於」頁底部內嵌擁有者的 Google 表單（目前用短網址 `forms.gle/…`，附「新分頁開啟」備援）。若擁有者提供「傳送 → 嵌入」的完整網址（`docs.google.com/forms/…/viewform?embedded=true`），請替換 `about.html` 中的 iframe src。
+- 匿名留言：「關於」頁底部以 iframe 內嵌擁有者的 Google 表單（`viewform?embedded=true`；短網址 `forms.gle` 會被 Google 拒絕嵌入）。
