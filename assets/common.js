@@ -8,6 +8,18 @@ export const NOTE_TINTS = ['mint', 'blush', 'coral', 'sand', 'ivory', 'teal'];
 /** 預設分類標籤（依顯示順序） */
 export const PRESET_TAGS = ['YouTube', 'Berriz', 'Universe', '花絮', '綜藝', 'Bubble', 'Instagram', 'FanClub', 'LIVE', 'FanSign'];
 
+/** 貼圖數量（assets/stickers/dog-01.webp …、chipmunk-01.webp …） */
+export const STICKERS = { dog: 44, chipmunk: 60 };
+
+/** 依種子挑一張貼圖：同一則紀錄每次都會拿到同一張，不同紀錄各不相同 */
+export function sticker(seed, salt = 0) {
+  const h = hashString(`${seed}:${salt}`);
+  const total = STICKERS.dog + STICKERS.chipmunk;
+  const n = h % total;
+  const [kind, i] = n < STICKERS.dog ? ['dog', n + 1] : ['chipmunk', n - STICKERS.dog + 1];
+  return `assets/stickers/${kind}-${String(i).padStart(2, '0')}.webp`;
+}
+
 /** 生日（MM-DD） */
 export const BIRTHDAYS = ['09-01', '09-24'];
 

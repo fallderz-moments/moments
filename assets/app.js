@@ -1,8 +1,8 @@
 import {
-  NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf,
+  NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, STICKERS,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet,
-} from './common.js?v=202610031506';
+} from './common.js?v=202610031519';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -106,6 +106,7 @@ function noteHtml(m, index) {
       <span class="note-title">${bday ? '🎂 ' : ''}${escapeHtml(m.title || '無標題')}</span>
       ${tagsHtml(m.tags)}
       <span class="call-number">${callNo(m)}</span>
+      ${bday ? '' : `<img class="sticker note-sticker ${h % 3 === 0 ? 'left' : ''}" src="${sticker(m.id)}" alt="" loading="lazy">`}
     </button>`;
 }
 
@@ -119,7 +120,7 @@ function ledgerHtml(m, index) {
           ${bday ? '<span class="bday-mark"><img class="sprite" src="assets/pixel/cake.svg" alt="">BIRTHDAY</span>' : ''}</span>
         <span class="ledger-title"><b>${escapeHtml(m.title || '無標題')}</b><span>${escapeHtml(excerpt(m.content, 80))}</span></span>
         <span class="ledger-tags">${sortTags(m.tags || []).map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</span>
-        <span class="ledger-media">${mediaSummary(m.media)}</span>
+        <span class="ledger-media">${mediaSummary(m.media)}<img class="sticker ledger-sticker" src="${sticker(m.id)}" alt="" loading="lazy"></span>
       </button>
     </li>`;
 }
@@ -133,7 +134,7 @@ function render() {
     const hint = searching
       ? '找不到符合的館藏'
       : state.all.length ? `${periodLabel()}還沒有紀錄` : '還沒有任何紀錄，到館員後台新增第一則吧！';
-    main.innerHTML = `<p class="status"><img class="sprite" src="assets/pixel/${state.all.length ? 'chipmunk' : 'dog'}.svg" alt="">
+    main.innerHTML = `<p class="status"><img class="sticker status-sticker" src="${sticker(periodLabel())}" alt="">
       ${escapeHtml(hint)}
       ${!searching && latest ? `<button class="btn small" type="button" data-goto="${monthKey(latest.date)}">看最近一則紀錄（${formatDate(latest.date)}）</button>` : ''}</p>`;
   } else {
@@ -147,7 +148,7 @@ function render() {
         : `<div class="ledger"><div class="ledger-head" aria-hidden="true"><span>DATE</span><span>TITLE</span><span>CATEGORY</span><span style="text-align:right">MEDIA</span></div><ol>${inner}</ol></div>`;
       html.push(`
         <section class="month-section" id="sec-${key}">
-          <h2 class="month-heading"><span class="drawer-label"><b>${y}</b><span>${Number(mo)} 月</span></span><small>${items.length} 則</small></h2>
+          <h2 class="month-heading"><span class="drawer-label"><b>${y}</b><span>${Number(mo)} 月</span></span><small>${items.length} 則</small><img class="sticker heading-sticker" src="${sticker(key, 'month')}" alt="" loading="lazy"></h2>
           ${body}
         </section>`);
     }
@@ -282,6 +283,9 @@ function openDetail(index) {
   $('#detail-birthday').hidden = !bday;
   $('#detail-date').textContent = `${formatDate(m.date)}（週${weekday}）`;
   $('#detail-callno').textContent = callNo(m);
+  const ds = $('#detail-sticker');
+  ds.hidden = bday;
+  ds.src = sticker(m.id, 'detail');
   $('#detail-title').textContent = m.title || '無標題';
   $('#detail-tags').innerHTML = sortTags(m.tags || []).map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join('');
   const media = m.media || [];
@@ -374,6 +378,10 @@ function openFromHash() {
 
 async function init() {
   bindEvents();
+  // 頁尾每次造訪隨機換一組狗狗鼠鼠
+  const pick = (kind, n) => `assets/stickers/${kind}-${String(1 + Math.floor(Math.random() * n)).padStart(2, '0')}.webp`;
+  $('#footer-dog').src = pick('dog', STICKERS.dog);
+  $('#footer-chipmunk').src = pick('chipmunk', STICKERS.chipmunk);
   $('#today').textContent = formatDate(todayStr());
   onNewDay((today) => {
     // 沒有手動選過期間時，換月自動切到新的「本月」

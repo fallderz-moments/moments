@@ -253,6 +253,25 @@ main { max-width: 1200px; margin: 0 auto; padding: 28px 16px 60px; min-height: 5
   font-family: var(--font-pixel); font-size: .72rem; color: var(--ink-soft); letter-spacing: .08em;
 }
 
+/* 狗狗鼠鼠貼圖 */
+.sticker { display: block; width: auto; image-rendering: auto; pointer-events: none; user-select: none; }
+.note-sticker {
+  position: absolute; right: -14px; bottom: -16px; height: 58px; z-index: 3;
+  filter: drop-shadow(0 2px 1px rgba(62, 74, 72, .18)); transition: transform .25s;
+}
+.note-sticker.left { right: auto; left: -14px; }
+.note:hover .note-sticker, .note:focus-visible .note-sticker { transform: translateY(-6px) rotate(-4deg); }
+.note .call-number { padding-right: 34px; }
+.note:has(.note-sticker.left) .call-number { padding-right: 0; padding-left: 34px; }
+.heading-sticker { height: 40px; margin-left: -4px; }
+.ledger-media { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.ledger-sticker { height: 34px; }
+.status-sticker { height: 84px; }
+.detail-body { position: relative; }
+.detail-sticker { position: absolute; right: 18px; top: 10px; height: 76px; }
+.detail-body .call-no, .detail-body h2 { padding-right: 90px; }
+.footer-shelf .sticker { height: 52px; }
+
 /* 生日便利貼 */
 .note.birthday {
   --tint: #FBE3DC;
@@ -285,7 +304,7 @@ main { max-width: 1200px; margin: 0 auto; padding: 28px 16px 60px; min-height: 5
   box-shadow: 0 3px 0 var(--sand);
 }
 .ledger-head, .ledger-row {
-  display: grid; grid-template-columns: 120px minmax(0, 1fr) minmax(120px, 220px) 90px; gap: 14px; align-items: center;
+  display: grid; grid-template-columns: 120px minmax(0, 1fr) minmax(120px, 220px) 130px; gap: 14px; align-items: center;
   padding: 10px 16px;
 }
 .ledger-head {
@@ -396,6 +415,7 @@ dialog.lightbox .icon-btn { position: absolute; top: 14px; right: 14px; }
   .ledger-head { display: none; }
   .ledger-row { grid-template-columns: 86px minmax(0, 1fr); gap: 4px 12px; }
   .ledger-tags, .ledger-media { grid-column: 2; text-align: left; }
+  .ledger-media { justify-content: flex-start; }
 }
 @media (max-width: 640px) {
   html { scroll-padding-top: 220px; }
@@ -410,6 +430,11 @@ dialog.lightbox .icon-btn { position: absolute; top: 14px; right: 14px; }
   .note.birthday { padding-top: 36px; }
   .note-title { font-size: .92rem; }
   .bday-sprite { height: 40px; top: -24px; right: -6px; }
+  .note-sticker { height: 44px; right: -8px; bottom: -12px; }
+  .note-sticker.left { left: -8px; }
+  .detail-sticker { height: 56px; right: 10px; }
+  .detail-body .call-no, .detail-body h2 { padding-right: 64px; }
+  .ledger-sticker { height: 28px; }
   .detail-body { padding: 16px; }
   .media-grid { gap: 8px; }
   .birthday-banner { font-size: .95rem; gap: 6px; }

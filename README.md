@@ -59,7 +59,7 @@
 
 ## 讓其他人一起上傳
 
-完整圖文教學請見網站上的 **共同編輯者手冊**：`guide.html`（後台右上角「使用手冊」）。以下為摘要。
+申請者請看網站上的 **共同編輯者申請與使用手冊**：`guide.html`（後台右上角「使用手冊」）。以下是擁有者（KONOKI）收到申請後要做的事。
 
 每位上傳者都需要「GitHub 寫入權限」（儲存文字）與「雲端資料夾的編輯權限」（儲存照片影片）。由你（擁有者）做 3 件事，對方做 2 件事：
 
@@ -79,20 +79,22 @@
 > - 對方上傳到資料夾的檔案，擁有者是對方，佔用的是**對方**的雲端硬碟空間。
 > - 多人同時存檔時，後台會自動重新讀取最新資料再合併，不會互相覆蓋。
 
-## 更改網站網址
+## 搬到 GitHub 組織：fallderz-moments.github.io/moments
 
-網址 `https://<帳號>.github.io/moments/` 中的帳號名稱來自擁有儲存庫的 GitHub 帳號或組織。程式會依網址自動判斷儲存庫，改網址不需要修改程式。
+程式會依網址自動判斷儲存庫，搬家不需要修改程式。以下步驟需由擁有者在 GitHub 網頁操作（約 10 分鐘）：
 
-| 方式 | 新網址 | 說明 |
-| --- | --- | --- |
-| 建立 GitHub 組織並轉移儲存庫（建議） | `https://<組織名稱>.github.io/moments/` | 免費。組織名稱不可與現有帳號重複（例如 `konoki` 已被使用），可用 `konoki-moments` 等。共同編輯者也能改用權限更小的 Fine-grained token。 |
-| 更改自己的 GitHub 帳號名稱 | `https://<新帳號>.github.io/moments/` | 會影響整個帳號；舊網址不會自動轉址。 |
-| 自訂網域 | 例如 `https://moments.example.com` | 需購買網域（約每年 NT$300～1,000），在 Settings → Pages → Custom domain 設定。 |
+1. **建立組織**：<https://github.com/account/organizations/new?plan=free> → 選 **Free** →
+   Organization name 填 `fallderz-moments` → 聯絡信箱填自己的 email → 「My personal account」→ Next 完成。
+2. **轉移儲存庫**：到目前的儲存庫 **Settings → General**，拉到最下面 Danger Zone → **Transfer ownership** →
+   New owner 選 `fallderz-moments` → 輸入儲存庫名稱確認 → Transfer。
+3. **確認 GitHub Pages**：到新儲存庫 `fallderz-moments/moments` 的 **Settings → Pages**，確認 Source 為 Deploy from a branch、`main`、`/ (root)`。
+   約 1～2 分鐘後網站會出現在 <https://fallderz-moments.github.io/moments/>（舊網址不會自動轉址）。
+4. **更新 Google 用戶端**（若已建立）：Google Cloud → Google Auth Platform → 用戶端 → 「已授權的 JavaScript 來源」加入 `https://fallderz-moments.github.io`。
+5. **重新連線後台**：開啟新網址的 `admin.html` 貼上權杖（瀏覽器設定依網址分開儲存）。
+   擁有者的 Fine-grained token 需重新建立：Resource owner 選 `fallderz-moments`，Repository access 選 `moments`，Contents 設為 Read and write。
+6. **共同編輯者**：轉移後到新儲存庫 **Settings → Collaborators** 確認名單（不在名單中的請重新邀請）。
 
-改完網址後務必：
-1. Google Cloud → 用戶端 → 「已授權的 JavaScript 來源」加入新網址（例如 `https://konoki-moments.github.io`）。
-2. 每位編輯者重新開啟新網址的 `admin.html`，貼上權杖（瀏覽器設定是依網址分開儲存的）。
-3. 轉移到組織時：儲存庫 Settings → General → Danger Zone → **Transfer ownership**，轉移後到新儲存庫確認 Settings → Pages 仍為 `main` / `(root)`，並確認儲存庫的 Collaborators 名單中仍有每位編輯者（不在名單中的請重新邀請）。
+> 其他改網址方式：更改個人帳號名稱（影響整個帳號），或在 Settings → Pages → Custom domain 設定自購網域。
 
 ## 常見問題
 

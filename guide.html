@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title>共同編輯者手冊 · Fallderz Moments</title>
+  <title>共同編輯者申請與使用手冊 · Fallderz Moments</title>
   <link rel="icon" href="assets/pixel/chipmunk.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610031506">
+  <link rel="stylesheet" href="assets/style.css?v=202610031519">
   <style>
     .guide { max-width: 860px; margin: 0 auto; padding: 0 16px 60px; }
     .guide-hero { text-align: center; padding: 34px 0 10px; }
@@ -62,78 +62,94 @@
 <body>
   <main class="guide">
     <header class="guide-hero">
-      <p class="plaque">LIBRARIAN HANDBOOK</p>
-      <h1>Fallderz <em>Moments</em><br>共同編輯者手冊</h1>
-      <p>狗狗鼠鼠觀察日誌 ‧ 館員後台使用說明</p>
+      <p class="plaque">LIBRARIAN APPLICATION</p>
+      <h1>Fallderz <em>Moments</em><br>共同編輯者申請與使用手冊</h1>
+      <p>想和 KONOKI 一起整理狗狗鼠鼠觀察日誌嗎？這份手冊會帶你從申請到上傳第一則紀錄。</p>
       <div class="pair" aria-hidden="true">
-        <img class="sprite" src="assets/pixel/dog.svg" alt="">
+        <img class="sticker" src="assets/stickers/dog-22.webp" alt="" style="height:70px">
         <img class="sprite" src="assets/pixel/books.svg" alt="" style="height:32px">
-        <img class="sprite" src="assets/pixel/chipmunk.svg" alt="">
+        <img class="sticker" src="assets/stickers/chipmunk-10.webp" alt="" style="height:70px">
       </div>
     </header>
 
     <section class="page">
       <h2><span class="chapter">CONTENTS</span>目錄</h2>
       <ol class="toc">
-        <li><a href="#overview">網站是怎麼運作的</a></li>
-        <li><a href="#owner">擁有者：新增共同編輯者</a></li>
-        <li><a href="#setup">共同編輯者：第一次設定</a></li>
+        <li><a href="#overview">共同編輯者可以做什麼</a></li>
+        <li><a href="#apply">申請流程</a></li>
+        <li><a href="#setup">通過後：第一次設定</a></li>
         <li><a href="#create">新增一則紀錄</a></li>
         <li><a href="#edit">編輯與刪除</a></li>
         <li><a href="#rules">分類、生日與日期規則</a></li>
         <li><a href="#browse">前台瀏覽方式</a></li>
-        <li><a href="#safety">安全守則</a></li>
+        <li><a href="#safety">編輯守則與安全</a></li>
         <li><a href="#faq">常見問題與錯誤訊息</a></li>
-        <li><a href="#remove">擁有者：移除共同編輯者</a></li>
+        <li><a href="#leave">停止擔任共同編輯者</a></li>
       </ol>
     </section>
 
     <section class="page" id="overview">
-      <h2><span class="chapter">CHAPTER 1</span>網站是怎麼運作的</h2>
+      <h2><span class="chapter">CHAPTER 1</span>共同編輯者可以做什麼</h2>
+      <p>Fallderz Moments 由 <b>KONOKI</b> 建立與管理。通過申請後，你可以在<a href="admin.html">館員後台</a>：</p>
       <ul>
-        <li><b>前台</b>：<a href="./">網站首頁</a>，所有人都能瀏覽。</li>
-        <li><b>館員後台</b>：<a href="admin.html">admin.html</a>，只有完成設定的編輯者能新增、修改、刪除紀錄。</li>
-        <li><b>文字資料</b>（日期、標題、內容、分類…）存在網站的 GitHub 儲存庫。</li>
-        <li><b>照片與影片</b>以原檔上傳到擁有者指定的 Google 雲端硬碟共用資料夾。</li>
+        <li>新增、編輯、刪除紀錄（日期、標題、內容、分類、資訊來源）。</li>
+        <li>上傳照片與影片，或貼上 YouTube、X、Instagram 連結。</li>
+        <li>匯出與匯入備份。</li>
+      </ul>
+      <p>網站背後的運作方式：</p>
+      <ul>
+        <li><b>文字資料</b>存在網站的 GitHub 儲存庫；<b>照片與影片</b>以原檔上傳到 KONOKI 的 Google 雲端硬碟共用資料夾。</li>
         <li>按下「儲存並發佈」後，約 <b>1～2 分鐘</b>前台就會更新。</li>
       </ul>
-      <p>因此每位編輯者都需要兩把「鑰匙」：</p>
+      <p>所以你會需要兩把「鑰匙」：</p>
       <div class="table-wrap"><table>
         <tr><th>鑰匙</th><th>用途</th><th>怎麼取得</th></tr>
-        <tr><td>GitHub 權杖</td><td>寫入文字資料</td><td>擁有者邀請你成為協作者 → 你自己建立權杖（第 3 章）</td></tr>
-        <tr><td>Google 授權</td><td>上傳照片與影片</td><td>擁有者共用資料夾並把你加為測試使用者 → 你用自己的 Gmail 登入（第 3 章）</td></tr>
+        <tr><td>GitHub 權杖</td><td>寫入文字資料</td><td>KONOKI 邀請你成為協作者後，你自己建立（第 3 章）</td></tr>
+        <tr><td>Google 授權</td><td>上傳照片與影片</td><td>KONOKI 把資料夾共用給你後，用自己的 Gmail 登入（第 3 章）</td></tr>
       </table></div>
-      <div class="note-box">共同編輯者擁有和擁有者相同的後台權限：可以新增、編輯、刪除所有紀錄，也能匯出與匯入備份。</div>
     </section>
 
-    <section class="page owner" id="owner">
-      <h2><span class="chapter">CHAPTER 2</span>擁有者：新增共同編輯者 <span class="who">由擁有者 KONOKI 操作</span></h2>
-      <p>先向對方要兩樣資料：<b>GitHub 使用者名稱</b>（不是 email）和 <b>Gmail 信箱</b>。</p>
-      <ul class="check">
-        <li><b>GitHub 協作者</b>：開啟 <a data-repo="settings/access" href="#" target="_blank" rel="noopener">儲存庫 Settings → Collaborators</a> → <b>Add people</b> → 輸入對方的 GitHub 使用者名稱 → 送出邀請。</li>
-        <li><b>雲端資料夾</b>：在 Google 雲端硬碟對上傳資料夾按右鍵 → <b>共用</b> → 輸入對方的 Gmail → 權限選 <b>編輯者</b> → 傳送。</li>
-        <li><b>Google 測試使用者</b>：開啟 <a href="https://console.cloud.google.com/auth/audience" target="_blank" rel="noopener">Google Auth Platform → 目標對象</a> → 測試使用者 → <b>Add users</b> → 輸入對方的 Gmail → 儲存（最多 100 人）。</li>
-        <li>把這份手冊的網址和 <b>OAuth 用戶端 ID</b> 傳給對方（如果用戶端 ID 已寫進網站設定，就不用另外提供）。</li>
+    <section class="page" id="apply">
+      <h2><span class="chapter">CHAPTER 2</span>申請流程</h2>
+      <h3>步驟 1　準備兩個帳號</h3>
+      <ul>
+        <li><b>GitHub 帳號</b>：沒有的話到 <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a> 免費註冊。使用者名稱會公開顯示在網站的修改紀錄上，建議使用暱稱。</li>
+        <li><b>Gmail</b>（Google 帳號）：用來上傳照片與影片。</li>
       </ul>
+
+      <h3>步驟 2　向 KONOKI 提出申請</h3>
+      <p>透過你平常聯絡 KONOKI 的方式（例如私訊）傳送以下資料：</p>
+      <div class="note-box">
+        <b>申請訊息範本</b><br>
+        你好，我想申請成為 Fallderz Moments 的共同編輯者。<br>
+        ・GitHub 使用者名稱：＿＿＿＿（不是 email）<br>
+        ・Gmail：＿＿＿＿@gmail.com<br>
+        ・想協助的內容：＿＿＿＿（例如整理直播、翻譯、補上舊紀錄）
+      </div>
+      <p>請只透過私訊傳送，不要把 Gmail 公開貼在留言區。</p>
+
+      <h3>步驟 3　等待審核</h3>
+      <p>KONOKI 同意後，會替你開通三項權限，你會陸續收到通知：</p>
+      <ul class="check">
+        <li>GitHub 的<b>協作邀請信</b>（寄到你 GitHub 帳號的信箱）</li>
+        <li>Google 雲端硬碟的<b>資料夾共用通知</b>（權限為「編輯者」）</li>
+        <li>上傳功能的<b>授權名單</b>（不會另外收到通知）</li>
+      </ul>
+      <p>KONOKI 也會一併告訴你本網站的 <b>OAuth 用戶端 ID</b>（若後台已自動帶入，就不需要）。收到邀請後，繼續第 3 章。</p>
+      <div class="warn-box">KONOKI 不會向你索取任何密碼或權杖。如果有人自稱 KONOKI 要你提供，請不要理會。</div>
     </section>
 
     <section class="page" id="setup">
-      <h2><span class="chapter">CHAPTER 3</span>共同編輯者：第一次設定 <span class="who">約 10 分鐘</span></h2>
+      <h2><span class="chapter">CHAPTER 3</span>通過後：第一次設定 <span class="who">約 10 分鐘</span></h2>
       <p>建議用<b>電腦</b>完成第一次設定；之後用手機也能上傳。</p>
 
-      <h3>步驟 1　準備 GitHub 帳號</h3>
+      <h3>步驟 1　接受 GitHub 邀請</h3>
       <ol>
-        <li>沒有帳號的話，到 <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a> 免費註冊。</li>
-        <li>把你的 <b>GitHub 使用者名稱</b>和 <b>Gmail</b> 告訴擁有者，等擁有者完成第 2 章。</li>
+        <li>打開 GitHub 寄來的邀請信，或直接前往 <a data-repo="invitations" href="#" target="_blank" rel="noopener">網站儲存庫的邀請頁面</a>。</li>
+        <li>按 <b>Accept invitation</b>。邀請 7 天內有效，過期請請 KONOKI 重新邀請。</li>
       </ol>
 
-      <h3>步驟 2　接受 GitHub 邀請</h3>
-      <ol>
-        <li>打開 GitHub 寄來的邀請信，或直接前往 <a data-repo="invitations" href="#" target="_blank" rel="noopener">儲存庫的邀請頁面</a>。</li>
-        <li>按 <b>Accept invitation</b>。</li>
-      </ol>
-
-      <h3>步驟 3　建立你自己的 GitHub 權杖</h3>
+      <h3>步驟 2　建立你自己的 GitHub 權杖</h3>
       <ol>
         <li>開啟 <a href="https://github.com/settings/tokens/new?scopes=public_repo&amp;description=Fallderz%20Moments" target="_blank" rel="noopener">建立 classic token</a>（連結已預先勾選好權限）。</li>
         <li><b>Note</b>：<code>Fallderz Moments</code>。</li>
@@ -141,33 +157,32 @@
         <li><b>Select scopes</b>：確認只勾選 <b>public_repo</b>。</li>
         <li>拉到最下面按 <b>Generate token</b>，複製以 <code>ghp_</code> 開頭的權杖。</li>
       </ol>
-      <div class="warn-box">權杖只會顯示一次，請先貼到後台（步驟 5）。權杖等同你的鑰匙，<b>不要傳給任何人</b>，也不要貼在聊天室。</div>
-      <div class="note-box">為什麼不是 Fine-grained token？儲存庫屬於擁有者的<b>個人帳號</b>時，協作者的 Fine-grained token 無法存取它，所以要用 classic token。若之後儲存庫轉移到 GitHub 組織，就能改用權限更小的 Fine-grained token（屆時擁有者會另行通知）。</div>
+      <div class="warn-box">權杖只會顯示一次，請直接貼到後台（步驟 4）。權杖等同你的鑰匙，<b>不要傳給任何人</b>，包括 KONOKI。</div>
 
-      <h3>步驟 4　確認雲端資料夾已共用給你</h3>
-      <p>打開 Google 雲端硬碟 →「與我共用」，應該能看到上傳資料夾，而且你的權限是「編輯者」。看不到的話請擁有者確認第 2 章。</p>
+      <h3>步驟 3　確認雲端資料夾已共用給你</h3>
+      <p>打開 Google 雲端硬碟 →「與我共用」，應該能看到 KONOKI 共用的資料夾，而且你的權限是「編輯者」。</p>
 
-      <h3>步驟 5　填寫後台的連線設定</h3>
+      <h3>步驟 4　填寫後台的連線設定</h3>
       <ol>
         <li>開啟 <a href="admin.html">館員後台</a>，會自動跳出「連線設定」（之後可按右上角「連線設定」再打開）。</li>
-        <li><b>存取權杖</b>：貼上步驟 3 的權杖。</li>
+        <li><b>存取權杖</b>：貼上步驟 2 的權杖。</li>
         <li><b>進階設定</b>（儲存庫位置）會依網站網址自動帶入，<b>不用填寫</b>。</li>
-        <li><b>OAuth 用戶端 ID</b>：填擁有者提供的那一組（已自動帶入就不用改）。</li>
+        <li><b>OAuth 用戶端 ID</b>：填 KONOKI 提供的那一組（已自動帶入就不用改）。</li>
         <li><b>上傳資料夾</b>：保持預設即可。</li>
         <li>按「儲存並連線」，出現「GitHub 連線成功」就完成了。</li>
       </ol>
       <figure class="narrow"><img src="assets/guide/settings.png" alt="連線設定畫面" loading="lazy"><figcaption>連線設定畫面（截圖中的權杖、用戶端 ID 與資料夾已打碼）</figcaption></figure>
 
-      <h3>步驟 6　連結 Google 雲端硬碟</h3>
+      <h3>步驟 5　連結 Google 雲端硬碟</h3>
       <ol>
         <li>按後台上方的「<b>連結 Google 雲端硬碟</b>」。</li>
-        <li>選擇擁有者共用資料夾給你的那個 Gmail 帳號。</li>
-        <li>看到「<b>Google 尚未驗證這個應用程式</b>」時，按「繼續」（這是擁有者自己建立的私人應用程式）。</li>
-        <li>在權限畫面<b>勾選</b>「查看、編輯、建立及刪除您所有的 Google 雲端硬碟檔案」→ 繼續。<b>沒有勾選的話上傳會失敗</b>，請重新連結並勾選。</li>
+        <li>選擇你提供給 KONOKI 的那個 Gmail。</li>
+        <li>看到「<b>Google 尚未驗證這個應用程式</b>」時，按「繼續」（這是 KONOKI 為本網站建立的私人應用程式）。</li>
+        <li>在權限畫面<b>勾選</b>「查看、編輯、建立及刪除您所有的 Google 雲端硬碟檔案」→ 繼續。<b>沒有勾選的話上傳會失敗</b>。網站只會把檔案放進共用資料夾，不會讀取你其他的檔案。</li>
         <li>上方出現兩個 ✓ 就代表一切就緒：</li>
       </ol>
       <figure><img src="assets/guide/topbar.png" alt="後台上方狀態列" loading="lazy"><figcaption>「GitHub ✓」與「雲端硬碟 ✓」都出現即設定完成</figcaption></figure>
-      <div class="note-box">Google 授權約 <b>1 小時</b>後失效，下次上傳時會自動跳出授權視窗，再按一次允許即可。GitHub 權杖則會保存在這台裝置的瀏覽器裡，換裝置要重新填寫。</div>
+      <div class="note-box">Google 授權約 <b>1 小時</b>後失效，下次上傳時會自動跳出授權視窗，再按一次允許即可。GitHub 權杖會保存在這台裝置的瀏覽器裡，換裝置要重新填寫。</div>
     </section>
 
     <section class="page" id="create">
@@ -205,10 +220,10 @@
       <figure class="narrow"><img src="assets/guide/sidebar.png" alt="後台左側清單" loading="lazy"><figcaption>左側清單依年份排列，🎂 代表生日紀錄</figcaption></figure>
       <ul>
         <li><b>編輯</b>：在左側清單點選紀錄（可用搜尋框找），修改後按「儲存並發佈」。</li>
-        <li><b>刪除</b>：打開紀錄後按左下角「刪除這則」並確認。</li>
-        <li>刪除紀錄或移除媒體時，<b>雲端硬碟裡的原始檔案會保留</b>，不會被刪除；需要的話請到雲端硬碟手動處理。</li>
+        <li><b>刪除</b>：打開紀錄後按左下角「刪除這則」並確認。刪除別人建立的紀錄前，請先和 KONOKI 確認。</li>
+        <li>刪除紀錄或移除媒體時，<b>雲端硬碟裡的原始檔案會保留</b>，不會被刪除。</li>
         <li>多人同時編輯不同紀錄不會互相覆蓋；但請避免兩個人同時編輯<b>同一則</b>，以後存檔的版本為準。</li>
-        <li><b>匯出備份</b>：下載全部文字資料（JSON 檔）。<b>匯入備份</b>會<b>取代</b>目前所有資料，請謹慎使用。</li>
+        <li><b>匯出備份</b>：下載全部文字資料（JSON 檔）。<b>匯入備份</b>會<b>取代</b>目前所有資料，請先和 KONOKI 確認再使用。</li>
       </ul>
     </section>
 
@@ -246,14 +261,20 @@
     </section>
 
     <section class="page" id="safety">
-      <h2><span class="chapter">CHAPTER 8</span>安全守則</h2>
+      <h2><span class="chapter">CHAPTER 8</span>編輯守則與安全</h2>
+      <h3>編輯守則</h3>
       <ul>
-        <li><b>每個人使用自己的權杖</b>，不要共用、不要傳給別人。</li>
+        <li>盡量附上<b>資訊來源網址</b>，方便大家查證。</li>
+        <li>網站與上傳的照片影片是<b>公開</b>的，請勿上傳私密、未公開或不適合公開的內容。</li>
+        <li>大幅修改或刪除既有紀錄前，先和 KONOKI 討論。</li>
+      </ul>
+      <h3>帳號安全</h3>
+      <ul>
+        <li><b>只使用你自己的權杖</b>，不要共用、不要傳給任何人。</li>
         <li>在公用或別人的電腦上使用後，請到「連線設定」按「<b>清除權杖</b>」。</li>
-        <li>懷疑權杖外流時，立即到 <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub → Settings → Tokens</a> 刪除，再建立新的。</li>
-        <li>網站與上傳的照片影片是<b>公開</b>的，請勿上傳私密或不適合公開的內容。</li>
-        <li>網站的 GitHub 儲存庫也是公開的：每次存檔都會以<b>你的 GitHub 使用者名稱</b>留下紀錄（不會顯示 email）。如果不想公開本名，請使用暱稱註冊 GitHub。</li>
-        <li>上傳到資料夾的檔案擁有者是上傳的人，佔用的是<b>上傳者自己</b>的雲端硬碟空間。</li>
+        <li>懷疑權杖外流時，立即到 <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub → Settings → Tokens</a> 刪除，再建立新的，並告知 KONOKI。</li>
+        <li>每次存檔都會以<b>你的 GitHub 使用者名稱</b>公開留下紀錄（不會顯示 email）。</li>
+        <li>你上傳到資料夾的檔案，擁有者是你自己，佔用的是<b>你的</b>雲端硬碟空間。</li>
       </ul>
     </section>
 
@@ -261,44 +282,45 @@
       <h2><span class="chapter">CHAPTER 9</span>常見問題與錯誤訊息</h2>
       <div class="table-wrap"><table>
         <tr><th>看到的訊息</th><th>原因與解決方式</th></tr>
-        <tr><td>權杖無效或已過期</td><td>權杖輸入錯誤或已到期，請重新建立權杖（第 3 章步驟 3）並貼上。</td></tr>
+        <tr><td>權杖無效或已過期</td><td>權杖輸入錯誤或已到期，請重新建立權杖（第 3 章步驟 2）並貼上。</td></tr>
         <tr><td>找不到儲存庫，或權杖沒有存取權</td><td>① 尚未接受協作邀請 ② 權杖沒有勾選 public_repo ③ 權杖是用其他 GitHub 帳號建立的。</td></tr>
-        <tr><td>這個權杖沒有寫入權限</td><td>尚未成為協作者，或權杖權限不足。請確認已接受邀請。</td></tr>
+        <tr><td>這個權杖沒有寫入權限</td><td>尚未接受邀請，或權杖權限不足。請確認已按下 Accept invitation。</td></tr>
         <tr><td>找不到分支</td><td>打開「連線設定 → 進階設定」，分支請填 <code>main</code>。</td></tr>
-        <tr><td>access_denied／存取遭拒</td><td>你的 Gmail 不在 Google 測試使用者名單，請擁有者加入（第 2 章）。</td></tr>
-        <tr><td>origin_mismatch／redirect_uri_mismatch</td><td>擁有者的 OAuth 用戶端沒有加入網站網址，請通知擁有者。</td></tr>
-        <tr><td>找不到上傳資料夾</td><td>登入的 Google 帳號沒有該資料夾的權限，或資料夾網址錯誤。請確認用的是被共用的 Gmail。</td></tr>
-        <tr><td>沒有權限把檔案放進資料夾</td><td>你的資料夾權限是「檢視者」，請擁有者改成「編輯者」。</td></tr>
+        <tr><td>access_denied／存取遭拒</td><td>你的 Gmail 還沒被加入授權名單，請聯絡 KONOKI。</td></tr>
+        <tr><td>origin_mismatch／redirect_uri_mismatch</td><td>網站的 Google 設定需要更新，請截圖通知 KONOKI。</td></tr>
+        <tr><td>找不到上傳資料夾</td><td>登入的 Google 帳號沒有資料夾權限。請確認用的是你提供給 KONOKI 的 Gmail。</td></tr>
+        <tr><td>沒有權限把檔案放進資料夾</td><td>你的資料夾權限是「檢視者」，請 KONOKI 改成「編輯者」。</td></tr>
         <tr><td>雲端硬碟權限不足</td><td>連結 Google 時沒有勾選雲端硬碟權限。再按一次「連結 Google 雲端硬碟」，在權限畫面勾選後繼續。</td></tr>
         <tr><td>已取消 Google 授權</td><td>授權視窗被關掉了，再按一次「儲存並發佈」或「連結 Google 雲端硬碟」。若視窗沒跳出，請允許瀏覽器的彈出式視窗。</td></tr>
         <tr><td>前台沒有更新</td><td>等 1～2 分鐘，再按 <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>（Mac：<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>）重新整理；手機請關掉分頁重開。</td></tr>
         <tr><td>照片顯示不出來</td><td>剛上傳的檔案需要幾分鐘處理；若是手動貼的雲端連結，請把共用設定改成「知道連結的任何人」。</td></tr>
         <tr><td>日期選不到明天</td><td>只能選到今天（台北時間），午夜後就能選新的一天。</td></tr>
       </table></div>
-      <p>其他問題請截圖後聯絡網站擁有者。</p>
+      <p>其他問題請截圖後聯絡 KONOKI。</p>
     </section>
 
-    <section class="page owner" id="remove">
-      <h2><span class="chapter">CHAPTER 10</span>擁有者：移除共同編輯者 <span class="who">由擁有者 KONOKI 操作</span></h2>
+    <section class="page" id="leave">
+      <h2><span class="chapter">CHAPTER 10</span>停止擔任共同編輯者</h2>
       <ol>
-        <li><a data-repo="settings/access" href="#" target="_blank" rel="noopener">儲存庫 Settings → Collaborators</a> → 對方旁的 <b>Remove</b>。對方的權杖會立即無法寫入。</li>
-        <li>雲端資料夾 → 共用 → 把對方改成「移除存取權」。</li>
-        <li>（可選）<a href="https://console.cloud.google.com/auth/audience" target="_blank" rel="noopener">Google 測試使用者</a>中刪除對方。</li>
+        <li>告訴 KONOKI，KONOKI 會移除你的 GitHub 協作權限與資料夾共用。</li>
+        <li>到 <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub → Settings → Tokens</a> 刪除為本網站建立的權杖。</li>
+        <li>在使用過的每台裝置開啟後台 →「連線設定」→「清除權杖」。</li>
+        <li>（可選）到 <a href="https://myaccount.google.com/connections" target="_blank" rel="noopener">Google 帳戶 → 第三方連結</a> 移除本網站的存取權。</li>
       </ol>
-      <p>所有新增與修改都會留在 GitHub 的歷史紀錄中（儲存庫的 Commits 頁面），可查看是誰在什麼時候做了哪些變更。</p>
+      <p>你已經新增的紀錄會保留在網站上；你上傳的檔案仍在你自己的雲端硬碟中，如需刪除請先和 KONOKI 討論，以免前台的照片或影片無法顯示。</p>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="footer-shelf" aria-hidden="true">
-      <img class="sprite" src="assets/pixel/dog.svg" alt="">
+      <img class="sticker" src="assets/stickers/dog-06.webp" alt="">
       <img class="sprite small" src="assets/pixel/heart.svg" alt="">
-      <img class="sprite" src="assets/pixel/chipmunk.svg" alt="">
+      <img class="sticker" src="assets/stickers/chipmunk-17.webp" alt="">
     </div>
     <p><a href="./">回到 Fallderz Moments</a> · <a href="admin.html">館員後台</a></p>
   </footer>
   <script>
-    // 依網站網址產生儲存庫連結（帳號名稱改變時不用修改手冊）
+    // 依網站網址產生儲存庫連結（網址改變時不用修改手冊）
     (() => {
       const m = location.hostname.match(/^([\w-]+)\.github\.io$/i);
       const seg = location.pathname.split('/').filter(Boolean)[0];
