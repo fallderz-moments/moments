@@ -1,7 +1,7 @@
 import {
   START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
   mediaThumb, driveId, driveImage, isVideoPath, isBirthday, fetchMoments, storageGet, storageSet, MEDIA_LABELS,
-} from './common.js?v=202610031801';
+} from './common.js?v=202610031806';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';
@@ -406,7 +406,7 @@ async function onSettingsSubmit(e) {
 function renderList() {
   const q = state.search.trim().toLowerCase();
   const list = sortMoments(state.moments, 'desc')
-    .filter((m) => !q || [m.title, m.content, m.date, ...(m.tags || [])].join(' ').toLowerCase().includes(q));
+    .filter((m) => !q || [m.title, m.content, m.date, m.series, ...(m.tags || [])].join(' ').toLowerCase().includes(q));
   let year = '';
   const html = [];
   for (const m of list) {
@@ -420,6 +420,11 @@ function renderList() {
       </button></li>`);
   }
   $('#admin-list').innerHTML = html.join('') || '<li class="year">沒有紀錄</li>';
+  // 既有系列（附則數），方便選到完全相同的名稱
+  const seriesCount = new Map();
+  for (const m of state.moments) if (m.series) seriesCount.set(m.series, (seriesCount.get(m.series) || 0) + 1);
+  $('#series-suggest').innerHTML = [...seriesCount.entries()].sort((a, b) => a[0].localeCompare(b[0], 'zh-Hant'))
+    .map(([name, n]) => `<option value="${escapeHtml(name)}" label="${n} 則">`).join('');
   $('#tag-suggest').innerHTML = sortTags([...new Set(state.moments.flatMap((m) => m.tags || []))])
     .filter((t) => !PRESET_TAGS.includes(t))
     .map((t) => `<option value="${escapeHtml(t)}">`).join('');
@@ -449,6 +454,7 @@ function openEditor(moment) {
   form.elements.date.value = state.draft.date;
   form.elements.title.value = state.draft.title || '';
   form.elements.source.value = state.draft.source || '';
+  form.elements.series.value = state.draft.series || '';
   form.elements.content.value = state.draft.content || '';
   $('#btn-delete').hidden = isNew;
   refreshDateLimit();
@@ -655,6 +661,7 @@ async function onSave(e) {
   draft.date = date;
   draft.title = form.elements.title.value.trim();
   draft.source = source;
+  draft.series = form.elements.series.value.trim().replace(/\s+/g, ' ');
   draft.content = form.elements.content.value.replace(/\s+$/, '');
   const now = new Date().toISOString();
   draft.id ||= `m-${date.replace(/-/g, '')}-${randId()}`;
@@ -700,6 +707,7 @@ async function onSave(e) {
     setBusy(true, '儲存中…');
     const saved = structuredClone(draft);
     if (!saved.source) delete saved.source;
+    if (!saved.series) delete saved.series;
     const before = state.moments.find((m) => m.id === state.originalId);
     await commitChange((list) => {
       const idx = list.findIndex((m) => m.id === saved.id);

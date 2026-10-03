@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, STICKERS,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet,
-} from './common.js?v=202610031801';
+} from './common.js?v=202610031806';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -36,7 +36,7 @@ function filtered() {
   const list = byTag(state.all).filter((m) => {
     // 有輸入搜尋時搜尋全部時間；否則只顯示選擇的年份／月份
     if (!q) return inPeriod(m);
-    return [m.title, m.content, ...(m.tags || []), m.date].join(' ').toLowerCase().includes(q);
+    return [m.title, m.content, m.series, ...(m.tags || []), m.date].join(' ').toLowerCase().includes(q);
   });
   return sortMoments(list, state.sort);
 }
@@ -105,6 +105,7 @@ function noteHtml(m, index) {
       <span class="note-date"><strong>${formatDate(m.date)}</strong><span>週${weekday}</span></span>
       <span class="note-thumb">${thumb}${count > 1 ? `<span class="badge">${mediaSummary(m.media)}</span>` : ''}</span>
       <span class="note-title">${bday ? '🎂 ' : ''}${escapeHtml(m.title || '無標題')}</span>
+      ${m.series ? `<span class="series-chip">📚 ${escapeHtml(m.series)}</span>` : ''}
       ${tagsHtml(m.tags)}
       <span class="call-number">${callNo(m)}</span>
       ${bday ? '' : `<img class="sticker note-sticker ${h % 3 === 0 ? 'left' : ''}" src="${sticker(m.id)}" alt="" loading="lazy">`}
@@ -119,7 +120,7 @@ function ledgerHtml(m, index) {
       <button class="ledger-row${bday ? ' birthday' : ''}" type="button" data-index="${index}">
         <span class="ledger-date"><strong>${y}.${String(mon).padStart(2, '0')}.${String(d).padStart(2, '0')}</strong><span>週${weekday}</span>
           ${bday ? '<span class="bday-mark"><img class="sprite" src="assets/pixel/cake.svg" alt="">BIRTHDAY</span>' : ''}</span>
-        <span class="ledger-title"><b>${escapeHtml(m.title || '無標題')}</b><span>${escapeHtml(excerpt(m.content, 80))}</span></span>
+        <span class="ledger-title"><b>${escapeHtml(m.title || '無標題')}</b>${m.series ? `<span class="series-chip">📚 ${escapeHtml(m.series)}</span>` : ''}<span>${escapeHtml(excerpt(m.content, 80))}</span></span>
         <span class="ledger-tags">${sortTags(m.tags || []).map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</span>
         <span class="ledger-media">${mediaSummary(m.media)}<img class="sticker ledger-sticker" src="${sticker(m.id)}" alt="" loading="lazy"></span>
       </button>
@@ -300,11 +301,51 @@ function openDetail(index) {
   if (m.source) {
     source.innerHTML = `📎 資訊來源：<a href="${escapeHtml(m.source)}" target="_blank" rel="noopener">${escapeHtml(hostOf(m.source))}</a>`;
   }
+  renderSeries(m);
   $('[data-nav="prev"]').disabled = index <= 0;
   $('[data-nav="next"]').disabled = index >= state.visible.length - 1;
   if (!dlg.open) dlg.showModal();
   dlg.scrollTop = 0;
   history.replaceState(null, '', `#m=${encodeURIComponent(m.id)}`);
+}
+
+/** 詳細內容底部：同系列的所有紀錄（依日期排序）與上一則／下一則 */
+function renderSeries(m) {
+  const box = $('#detail-series');
+  const items = m.series ? sortMoments(state.all.filter((x) => x.series === m.series), 'asc') : [];
+  box.hidden = items.length === 0;
+  if (!items.length) { box.innerHTML = ''; return; }
+  const i = items.indexOf(m);
+  const prev = items[i - 1], next = items[i + 1];
+  const navBtn = (x, label, cls) => (x
+    ? `<button type="button" class="series-nav ${cls}" data-goto-id="${escapeHtml(x.id)}"><small>${label}</small><span>${formatDate(x.date)}　${escapeHtml(x.title || '無標題')}</span></button>`
+    : `<span class="series-nav ${cls} empty"><small>${label}</small><span>${cls === 'prev' ? '這是系列的第一則' : '這是系列的最新一則'}</span></span>`);
+  box.innerHTML = `
+    <h3>📚 本系列：${escapeHtml(m.series)} <small>共 ${items.length} 則 · 第 ${i + 1} 則</small></h3>
+    <div class="series-pager">${navBtn(prev, '‹ 上一則', 'prev')}${navBtn(next, '下一則 ›', 'next')}</div>
+    <ol class="series-list">${items.map((x) => `
+      <li${x === m ? ' aria-current="true"' : ''}>${x === m
+        ? `<span class="series-item"><span class="d">${formatDate(x.date)}</span><span class="t">${escapeHtml(x.title || '無標題')}</span><span class="here">閱讀中</span></span>`
+        : `<button type="button" class="series-item" data-goto-id="${escapeHtml(x.id)}"><span class="d">${formatDate(x.date)}</span><span class="t">${escapeHtml(x.title || '無標題')}</span></button>`}</li>`).join('')}
+    </ol>`;
+}
+
+/** 依 id 打開紀錄；不在目前期間時切換到該紀錄所在的月份 */
+function openById(id) {
+  const target = state.all.find((m) => m.id === id);
+  if (!target) return;
+  if (!state.visible.includes(target)) {
+    state.tag = null;
+    state.q = '';
+    $('#search').value = '';
+    state.year = target.date.slice(0, 4);
+    state.month = monthKey(target.date);
+    state.periodPicked = true;
+    renderTags();
+    render();
+  }
+  const index = state.visible.indexOf(target);
+  if (index >= 0) openDetail(index);
 }
 
 function closeDetail() {
@@ -335,6 +376,7 @@ function bindEvents() {
       setPeriod(state.year, state.month === t.dataset.month ? null : t.dataset.month);
     }
     else if (t.dataset.goto) { setPeriod(t.dataset.goto.slice(0, 4), t.dataset.goto); }
+    else if (t.dataset.gotoId) { openById(t.dataset.gotoId); }
     else if (t.dataset.full) { openLightbox(t.dataset.full, t.dataset.link); }
     else if (t.dataset.index && !t.closest('dialog')) { openDetail(Number(t.dataset.index)); }
     else if (t.dataset.nav) { openDetail(state.current + (t.dataset.nav === 'next' ? 1 : -1)); }
@@ -362,19 +404,7 @@ function bindEvents() {
 
 function openFromHash() {
   const match = location.hash.match(/^#m=(.+)$/);
-  if (!match) return;
-  const id = decodeURIComponent(match[1]);
-  const target = state.all.find((m) => m.id === id);
-  if (!target) return;
-  if (!state.visible.includes(target)) { // 分享的連結不在目前期間時，切換到該月份
-    state.tag = null;
-    state.year = target.date.slice(0, 4);
-    state.month = monthKey(target.date);
-    renderTags();
-    render();
-  }
-  const index = state.visible.indexOf(target);
-  if (index >= 0) openDetail(index);
+  if (match) openById(decodeURIComponent(match[1]));
 }
 
 async function init() {

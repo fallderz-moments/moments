@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:wght@400;700&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610031801">
-  <link rel="stylesheet" href="assets/admin.css?v=202610031801">
-  <link rel="stylesheet" href="assets/guide.css?v=202610031801">
+  <link rel="stylesheet" href="assets/style.css?v=202610031806">
+  <link rel="stylesheet" href="assets/admin.css?v=202610031806">
+  <link rel="stylesheet" href="assets/guide.css?v=202610031806">
 </head>
 <body class="admin">
   <header class="admin-bar">
@@ -57,6 +57,12 @@
 
         <label>資訊來源網址（選填）
           <input class="field" type="url" name="source" placeholder="https://…（例如原始貼文、文章、直播頁面）">
+        </label>
+
+        <label>系列（選填）
+          <input class="field" type="text" name="series" maxlength="40" list="series-suggest" placeholder="例如：東京燒鳥約會（同系列的紀錄請填完全相同的名稱）">
+          <datalist id="series-suggest"></datalist>
+          <small class="hint">同一件事分成好幾則時填同一個系列名稱，前台會在每則下方串起整個系列，並提供上一則／下一則。可從建議清單選擇既有系列。</small>
         </label>
 
         <label>內容
@@ -159,6 +165,7 @@
         <tr><td>日期（必填）</td><td>可選 2021/12/01 到<b>今天</b>；過了午夜就能選隔天。日期是 9/1 或 9/24 時會顯示 🎂 提示。</td></tr>
         <tr><td>標題</td><td>這一天的小標題，最多 80 字。</td></tr>
         <tr><td>資訊來源網址（選填）</td><td>原始貼文、文章、直播頁面的網址，前台會顯示在內容最下方。</td></tr>
+        <tr><td>系列（選填）</td><td>同一件事分成多則時填同一個系列名稱，前台會自動串起整個系列（上一則／下一則與清單）。</td></tr>
         <tr><td>內容</td><td>可換行；文字裡的網址會自動變成連結。</td></tr>
         <tr><td>分類標籤</td><td>點選預設分類（可複選）；其他標籤在下方輸入後按 Enter 或逗號。</td></tr>
         <tr><td>照片／影片</td><td>點擊或拖曳檔案到虛線框，<b>可一次選多張照片、多支影片</b>。檔案會在按「儲存並發佈」時以原檔上傳到雲端資料夾備份。原始貼文網址請填在「資訊來源網址」。</td></tr>
@@ -214,8 +221,7 @@
       <ul>
         <li><b>日期以「我們得知的時間點」為準</b>：同一件事分階段曝光時，請依曝光日期分成不同則紀錄。<br>
           例：2026/9/22 透過文字得知兩人去約會、相關照片 9/24 才發出來 → 分成 <b>9/22（文字）</b>與 <b>9/24（照片）</b>兩則。</li>
-        <li><b>同一系列用「系列標籤」串起來</b>：在「其他標籤」輸入系列名稱，例如 <code>東京燒鳥約會</code>，同系列的每一則都加上同一個標籤。讀者在前台選「全部」再點這個標籤，就能依時間看到整個系列。<br>
-          除了標籤之外，如果想到更有效率串接系列糖的方式，歡迎大家集思廣益 💡</li>
+        <li><b>同一系列用「系列」欄位串起來</b>：同一件事分成好幾則時，每一則的「系列」都填<b>完全相同</b>的名稱（例如 <code>東京燒鳥約會</code>，可從建議清單選既有系列）。前台會在每則紀錄下方顯示「本系列」清單與上一則／下一則，讀者不用另外篩選；分類標籤照常選擇即可，兩者互不影響。</li>
         <li><b>雙人直播有大量糖點時</b>：在「資訊來源網址」附上直播連結，節錄的片段<b>集中在同一則</b>紀錄，並在內文整理重點摘要（建議附上時間點），不要拆成很多則。</li>
         <li>盡量附上<b>資訊來源網址</b>，方便大家查證。</li>
         <li>網站與上傳的照片影片是<b>公開</b>的，請勿上傳私密、未公開或不適合公開的內容。</li>
@@ -255,6 +261,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="assets/admin.js?v=202610031801"></script>
+  <script type="module" src="assets/admin.js?v=202610031806"></script>
 </body>
 </html>
