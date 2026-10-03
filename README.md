@@ -1,56 +1,75 @@
-# Fallderz moments
+# Fallderz Moments
 
-紀錄生活片段的個人網站，時間軸從 **2021 年 12 月 1 日** 開始直到現在。
+狗狗鼠鼠觀察日誌，時間軸從 **2021 年 12 月 1 日** 開始，每天自動延伸到今天（台北時間）。
 
-- **前台**（`index.html`）：以「便利貼」或「列表」兩種方式瀏覽，依月份分組、可切換新舊排序，並能用標籤、關鍵字篩選，也可透過年份／月份導覽快速跳轉。點開片段可看完整內容、照片與影片，並用 ← → 切換上下則。
-- **後台**（`admin.html`）：新增、編輯、刪除片段，可設定日期、標題、文字內容、標籤，上傳照片／影片，或貼上外部連結。
+- **前台**（`index.html`）：圖書館風格，搭配像素風的黃金獵犬與花栗鼠。可用「便利貼」或「列表（借閱登記卡）」兩種方式瀏覽，依月份分組、可切換新舊排序，並能用分類、關鍵字、年份／月份快速找到紀錄。點開後可看完整內容、多張照片（可放大）與影片，並用 ← → 切換上下則。
+- **館員後台**（`admin.html`）：新增、編輯、刪除紀錄；設定日期、標題、資訊來源網址（選填）、內容、分類標籤，並可一次上傳多張照片與多支影片。
+- **生日**：日期為 **9/1** 或 **9/24** 的紀錄會自動加上彩帶、蛋糕與戴派對帽的狗狗鼠鼠。
 
-整個網站都是靜態檔案，不需要伺服器或資料庫，可以免費架在 GitHub Pages 上。
+## 儲存方式
 
-## 媒體來源
+| 內容 | 存放位置 |
+| --- | --- |
+| 文字資料（日期、標題、內容、標籤…） | GitHub 儲存庫的 `data/moments.json` |
+| 上傳的照片與影片 | **你的 Google 雲端硬碟資料夾**（原檔上傳，不壓縮） |
+| YouTube / X / Instagram | 貼上連結，直接嵌入顯示 |
 
-| 來源 | 用法 | 前台顯示 |
-| --- | --- | --- |
-| 直接上傳照片 | 後台拖曳或點選檔案 | 自動壓縮（最長邊 2000px）後存到 `media/年份/` |
-| 直接上傳影片 | 同上（單檔上限約 95MB） | 內建播放器 |
-| Google 雲端硬碟 | 貼上分享連結，選擇「雲端照片」或「雲端影片」 | 照片顯示大圖、影片內嵌播放 |
-| YouTube | 貼上影片或 Shorts 連結 | 內嵌播放，自動抓縮圖 |
-| X（Twitter） | 貼上貼文連結 | 內嵌貼文 |
-| Instagram | 貼上貼文／Reels 連結 | 內嵌貼文 |
-| 其他網址 | 圖片網址會直接顯示，其他顯示為連結卡片 | — |
+上傳到雲端硬碟的檔案會自動設成「知道連結的任何人可檢視」，檔名格式為 `日期_標題_序號.副檔名`。
+在後台刪除紀錄或移除媒體時，**雲端硬碟上的原檔會保留**，不會被刪除。
 
-> Google 雲端硬碟的檔案需要把共用設定改成「**知道連結的任何人**皆可檢視」，網站才能顯示。
-> 長影片建議放雲端硬碟或 YouTube，以免儲存庫變得太大。
+## 分類標籤
 
-每則片段可以按 ★ 指定哪一個媒體當作便利貼縮圖；沒有圖片的片段會顯示文字內容。
+預設分類：YouTube、Berriz、Universe、花絮、綜藝、Bubble、Instagram、FanClub、LIVE、FanSign。
+後台點一下即可選取，也能另外輸入自訂標籤。預設分類可在 `assets/common.js` 的 `PRESET_TAGS` 修改。
 
 ## 上線步驟（GitHub Pages）
 
-1. 把這個分支合併到 `main`。
-2. 到儲存庫的 **Settings → Pages**，Source 選 **Deploy from a branch**，Branch 選 `main`、資料夾選 `/ (root)`，按 Save。
-3. 約 1～2 分鐘後網站就會出現在 `https://slam0615.github.io/moments/`。
+1. 確認儲存庫有 `main` 分支（沒有的話：儲存庫首頁 → 分支選單 → View all branches → New branch，名稱 `main`，來源選目前的分支）。
+2. **Settings → Pages**：Source 選 **Deploy from a branch**，Branch 選 `main`、資料夾 `/ (root)`。
+3. 約 1～2 分鐘後網站會出現在 `https://slam0615.github.io/moments/`。
 
-> 免費帳號的 GitHub Pages 需要儲存庫是公開的（Public）。
-
-## 啟用後台編修
-
-後台透過 GitHub API 把資料寫回儲存庫，需要一組只能存取這個儲存庫的權杖：
+## 設定後台：① GitHub（文字資料）
 
 1. 開啟 <https://github.com/settings/personal-access-tokens/new>（Fine-grained token）。
 2. **Repository access** 選 *Only select repositories* → `moments`。
-3. **Permissions → Repository permissions → Contents** 設為 **Read and write**。
-4. 建立後複製權杖，打開網站的 `admin.html`，在「連線設定」貼上即可。
+3. **Permissions → Contents** 設為 **Read and write**。
+4. 到網站的 `admin.html` →「連線設定」貼上權杖，分支填 GitHub Pages 使用的分支（通常是 `main`）。
 
-權杖只會存在你自己裝置的瀏覽器裡，別人打開後台頁面也只能看、不能改。在公用電腦上用完請按「清除權杖」。
+## 設定後台：② Google 雲端硬碟上傳（只需做一次）
 
-每次儲存都會產生一筆 commit，GitHub Pages 約 1 分鐘後更新前台。後台也提供「匯出備份／匯入備份」（JSON 檔）。
+網站需要一組你自己的 Google「OAuth 用戶端 ID」，才能把檔案上傳到你的雲端硬碟：
+
+1. 開啟 <https://console.cloud.google.com/>，左上角建立一個新專案（名稱例如 `fallderz-moments`）。
+2. 搜尋並進入 **Google Drive API** → 按 **啟用**。
+3. 進入 **Google Auth Platform**（或「OAuth 同意畫面」）→ 開始設定：
+   - 應用程式名稱：`Fallderz Moments`，支援電子郵件選你自己的信箱
+   - 目標對象選 **外部（External）**
+   - 完成後到 **目標對象 → 測試使用者**，新增你自己的 Gmail
+   - 發布狀態維持 **測試中（Testing）** 即可
+4. 進入 **用戶端（Clients）→ 建立用戶端**：
+   - 應用程式類型：**網頁應用程式**
+   - 已授權的 JavaScript 來源：新增 `https://slam0615.github.io`（本機測試可再加 `http://localhost:8000`）
+5. 複製產生的 **用戶端 ID**（`….apps.googleusercontent.com`），貼到後台「連線設定」的 OAuth 用戶端 ID。
+   上傳資料夾已預設為你提供的資料夾，需要時可改貼其他資料夾網址。
+6. 按後台上方「連結 Google 雲端硬碟」，登入擁有該資料夾的 Google 帳號。
+   第一次會看到「Google 尚未驗證這個應用程式」，因為這是你自己的私人應用程式，按「繼續」即可。
+
+> 為了把檔案放進你既有的資料夾，網站會要求雲端硬碟的存取權限。授權只存在你目前的瀏覽器分頁，約 1 小時後失效，
+> 下次上傳時會自動再跳出授權視窗。其他人沒有你的 Google 帳號與 GitHub 權杖，就無法編修。
 
 ## 常見問題
 
 **存檔時出現「Branch main not found」／連線時顯示「找不到分支」**
-儲存庫還沒有 `main` 分支。到儲存庫首頁 → 分支選單 → **View all branches** → **New branch**，
-名稱填 `main`、來源選 `claude/fallderz-moments-site-rrl8ea` 建立即可；或在「連線設定」把分支改成 GitHub Pages 實際使用的分支。
-後台寫入的分支必須和 GitHub Pages 發佈的分支相同，前台才會顯示新內容。
+儲存庫沒有那個分支。請依「上線步驟」建立 `main`，或在「連線設定」改成 GitHub Pages 實際使用的分支。
+
+**授權時出現 `redirect_uri_mismatch` 或 `origin_mismatch`**
+OAuth 用戶端的「已授權的 JavaScript 來源」沒有加上網站網址（只填 `https://slam0615.github.io`，不要加路徑或結尾斜線）。
+
+**授權時出現「存取遭拒／access_denied」**
+登入的帳號不在「測試使用者」名單內，請到 Google Auth Platform → 目標對象新增。
+
+**照片在前台顯示不出來**
+確認檔案共用設定為「知道連結的任何人」。新上傳的影片需要幾分鐘讓 Google 處理後才能播放與產生縮圖。
 
 ## 本機預覽
 
@@ -62,18 +81,20 @@ python3 -m http.server 8000
 ## 檔案結構
 
 ```
-index.html          前台
-admin.html          後台
+index.html             前台
+admin.html             館員後台
 assets/
-  style.css         共用樣式（配色：#97B3AE #D2E0D3 #F0DDD6 #F2C3B9 #D6CBBF #F0EEEA）
-  admin.css         後台樣式
-  common.js         共用工具（日期、媒體連結辨識等）
-  app.js            前台程式
-  admin.js          後台程式
-data/moments.json   所有片段資料
-media/              上傳的照片與影片
+  style.css            共用樣式（配色：#97B3AE #D2E0D3 #F0DDD6 #F2C3B9 #D6CBBF #F0EEEA）
+  admin.css            後台樣式
+  common.js            共用設定與工具（預設分類、生日日期、日期換算、媒體連結辨識）
+  app.js               前台程式
+  admin.js             後台程式（GitHub 與 Google 雲端硬碟串接）
+  pixel/               像素風圖案（狗狗、鼠鼠、生日版、蛋糕、書本…）
+data/moments.json      所有紀錄資料
+media/samples/         範例紀錄用的插圖
+tools/pixel_sprites.py 像素圖案產生器（修改後執行即可重新產生 SVG）
 ```
 
-字體使用 Google Fonts 的 **粉圓體（Huninn）**，繁體中文圓體；缺字時會依序改用 Zen Maru Gothic、蘋方、思源黑體、微軟正黑體。
+字體：英文標題使用 Libre Baskerville、內文英數使用 Nunito、像素標籤使用 Pixelify Sans，**中文使用粉圓體（Huninn）**。
 
-`data/moments.json` 內附的三則「範例」片段可以直接在後台刪除。
+`data/moments.json` 內附三則「範例」紀錄，可以直接在後台刪除。

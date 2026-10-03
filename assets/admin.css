@@ -5,9 +5,10 @@ body.admin { background-image: none; background: var(--ivory); }
   position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
   padding: 10px 16px; background: var(--mint); border-bottom: 1px solid var(--line);
 }
-.admin-brand { text-decoration: none; color: var(--teal-ink); font-size: 1.3rem; margin-right: 6px; }
-.admin-brand span { color: var(--coral-deep); }
-.admin-brand small { font-size: .8rem; background: var(--white); padding: .05em .6em; border-radius: 999px; margin-left: 4px; color: var(--ink-soft); }
+.admin-brand { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--teal-ink); font-family: var(--font-title); font-weight: 700; font-size: 1.2rem; margin-right: 6px; }
+.admin-brand .sprite { height: 34px; }
+.admin-brand em { color: var(--coral-deep); font-weight: 400; }
+.admin-brand small { font-family: var(--font); font-weight: 400; font-size: .8rem; background: var(--white); padding: .05em .6em; border-radius: 999px; margin-left: 4px; color: var(--ink-soft); }
 .conn { font-size: .85rem; padding: .1em .8em; border-radius: 999px; background: var(--blush); color: #8a4f45; }
 .conn.ok { background: var(--white); color: var(--teal-ink); }
 
@@ -29,7 +30,19 @@ body.admin { background-image: none; background: var(--ivory); }
 .admin-list .meta div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .admin-main { min-width: 0; }
-.empty-editor { background: var(--white); border-radius: var(--radius); padding: 60px 20px; text-align: center; color: var(--ink-soft); }
+.empty-editor { background: var(--white); border-radius: var(--radius); padding: 60px 20px; text-align: center; color: var(--ink-soft); display: flex; flex-direction: column; align-items: center; }
+.empty-editor .sprite { height: 72px; }
+.preset-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
+.preset-tags button {
+  border: 1.5px solid var(--line); background: var(--white); border-radius: 4px; padding: .1em .8em; cursor: pointer; color: var(--ink);
+}
+.preset-tags button:hover { border-color: var(--teal); }
+.preset-tags button[aria-pressed="true"] { background: var(--teal-deep); border-color: var(--teal-deep); color: var(--white); }
+.bday-note { color: var(--coral-deep); }
+fieldset { border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 14px 12px; display: flex; flex-direction: column; gap: 10px; margin: 0; }
+legend { color: var(--teal-ink); padding: 0 6px; }
+.progress { height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.progress i { display: block; height: 100%; background: var(--teal-deep); width: 0; transition: width .2s; }
 .editor { background: var(--white); border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: var(--shadow); }
 .editor h2 { margin: 0; font-weight: 400; color: var(--teal-ink); }
 .editor label, .label, .settings label { display: flex; flex-direction: column; gap: 4px; color: var(--ink-soft); font-size: .92rem; }

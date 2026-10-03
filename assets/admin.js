@@ -1,22 +1,32 @@
 import {
-  START_DATE, DATA_PATH, todayStr, formatDate, escapeHtml, sortMoments, momentCover, mediaThumb,
-  parseMediaUrl, isVideoPath, fetchMoments, storageGet, storageSet, MEDIA_LABELS,
+  START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
+  mediaThumb, parseMediaUrl, driveId, isVideoPath, isBirthday, fetchMoments, storageGet, storageSet, MEDIA_LABELS,
 } from './common.js';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';
-const MAX_UPLOAD = 95 * 1024 * 1024; // GitHub 單檔上限 100MB
-const WARN_UPLOAD = 40 * 1024 * 1024;
+const DRIVE_TOKEN_KEY = 'fm.driveToken';
+const DEFAULT_FOLDER = '1FUYYyQomHMSPIXnTlBSWNqTbP2MAtUUp';
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive';
 
 const state = {
-  cfg: storageGet(CFG_KEY, null) || guessConfig(),
+  cfg: { ...guessConfig(), ...storageGet(CFG_KEY, {}) },
   connected: false,
   moments: [],
   sha: null,
-  draft: null,     // 編輯中的片段副本
+  draft: null,     // 編輯中的紀錄副本
   originalId: null,
   search: '',
   busy: false,
+};
+
+const drive = {
+  token: null,
+  expires: 0,
+  client: null,
+  pending: null,
+  folderName: '',
+  ...storageGet(DRIVE_TOKEN_KEY, {}, 'sessionStorage'),
 };
 
 function guessConfig() {
@@ -28,6 +38,8 @@ function guessConfig() {
     repo: m ? (seg && !seg.endsWith('.html') ? seg : host) : 'moments',
     branch: 'main',
     token: '',
+    clientId: '',
+    folderId: DEFAULT_FOLDER,
   };
 }
 
@@ -61,19 +73,11 @@ function b64ToUtf8(b64) {
   return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));
 }
 
-function blobToB64(blob) {
-  return new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(String(r.result).split(',')[1]);
-    r.onerror = () => reject(r.error);
-    r.readAsDataURL(blob);
-  });
-}
-
 const randId = () => Math.random().toString(36).slice(2, 8);
 const isRepoMedia = (src = '') => src.startsWith('media/');
+const formatSize = (n) => (n > 1048576 ? `${(n / 1048576).toFixed(1)}MB` : `${Math.ceil(n / 1024)}KB`);
 
-/* ---------- GitHub API ---------- */
+/* ---------- GitHub API（文字資料） ---------- */
 async function gh(path, { method = 'GET', body, raw = false } = {}) {
   const { owner, repo, token } = state.cfg;
   const res = await fetch(`https://api.github.com/repos/${owner}/${repo}${path}`, {
@@ -145,12 +149,7 @@ async function commitChange(apply, message) {
   }
 }
 
-async function uploadFile(path, blob, message) {
-  const content = await blobToB64(blob);
-  await gh(contentsPath(path), { method: 'PUT', body: { message, content, branch: state.cfg.branch } });
-}
-
-async function deleteFile(path) {
+async function deleteRepoFile(path) {
   try {
     const meta = await gh(`${contentsPath(path)}?ref=${encodeURIComponent(state.cfg.branch)}`);
     await gh(contentsPath(path), {
@@ -160,14 +159,6 @@ async function deleteFile(path) {
   } catch (err) {
     if (err.status !== 404) console.warn('刪除檔案失敗', path, err);
   }
-}
-
-/* ---------- 連線 ---------- */
-function updateConn() {
-  const el = $('#conn');
-  const { owner, repo, branch } = state.cfg;
-  el.textContent = state.connected ? `已連線 ${owner}/${repo} · ${branch}` : '未連線（唯讀）';
-  el.classList.toggle('ok', state.connected);
 }
 
 /** 確認分支存在，避免讀到空資料、存檔時才失敗 */
@@ -195,20 +186,178 @@ async function connect() {
   renderList();
 }
 
+/* ---------- Google 雲端硬碟（照片與影片） ---------- */
+let gisLoader;
+function loadGis() {
+  gisLoader ||= new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.async = true;
+    s.onload = resolve;
+    s.onerror = () => { gisLoader = null; reject(new Error('無法載入 Google 登入元件')); };
+    document.head.appendChild(s);
+  });
+  return gisLoader;
+}
+
+/** 預先載入 Google 登入元件，讓之後按鈕點擊時可以直接跳出授權視窗 */
+async function initDrive() {
+  drive.client = null;
+  if (!state.cfg.clientId) { updateDriveConn(); return; }
+  try {
+    await loadGis();
+    drive.client = google.accounts.oauth2.initTokenClient({
+      client_id: state.cfg.clientId,
+      scope: DRIVE_SCOPE,
+      callback: (resp) => {
+        const p = drive.pending;
+        drive.pending = null;
+        if (resp.error) { p?.reject(new Error(`Google 授權失敗：${resp.error_description || resp.error}`)); return; }
+        drive.token = resp.access_token;
+        drive.expires = Date.now() + Number(resp.expires_in || 3600) * 1000;
+        storageSet(DRIVE_TOKEN_KEY, { token: drive.token, expires: drive.expires }, 'sessionStorage');
+        p?.resolve(drive.token);
+      },
+      error_callback: (err) => {
+        const p = drive.pending;
+        drive.pending = null;
+        p?.reject(new Error(err.type === 'popup_closed' ? '已取消 Google 授權' : `Google 授權失敗：${err.message || err.type}`));
+      },
+    });
+  } catch (err) {
+    toast(err.message, true, 6000);
+  }
+  updateDriveConn();
+}
+
+const driveTokenValid = () => drive.token && Date.now() < drive.expires - 60_000;
+
+/** 取得雲端硬碟權杖；必須在使用者點擊的當下呼叫（瀏覽器才會允許跳出授權視窗） */
+function ensureDriveToken() {
+  if (driveTokenValid()) return Promise.resolve(drive.token);
+  if (!state.cfg.clientId) return Promise.reject(new Error('請先在「連線設定」填寫 Google OAuth 用戶端 ID'));
+  if (!drive.client) return Promise.reject(new Error('Google 登入元件尚未載入，請稍候再試'));
+  return new Promise((resolve, reject) => {
+    drive.pending = { resolve, reject };
+    drive.client.requestAccessToken({ prompt: drive.token ? '' : 'consent' });
+  });
+}
+
+async function gd(url, { method = 'GET', body } = {}) {
+  const res = await fetch(url, {
+    method,
+    headers: { Authorization: `Bearer ${drive.token}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) {
+    const info = await res.json().catch(() => ({}));
+    if (res.status === 401) { drive.token = null; updateDriveConn(); }
+    const err = new Error(info.error?.message || res.statusText);
+    err.status = res.status;
+    throw err;
+  }
+  return res.status === 204 ? null : res.json();
+}
+
+async function checkFolder() {
+  try {
+    const f = await gd(`https://www.googleapis.com/drive/v3/files/${state.cfg.folderId}?fields=id,name,mimeType,capabilities(canAddChildren)&supportsAllDrives=true`);
+    if (f.mimeType !== 'application/vnd.google-apps.folder') throw new Error('設定的 ID 不是資料夾');
+    if (f.capabilities && f.capabilities.canAddChildren === false) throw new Error(`沒有權限把檔案放進「${f.name}」`);
+    drive.folderName = f.name;
+  } catch (err) {
+    drive.folderName = '';
+    throw err.status === 404 ? new Error('找不到上傳資料夾，請確認資料夾網址，以及登入的是擁有該資料夾的 Google 帳號') : err;
+  } finally {
+    updateDriveConn();
+  }
+}
+
+async function connectDrive() {
+  try {
+    await ensureDriveToken();
+    await checkFolder();
+    toast(`已連結雲端資料夾「${drive.folderName}」`);
+  } catch (err) {
+    toast(err.message, true, 7000);
+  }
+}
+
+/** 以 resumable 方式上傳（支援大型影片），回傳 Drive 檔案資訊 */
+async function driveUpload(file, name, onProgress) {
+  const init = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&supportsAllDrives=true&fields=id,name,mimeType', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${drive.token}`,
+      'Content-Type': 'application/json; charset=UTF-8',
+      'X-Upload-Content-Type': file.type || 'application/octet-stream',
+      'X-Upload-Content-Length': String(file.size),
+    },
+    body: JSON.stringify({ name, parents: [state.cfg.folderId] }),
+  });
+  if (!init.ok) {
+    const info = await init.json().catch(() => ({}));
+    throw new Error(info.error?.message || `無法建立上傳（${init.status}）`);
+  }
+  const uploadUrl = init.headers.get('Location');
+  if (!uploadUrl) throw new Error('無法取得上傳網址');
+  const result = await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', uploadUrl);
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress(e.loaded / e.total); };
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) resolve(JSON.parse(xhr.responseText));
+      else reject(new Error(`上傳失敗（${xhr.status}）`));
+    };
+    xhr.onerror = () => reject(new Error('網路中斷，上傳失敗'));
+    xhr.send(file);
+  });
+  // 讓「知道連結的任何人」都能檢視，網站才能顯示
+  await gd(`https://www.googleapis.com/drive/v3/files/${result.id}/permissions?supportsAllDrives=true`, {
+    method: 'POST',
+    body: { role: 'reader', type: 'anyone' },
+  });
+  return result;
+}
+
+/* ---------- 連線狀態與設定 ---------- */
+function updateConn() {
+  const el = $('#conn');
+  const { owner, repo, branch } = state.cfg;
+  el.textContent = state.connected ? `GitHub ✓ ${owner}/${repo} · ${branch}` : 'GitHub 未連線（唯讀）';
+  el.classList.toggle('ok', state.connected);
+}
+
+function updateDriveConn() {
+  const el = $('#drive-conn');
+  const ok = driveTokenValid();
+  el.textContent = ok ? `雲端硬碟 ✓ ${drive.folderName || '已授權'}` : state.cfg.clientId ? '雲端硬碟未連結' : '雲端硬碟未設定';
+  el.classList.toggle('ok', !!ok);
+  $('#btn-drive').hidden = !!(ok && drive.folderName);
+}
+
 function openSettings(msg = '') {
   const form = $('#settings-form');
-  for (const k of ['owner', 'repo', 'branch', 'token']) form.elements[k].value = state.cfg[k] || '';
+  for (const k of ['owner', 'repo', 'branch', 'token', 'clientId']) form.elements[k].value = state.cfg[k] || '';
+  form.elements.folder.value = state.cfg.folderId || '';
   const m = $('#settings-msg');
   m.textContent = msg;
   m.classList.remove('ok');
-  $('#settings').showModal();
+  if (!$('#settings').open) $('#settings').showModal();
 }
 
 async function onSettingsSubmit(e) {
   if (e.submitter?.value === 'cancel') return;
   e.preventDefault();
   const form = e.target;
-  state.cfg = Object.fromEntries(['owner', 'repo', 'branch', 'token'].map((k) => [k, form.elements[k].value.trim()]));
+  const prevClient = state.cfg.clientId;
+  const folderRaw = form.elements.folder.value.trim();
+  state.cfg = {
+    ...Object.fromEntries(['owner', 'repo', 'branch', 'token', 'clientId'].map((k) => [k, form.elements[k].value.trim()])),
+    folderId: driveId(folderRaw) || folderRaw || DEFAULT_FOLDER,
+  };
+  storageSet(CFG_KEY, state.cfg);
+  if (state.cfg.clientId !== prevClient) { drive.token = null; initDrive(); }
   const msg = $('#settings-msg');
   msg.classList.remove('ok');
   msg.textContent = '連線中…';
@@ -216,10 +365,9 @@ async function onSettingsSubmit(e) {
     const info = await gh('');
     if (info.permissions && !info.permissions.push) throw new Error('這個權杖沒有寫入權限（Contents: Read and write）');
     await connect();
-    storageSet(CFG_KEY, state.cfg);
     msg.classList.add('ok');
-    msg.textContent = `連線成功，共 ${state.moments.length} 則片段`;
-    setTimeout(() => $('#settings').close(), 700);
+    msg.textContent = `GitHub 連線成功，共 ${state.moments.length} 則紀錄`;
+    setTimeout(() => $('#settings').close(), 900);
   } catch (err) {
     state.connected = false;
     updateConn();
@@ -245,33 +393,43 @@ function renderList() {
     html.push(`
       <li><button type="button" data-id="${escapeHtml(m.id)}" aria-current="${state.originalId === m.id}">
         <span class="thumb">${cover.url ? `<img src="${escapeHtml(cover.url)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '✎'}</span>
-        <span class="meta"><small>${formatDate(m.date)}</small><div>${escapeHtml(m.title || '無標題')}</div></span>
+        <span class="meta"><small>${formatDate(m.date)}${isBirthday(m.date) ? ' 🎂' : ''}</small><div>${escapeHtml(m.title || '無標題')}</div></span>
       </button></li>`);
   }
-  $('#admin-list').innerHTML = html.join('') || '<li class="year">沒有片段</li>';
-  $('#tag-suggest').innerHTML = [...new Set(state.moments.flatMap((m) => m.tags || []))]
+  $('#admin-list').innerHTML = html.join('') || '<li class="year">沒有紀錄</li>';
+  $('#tag-suggest').innerHTML = sortTags([...new Set(state.moments.flatMap((m) => m.tags || []))])
+    .filter((t) => !PRESET_TAGS.includes(t))
     .map((t) => `<option value="${escapeHtml(t)}">`).join('');
 }
 
 /* ---------- 編輯器 ---------- */
+function refreshDateLimit() {
+  const input = $('#editor').elements.date;
+  input.min = START_DATE;
+  input.max = todayStr();
+  const hint = $('#date-hint');
+  hint.textContent = isBirthday(input.value) ? '🎂 生日紀錄，前台會特別裝飾' : `可選 ${formatDate(START_DATE)} ～ ${formatDate(todayStr())}`;
+  hint.classList.toggle('bday-note', isBirthday(input.value));
+}
+
 function openEditor(moment) {
   releasePreviews();
   const isNew = !moment;
   state.originalId = moment?.id || null;
   state.draft = moment
-    ? structuredClone(moment)
-    : { id: null, date: todayStr(), title: '', content: '', tags: [], media: [], cover: 0 };
+    ? { source: '', ...structuredClone(moment) }
+    : { id: null, date: todayStr(), title: '', content: '', source: '', tags: [], media: [], cover: 0 };
   const form = $('#editor');
   form.hidden = false;
   $('#empty-editor').hidden = true;
-  $('#editor-heading').textContent = isNew ? '新增生活片段' : `編輯：${formatDate(moment.date)}`;
-  form.elements.date.min = START_DATE;
-  form.elements.date.max = todayStr();
+  $('#editor-heading').textContent = isNew ? '新增紀錄' : `編輯：${formatDate(moment.date)}`;
   form.elements.date.value = state.draft.date;
   form.elements.title.value = state.draft.title || '';
+  form.elements.source.value = state.draft.source || '';
   form.elements.content.value = state.draft.content || '';
   $('#btn-delete').hidden = isNew;
-  renderChips();
+  refreshDateLimit();
+  renderTagsUi();
   renderMedia();
   renderList();
   form.scrollIntoView({ block: 'start' });
@@ -290,21 +448,30 @@ function releasePreviews() {
   for (const item of state.draft?.media || []) if (item._preview) URL.revokeObjectURL(item._preview);
 }
 
-function renderChips() {
-  $('#tag-chips').innerHTML = state.draft.tags
-    .map((t, i) => `<span class="chip">#${escapeHtml(t)}<button type="button" data-remove-tag="${i}" aria-label="移除 ${escapeHtml(t)}">✕</button></span>`)
+function renderTagsUi() {
+  const tags = state.draft.tags;
+  $('#preset-tags').innerHTML = PRESET_TAGS
+    .map((t) => `<button type="button" data-preset="${escapeHtml(t)}" aria-pressed="${tags.includes(t)}">${escapeHtml(t)}</button>`)
+    .join('');
+  $('#tag-chips').innerHTML = tags
+    .map((t, i) => (PRESET_TAGS.includes(t) ? '' :
+      `<span class="chip">${escapeHtml(t)}<button type="button" data-remove-tag="${i}" aria-label="移除 ${escapeHtml(t)}">✕</button></span>`))
     .join('');
 }
 
 function addTags(text) {
-  const tags = text.split(/[,，、#\s]+/).map((t) => t.trim()).filter(Boolean);
-  for (const t of tags) if (!state.draft.tags.includes(t)) state.draft.tags.push(t);
-  renderChips();
+  const tags = text.split(/[,，、#\n]+/).map((t) => t.trim()).filter(Boolean);
+  for (const t of tags) {
+    const preset = PRESET_TAGS.find((p) => p.toLowerCase() === t.toLowerCase());
+    const tag = preset || t;
+    if (!state.draft.tags.includes(tag)) state.draft.tags.push(tag);
+  }
+  renderTagsUi();
 }
 
 function mediaPreview(item) {
   if (item._file) {
-    return item.type === 'video'
+    return item._isVideo
       ? `<video src="${item._preview}" muted preload="metadata"></video>`
       : `<img src="${item._preview}" alt="">`;
   }
@@ -318,17 +485,19 @@ function renderMedia() {
   const media = state.draft.media;
   if (state.draft.cover >= media.length) state.draft.cover = 0;
   $('#media-list').innerHTML = media.map((item, i) => {
-    const label = MEDIA_LABELS[item.type] || item.type;
-    const source = item._file ? item._file.name : item.src;
+    const label = item._file ? (item._isVideo ? '影片' : '照片') : item.type === 'drive'
+      ? `雲端${item.kind === 'video' ? '影片' : '照片'}` : MEDIA_LABELS[item.type] || item.type;
+    const source = item._file ? `${item._file.name}（${formatSize(item._file.size)}）` : item.name || item.src;
     const isCover = i === (state.draft.cover || 0);
     return `
       <li class="media-item ${isCover ? 'is-cover' : ''}">
         <div class="preview">${mediaPreview(item)}</div>
         <div class="info">
           <span class="kind">${escapeHtml(label)}${item._file ? '<span class="pending-badge">儲存時上傳</span>' : ''} · ${escapeHtml(source)}</span>
-          ${item.type === 'drive' ? `
+          ${item._file ? `<div class="progress"><i data-progress="${i}"></i></div>` : ''}
+          ${item.type === 'drive' && !item._file ? `
             <select class="field" data-kind="${i}" aria-label="雲端檔案類型">
-              <option value="image" ${item.kind === 'image' ? 'selected' : ''}>雲端照片</option>
+              <option value="image" ${item.kind !== 'video' ? 'selected' : ''}>雲端照片</option>
               <option value="video" ${item.kind === 'video' ? 'selected' : ''}>雲端影片</option>
             </select>` : ''}
           <input class="field" data-caption="${i}" value="${escapeHtml(item.caption || '')}" placeholder="說明文字（選填）">
@@ -344,20 +513,18 @@ function renderMedia() {
 }
 
 function addFiles(files) {
+  let added = 0;
   for (const file of files) {
-    const isVideo = file.type.startsWith('video/');
+    const isVideo = file.type.startsWith('video/') || isVideoPath(file.name);
     if (!isVideo && !file.type.startsWith('image/') && !/\.(heic|heif)$/i.test(file.name)) {
       toast(`不支援的檔案：${file.name}`, true);
       continue;
     }
-    if (file.size > MAX_UPLOAD) {
-      toast(`${file.name} 超過 95MB，請改放 Google 雲端硬碟或 YouTube 後貼連結`, true, 6000);
-      continue;
-    }
-    if (isVideo && file.size > WARN_UPLOAD) toast(`${file.name} 檔案較大，上傳可能需要一些時間`, false, 5000);
-    state.draft.media.push({ type: isVideo ? 'video' : 'image', src: '', caption: '', _file: file, _preview: URL.createObjectURL(file) });
+    state.draft.media.push({ type: 'drive', caption: '', _file: file, _isVideo: isVideo, _preview: URL.createObjectURL(file) });
+    added++;
   }
   renderMedia();
+  if (added && !state.cfg.clientId) toast('提醒：尚未設定 Google 雲端硬碟，儲存前請先到「連線設定」填寫', true, 6000);
 }
 
 function addLink() {
@@ -372,46 +539,36 @@ function addLink() {
   toast(`已加入：${MEDIA_LABELS[item.type]}`);
 }
 
-/** 照片壓縮：最長邊 2000px、JPEG 品質 0.86；GIF/SVG 或無法解碼的格式維持原檔 */
-async function prepareImage(file) {
-  if (/image\/(gif|svg)/.test(file.type)) return file;
-  let bmp;
-  try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch { return file; }
-  const scale = Math.min(1, 2000 / Math.max(bmp.width, bmp.height));
-  if (scale === 1 && file.size < 900 * 1024 && /jpe?g|png|webp/.test(file.type)) return file;
-  const canvas = document.createElement('canvas');
-  canvas.width = Math.round(bmp.width * scale);
-  canvas.height = Math.round(bmp.height * scale);
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
-  const blob = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', 0.86));
-  return blob && blob.size < file.size ? blob : file;
-}
-
-function extFor(blob, name = '') {
-  const map = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/svg+xml': 'svg',
-    'video/mp4': 'mp4', 'video/webm': 'webm', 'video/quicktime': 'mov' };
-  return map[blob.type] || (name.split('.').pop() || 'bin').toLowerCase();
+function uploadName(date, title, file, n) {
+  const safeTitle = (title || '').replace(/[\\/:*?"<>|\s]+/g, '_').slice(0, 30);
+  const ext = file.name.includes('.') ? file.name.split('.').pop() : '';
+  return `${date.replace(/-/g, '')}${safeTitle ? `_${safeTitle}` : ''}_${String(n).padStart(2, '0')}${ext ? `.${ext}` : ''}`;
 }
 
 async function onSave(e) {
   e.preventDefault();
   if (state.busy) return;
-  if (!state.connected) { openSettings('請先連線才能儲存。'); return; }
+  if (!state.connected) { openSettings('請先連線 GitHub 才能儲存。'); return; }
   const form = $('#editor');
   const date = form.elements.date.value;
   if (!date || date < START_DATE || date > todayStr()) {
-    toast(`日期需介於 ${formatDate(START_DATE)} 到今天之間`, true);
+    toast(`日期需介於 ${formatDate(START_DATE)} 到今天（${formatDate(todayStr())}）之間`, true);
     return;
   }
-  addTags($('#tag-entry').value);
-  $('#tag-entry').value = '';
+  const source = form.elements.source.value.trim();
+  if (source && !/^https?:\/\//i.test(source)) { toast('資訊來源網址需以 http(s):// 開頭', true); return; }
 
   const draft = state.draft;
+  const pending = draft.media.filter((m) => m._file);
+  // 必須在點擊的當下要求授權，瀏覽器才不會擋下 Google 授權視窗
+  const tokenReady = pending.length ? ensureDriveToken() : Promise.resolve();
+  tokenReady.catch(() => {}); // 錯誤會在下方 await 時處理
+
+  addTags($('#tag-entry').value);
+  $('#tag-entry').value = '';
   draft.date = date;
   draft.title = form.elements.title.value.trim();
+  draft.source = source;
   draft.content = form.elements.content.value.replace(/\s+$/, '');
   const now = new Date().toISOString();
   draft.id ||= `m-${date.replace(/-/g, '')}-${randId()}`;
@@ -419,33 +576,46 @@ async function onSave(e) {
   draft.updatedAt = now;
 
   try {
-    // 1. 上傳新檔案
-    const pending = draft.media.filter((m) => m._file);
-    for (let i = 0; i < pending.length; i++) {
-      const item = pending[i];
-      setBusy(true, `上傳媒體中（${i + 1}/${pending.length}）…`);
-      const blob = item.type === 'image' ? await prepareImage(item._file) : item._file;
-      const path = `media/${date.slice(0, 4)}/${date.replace(/-/g, '')}-${randId()}.${extFor(blob, item._file.name)}`;
-      await uploadFile(path, blob, `上傳媒體 ${path}`);
-      URL.revokeObjectURL(item._preview);
-      delete item._file;
-      delete item._preview;
-      item.src = path;
+    // 1. 上傳照片與影片到 Google 雲端硬碟
+    if (pending.length) {
+      setBusy(true, '等待 Google 授權…');
+      await tokenReady;
+      if (!drive.folderName) await checkFolder();
+      for (let i = 0; i < pending.length; i++) {
+        const item = pending[i];
+        const idx = draft.media.indexOf(item);
+        const bar = () => document.querySelector(`[data-progress="${idx}"]`);
+        const name = uploadName(date, draft.title, item._file, idx + 1);
+        const result = await driveUpload(item._file, name, (p) => {
+          toast(`上傳中 ${i + 1}/${pending.length}：${item._file.name}　${Math.round(p * 100)}%`, false, 0);
+          const b = bar();
+          if (b) b.style.width = `${p * 100}%`;
+        });
+        URL.revokeObjectURL(item._preview);
+        const isVideo = item._isVideo || (result.mimeType || '').startsWith('video/');
+        for (const k of ['_file', '_preview', '_isVideo']) delete item[k];
+        Object.assign(item, {
+          type: 'drive', id: result.id, kind: isVideo ? 'video' : 'image', name: result.name,
+          src: `https://drive.google.com/file/d/${result.id}/view`,
+        });
+        renderMedia();
+      }
     }
 
     // 2. 寫入資料
     setBusy(true, '儲存中…');
     const saved = structuredClone(draft);
+    if (!saved.source) delete saved.source;
     const before = state.moments.find((m) => m.id === state.originalId);
     await commitChange((list) => {
       const idx = list.findIndex((m) => m.id === saved.id);
       if (idx >= 0) list[idx] = saved; else list.push(saved);
       return list;
-    }, `${before ? '更新' : '新增'}片段 ${saved.date} ${saved.title}`.trim());
+    }, `${before ? '更新' : '新增'}紀錄 ${saved.date} ${saved.title}`.trim());
 
-    // 3. 刪除被移除的上傳檔案
+    // 3. 刪除被移除、存放在儲存庫內的舊檔案（雲端硬碟上的檔案一律保留）
     const keep = new Set(saved.media.map((m) => m.src));
-    for (const m of before?.media || []) if (isRepoMedia(m.src) && !keep.has(m.src)) await deleteFile(m.src);
+    for (const m of before?.media || []) if (isRepoMedia(m.src) && !keep.has(m.src)) await deleteRepoFile(m.src);
 
     state.originalId = saved.id;
     setBusy(false);
@@ -462,11 +632,11 @@ async function onDelete() {
   if (!state.originalId || state.busy) return;
   if (!state.connected) { openSettings('請先連線才能刪除。'); return; }
   const target = state.moments.find((m) => m.id === state.originalId);
-  if (!target || !confirm(`確定要刪除「${target.title || formatDate(target.date)}」嗎？上傳的照片與影片也會一併刪除。`)) return;
+  if (!target || !confirm(`確定要刪除「${target.title || formatDate(target.date)}」嗎？\n（Google 雲端硬碟裡的原始檔案會保留，不會被刪除）`)) return;
   try {
     setBusy(true, '刪除中…');
-    await commitChange((list) => list.filter((m) => m.id !== target.id), `刪除片段 ${target.date} ${target.title}`.trim());
-    for (const m of target.media || []) if (isRepoMedia(m.src)) await deleteFile(m.src);
+    await commitChange((list) => list.filter((m) => m.id !== target.id), `刪除紀錄 ${target.date} ${target.title}`.trim());
+    for (const m of target.media || []) if (isRepoMedia(m.src)) await deleteRepoFile(m.src);
     setBusy(false);
     toast('已刪除');
     closeEditor();
@@ -497,7 +667,7 @@ async function onImport(e) {
     if (!Array.isArray(list) || list.some((m) => !m.id || !/^\d{4}-\d{2}-\d{2}$/.test(m.date || ''))) {
       throw new Error('檔案格式不正確');
     }
-    if (!confirm(`匯入後會以檔案中的 ${list.length} 則片段取代目前的 ${state.moments.length} 則，確定嗎？`)) return;
+    if (!confirm(`匯入後會以檔案中的 ${list.length} 則紀錄取代目前的 ${state.moments.length} 則，確定嗎？`)) return;
     setBusy(true, '匯入中…');
     await commitChange(() => list, `匯入備份（${list.length} 則）`);
     setBusy(false);
@@ -512,14 +682,22 @@ async function onImport(e) {
 /* ---------- 事件 ---------- */
 function bindEvents() {
   $('#btn-settings').addEventListener('click', () => openSettings());
+  $('#btn-drive').addEventListener('click', () => {
+    if (!state.cfg.clientId) { openSettings('請先填寫 Google OAuth 用戶端 ID。'); return; }
+    connectDrive();
+  });
   $('#settings-form').addEventListener('submit', onSettingsSubmit);
   $('#btn-logout').addEventListener('click', () => {
     state.cfg.token = '';
     storageSet(CFG_KEY, { ...state.cfg });
     state.connected = false;
+    if (drive.token && window.google?.accounts?.oauth2) google.accounts.oauth2.revoke(drive.token, () => {});
+    drive.token = null;
+    storageSet(DRIVE_TOKEN_KEY, {}, 'sessionStorage');
     updateConn();
+    updateDriveConn();
     $('#settings-form').elements.token.value = '';
-    $('#settings-msg').textContent = '已清除這台裝置上的權杖';
+    $('#settings-msg').textContent = '已清除這台裝置上的 GitHub 權杖與 Google 授權';
   });
 
   $('#btn-new').addEventListener('click', () => openEditor(null));
@@ -529,21 +707,36 @@ function bindEvents() {
   $('#btn-export').addEventListener('click', onExport);
   $('#file-import').addEventListener('change', onImport);
 
+  const dateInput = $('#editor').elements.date;
+  dateInput.addEventListener('focus', refreshDateLimit);
+  dateInput.addEventListener('input', refreshDateLimit);
+  onNewDay(() => { if (state.draft) refreshDateLimit(); });
+
   $('#admin-search').addEventListener('input', (e) => { state.search = e.target.value; renderList(); });
   $('#admin-list').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-id]');
     if (btn) openEditor(state.moments.find((m) => m.id === btn.dataset.id));
   });
 
+  $('#preset-tags').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-preset]');
+    if (!b) return;
+    const tags = state.draft.tags;
+    const i = tags.indexOf(b.dataset.preset);
+    if (i >= 0) tags.splice(i, 1); else tags.push(b.dataset.preset);
+    renderTagsUi();
+  });
   const tagEntry = $('#tag-entry');
   tagEntry.addEventListener('keydown', (e) => {
     if ((e.key === 'Enter' || e.key === ',' || e.key === '，') && !e.isComposing) {
       e.preventDefault();
       addTags(tagEntry.value);
       tagEntry.value = '';
-    } else if (e.key === 'Backspace' && !tagEntry.value && state.draft.tags.length) {
-      state.draft.tags.pop();
-      renderChips();
+    } else if (e.key === 'Backspace' && !tagEntry.value) {
+      const tags = state.draft.tags;
+      for (let i = tags.length - 1; i >= 0; i--) {
+        if (!PRESET_TAGS.includes(tags[i])) { tags.splice(i, 1); renderTagsUi(); break; }
+      }
     }
   });
   tagEntry.addEventListener('change', () => { // 從建議清單點選時
@@ -556,7 +749,7 @@ function bindEvents() {
     const b = e.target.closest('[data-remove-tag]');
     if (!b) return;
     state.draft.tags.splice(Number(b.dataset.removeTag), 1);
-    renderChips();
+    renderTagsUi();
   });
 
   $('#file-media').addEventListener('change', (e) => { addFiles([...e.target.files]); e.target.value = ''; });
@@ -577,7 +770,7 @@ function bindEvents() {
   });
   mediaList.addEventListener('click', (e) => {
     const b = e.target.closest('button');
-    if (!b) return;
+    if (!b || state.busy) return;
     const media = state.draft.media;
     if (b.dataset.cover) {
       state.draft.cover = Number(b.dataset.cover);
@@ -604,6 +797,7 @@ function bindEvents() {
 async function init() {
   bindEvents();
   updateConn();
+  initDrive();
   if (state.cfg.token) {
     try {
       await connect();
@@ -614,7 +808,7 @@ async function init() {
   }
   try { state.moments = await fetchMoments(); } catch { state.moments = []; }
   renderList();
-  openSettings('目前為唯讀模式，請輸入 GitHub 權杖以啟用編修功能。');
+  openSettings('目前為唯讀模式，請完成連線設定以啟用編修功能。');
 }
 
 init();

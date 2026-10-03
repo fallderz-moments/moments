@@ -3,22 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fallderz moments</title>
-  <meta name="description" content="Fallderz 的生活片段，從 2021 年 12 月開始。">
+  <title>Fallderz Moments</title>
+  <meta name="description" content="Fallderz Moments — 狗狗鼠鼠觀察日誌，從 2021 年 12 月開始。">
   <meta name="theme-color" content="#D2E0D3">
-  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/pixel/chipmunk.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Zen+Maru+Gothic:wght@500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <header class="site-header">
+    <p class="plaque">READING ROOM · EST. 2021</p>
     <a class="brand" href="./">
-      <span class="brand-badge">LIFE · DIARY</span>
-      <h1>Fallderz <span>moments</span></h1>
+      <h1>Fallderz <em>Moments</em></h1>
     </a>
-    <p class="tagline">生活片段 · <span id="range-text">2021.12 — 現在</span></p>
+    <p class="tagline">狗狗鼠鼠觀察日誌 ‧ 2021.12 — </p>
+    <div class="shelf" aria-hidden="true">
+      <img class="sprite dog" src="assets/pixel/dog.svg" alt="">
+      <img class="sprite books" src="assets/pixel/books.svg" alt="">
+      <span class="today-stamp"><small>TODAY</small><span id="today">—</span></span>
+      <img class="sprite books flip" src="assets/pixel/books.svg" alt="">
+      <img class="sprite chipmunk" src="assets/pixel/chipmunk.svg" alt="">
+    </div>
   </header>
 
   <div class="toolbar">
@@ -34,26 +41,33 @@
       <span class="toolbar-spacer"></span>
       <label class="search">
         <span class="visually-hidden">搜尋</span>
-        <input id="search" class="field" type="search" placeholder="搜尋標題、內容、標籤…">
+        <input id="search" class="field" type="search" placeholder="搜尋館藏：標題、內容、標籤…">
       </label>
     </div>
-    <div class="tag-filter" id="tag-filter" aria-label="標籤篩選"></div>
-    <nav class="timeline-nav" aria-label="時間軸">
-      <div class="years" id="years"></div>
-      <div class="months" id="months"></div>
+    <div class="catalog-row">
+      <span class="row-label">分類</span>
+      <div class="tag-filter" id="tag-filter" aria-label="分類篩選"></div>
+    </div>
+    <nav class="catalog-row timeline-nav" aria-label="時間軸">
+      <span class="row-label">年份</span>
+      <div class="timeline-body">
+        <div class="years" id="years"></div>
+        <div class="months" id="months"></div>
+      </div>
     </nav>
   </div>
 
   <main id="content">
-    <p class="status">載入中…</p>
+    <p class="status"><img class="sprite" src="assets/pixel/chipmunk.svg" alt="">翻找館藏中…</p>
   </main>
 
   <footer class="site-footer">
-    <div class="palette-strip" aria-hidden="true">
-      <i style="background:#97B3AE"></i><i style="background:#D2E0D3"></i><i style="background:#F0DDD6"></i>
-      <i style="background:#F2C3B9"></i><i style="background:#D6CBBF"></i><i style="background:#F0EEEA"></i>
+    <div class="footer-shelf" aria-hidden="true">
+      <img class="sprite" src="assets/pixel/dog.svg" alt="">
+      <img class="sprite small" src="assets/pixel/heart.svg" alt="">
+      <img class="sprite" src="assets/pixel/chipmunk.svg" alt="">
     </div>
-    <p>© Fallderz moments · <a href="admin.html">後台</a></p>
+    <p>Fallderz Moments ‧ 狗狗鼠鼠觀察日誌 · <a href="admin.html">館員後台</a></p>
   </footer>
 
   <dialog class="detail" id="detail" aria-labelledby="detail-title">
@@ -64,11 +78,25 @@
       <button class="icon-btn" type="button" data-close aria-label="關閉">✕</button>
     </div>
     <div class="detail-body">
+      <p class="birthday-banner" id="detail-birthday" hidden>
+        <img class="sprite" src="assets/pixel/dog-party.svg" alt="">
+        <span>HAPPY BIRTHDAY</span>
+        <img class="sprite" src="assets/pixel/cake.svg" alt="">
+        <img class="sprite" src="assets/pixel/chipmunk-party.svg" alt="">
+      </p>
+      <p class="call-no" id="detail-callno"></p>
       <h2 id="detail-title"></h2>
       <div class="note-tags" id="detail-tags"></div>
-      <div class="media-stack" id="detail-media"></div>
       <div class="detail-text" id="detail-text"></div>
+      <div class="media-grid" id="detail-media"></div>
+      <p class="source" id="detail-source" hidden></p>
     </div>
+  </dialog>
+
+  <dialog class="lightbox" id="lightbox" aria-label="檢視照片">
+    <button class="icon-btn" type="button" data-close-lightbox aria-label="關閉">✕</button>
+    <img id="lightbox-img" alt="">
+    <a id="lightbox-link" target="_blank" rel="noopener">在 Google 雲端硬碟開啟 ↗</a>
   </dialog>
 
   <script type="module" src="assets/app.js"></script>

@@ -1,6 +1,7 @@
 import {
-  NOTE_TINTS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString,
-  sortMoments, momentCover, fetchMoments, storageGet, storageSet, MEDIA_LABELS,
+  NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf,
+  sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
+  fetchMoments, storageGet, storageSet,
 } from './common.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -37,45 +38,8 @@ function groupByMonth(list) {
   return groups;
 }
 
-/* ---------- 渲染：便利貼 / 列表 ---------- */
-function noteHtml(m, index) {
-  const h = hashString(m.id);
-  const tilt = ((h % 7) - 3) * 0.6;
-  const tint = NOTE_TINTS[h % NOTE_TINTS.length];
-  const { d, weekday } = parseDate(m.date);
-  const cover = momentCover(m);
-  const count = (m.media || []).length;
-  const thumb = cover.url
-    ? `<img src="${escapeHtml(cover.url)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'placeholder',textContent:'🖼'}))">`
-    : `<span class="placeholder">${cover.item ? mediaIcon(cover.item.type) + ' ' : ''}${escapeHtml(excerpt(m.content) || m.title || '無標題')}</span>`;
-  return `
-    <button class="note" type="button" data-index="${index}" data-tint="${tint}" style="--tilt:${tilt}deg">
-      <span class="note-date"><strong>${formatDate(m.date)}</strong><span>週${weekday}</span></span>
-      <span class="note-thumb">${thumb}${count > 1 ? `<span class="badge">${count} 則媒體</span>` : ''}</span>
-      <span class="note-title">${escapeHtml(m.title || `${d} 日的片段`)}</span>
-      ${tagsHtml(m.tags)}
-    </button>`;
-}
-
-function listHtml(m, index) {
-  const { y, m: mon, d, weekday } = parseDate(m.date);
-  const media = m.media || [];
-  const summary = media.length
-    ? [...new Set(media.map((x) => mediaIcon(x.type)))].join(' ') + ` ${media.length}`
-    : '';
-  return `
-    <li class="list-item">
-      <button type="button" data-index="${index}">
-        <span class="list-date"><strong>${d}</strong><span>${y}/${mon}<br>週${weekday}</span></span>
-        <span class="list-body">
-          <span class="list-title">${escapeHtml(m.title || '無標題')}</span>
-          <span class="list-excerpt">${escapeHtml((m.content || '').replace(/\s+/g, ' '))}</span>
-          ${tagsHtml(m.tags)}
-        </span>
-        <span class="list-media">${summary}</span>
-      </button>
-    </li>`;
-}
+/* ---------- 共用片段 ---------- */
+const callNo = (m) => `No. ${m.date.replace(/-/g, '')}`;
 
 function excerpt(text = '', max = 42) {
   const flat = text.replace(/\s+/g, ' ').trim();
@@ -84,28 +48,76 @@ function excerpt(text = '', max = 42) {
 
 function tagsHtml(tags = []) {
   if (!tags.length) return '';
-  return `<span class="note-tags">${tags.map((t) => `<span class="tag">#${escapeHtml(t)}</span>`).join('')}</span>`;
+  return `<span class="note-tags">${sortTags(tags).map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</span>`;
+}
+
+function mediaSummary(media = []) {
+  const { photos, videos, others } = mediaCounts(media);
+  return [photos && `📷 ${photos}`, videos && `🎬 ${videos}`, others && `🔗 ${others}`].filter(Boolean).join('　');
 }
 
 function mediaIcon(type) {
   return { image: '📷', video: '🎬', drive: '☁️', youtube: '▶️', x: '𝕏', instagram: '📸', link: '🔗' }[type] || '📎';
 }
 
+/* ---------- 渲染：便利貼 / 列表 ---------- */
+function noteHtml(m, index) {
+  const h = hashString(m.id);
+  const tilt = ((h % 7) - 3) * 0.6;
+  const tint = NOTE_TINTS[h % NOTE_TINTS.length];
+  const { weekday } = parseDate(m.date);
+  const bday = isBirthday(m.date);
+  const cover = momentCover(m);
+  const count = (m.media || []).length;
+  const thumb = cover.url
+    ? `<img src="${escapeHtml(cover.url)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'placeholder',textContent:'🖼'}))">`
+    : `<span class="placeholder">${cover.item ? mediaIcon(cover.item.type) + ' ' : ''}${escapeHtml(excerpt(m.content) || m.title || '無標題')}</span>`;
+  return `
+    <button class="note${bday ? ' birthday' : ''}" type="button" data-index="${index}" data-tint="${tint}" style="--tilt:${tilt}deg">
+      ${bday ? `<span class="bday-ribbon">HAPPY BIRTHDAY</span>
+        <img class="sprite bday-sprite" src="assets/pixel/${h % 2 ? 'dog' : 'chipmunk'}-party.svg" alt="">` : ''}
+      <span class="note-date"><strong>${formatDate(m.date)}</strong><span>週${weekday}</span></span>
+      <span class="note-thumb">${thumb}${count > 1 ? `<span class="badge">${mediaSummary(m.media)}</span>` : ''}</span>
+      <span class="note-title">${bday ? '🎂 ' : ''}${escapeHtml(m.title || '無標題')}</span>
+      ${tagsHtml(m.tags)}
+      <span class="call-number">${callNo(m)}</span>
+    </button>`;
+}
+
+function ledgerHtml(m, index) {
+  const { y, m: mon, d, weekday } = parseDate(m.date);
+  const bday = isBirthday(m.date);
+  return `
+    <li>
+      <button class="ledger-row${bday ? ' birthday' : ''}" type="button" data-index="${index}">
+        <span class="ledger-date"><strong>${y}.${String(mon).padStart(2, '0')}.${String(d).padStart(2, '0')}</strong><span>週${weekday}</span>
+          ${bday ? '<span class="bday-mark"><img class="sprite" src="assets/pixel/cake.svg" alt="">BIRTHDAY</span>' : ''}</span>
+        <span class="ledger-title"><b>${escapeHtml(m.title || '無標題')}</b><span>${escapeHtml(excerpt(m.content, 80))}</span></span>
+        <span class="ledger-tags">${sortTags(m.tags || []).map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</span>
+        <span class="ledger-media">${mediaSummary(m.media)}</span>
+      </button>
+    </li>`;
+}
+
 function render() {
   state.visible = filtered();
   const main = $('#content');
   if (!state.visible.length) {
-    main.innerHTML = `<p class="status">${state.all.length ? '找不到符合條件的片段' : '還沒有任何片段，到後台新增第一則吧！'}</p>`;
+    main.innerHTML = `<p class="status"><img class="sprite" src="assets/pixel/${state.all.length ? 'chipmunk' : 'dog'}.svg" alt="">
+      ${state.all.length ? '找不到符合條件的館藏' : '還沒有任何紀錄，到館員後台新增第一則吧！'}</p>`;
   } else {
     let index = 0;
     const html = [];
     for (const [key, items] of groupByMonth(state.visible)) {
       const [y, mo] = key.split('-');
-      const inner = items.map((m) => (state.view === 'notes' ? noteHtml(m, index++) : listHtml(m, index++))).join('');
+      const inner = items.map((m) => (state.view === 'notes' ? noteHtml(m, index++) : ledgerHtml(m, index++))).join('');
+      const body = state.view === 'notes'
+        ? `<div class="notes">${inner}</div>`
+        : `<div class="ledger"><div class="ledger-head" aria-hidden="true"><span>DATE</span><span>TITLE</span><span>CATEGORY</span><span style="text-align:right">MEDIA</span></div><ol>${inner}</ol></div>`;
       html.push(`
         <section class="month-section" id="sec-${key}">
-          <h2 class="month-heading">${y} 年 ${Number(mo)} 月 <small>${items.length} 則</small></h2>
-          ${state.view === 'notes' ? `<div class="notes">${inner}</div>` : `<ol class="list">${inner}</ol>`}
+          <h2 class="month-heading"><span class="drawer-label"><b>${y}</b><span>${Number(mo)} 月</span></span><small>${items.length} 則</small></h2>
+          ${body}
         </section>`);
     }
     main.innerHTML = html.join('');
@@ -114,23 +126,28 @@ function render() {
   syncButtons();
 }
 
-/* ---------- 標籤篩選 ---------- */
+/* ---------- 分類篩選（預設分類永遠顯示） ---------- */
 function renderTags() {
-  const counts = new Map();
+  const counts = new Map(PRESET_TAGS.map((t) => [t, 0]));
   for (const m of state.all) for (const t of m.tags || []) counts.set(t, (counts.get(t) || 0) + 1);
-  const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-Hant'));
-  const box = $('#tag-filter');
-  box.hidden = !tags.length;
-  box.innerHTML = [`<button type="button" data-tag="" aria-pressed="${!state.tag}">全部<span class="count">${state.all.length}</span></button>`]
-    .concat(tags.map(([t, c]) =>
-      `<button type="button" data-tag="${escapeHtml(t)}" aria-pressed="${state.tag === t}">#${escapeHtml(t)}<span class="count">${c}</span></button>`))
+  const tags = sortTags([...counts.keys()]);
+  $('#tag-filter').innerHTML = [`<button type="button" data-tag="" aria-pressed="${!state.tag}">全部<span class="count">${state.all.length}</span></button>`]
+    .concat(tags.map((t) => {
+      const c = counts.get(t);
+      return `<button type="button" data-tag="${escapeHtml(t)}" class="${c ? '' : 'empty'}" aria-pressed="${state.tag === t}">${escapeHtml(t)}<span class="count">${c}</span></button>`;
+    }))
     .join('');
 }
 
-/* ---------- 時間軸導覽（2021.12 至今） ---------- */
+/* ---------- 時間軸導覽（2021.12 至今天，換日自動更新） ---------- */
 function renderTimeline() {
   const counts = new Map();
-  for (const m of state.visible) counts.set(monthKey(m.date), (counts.get(monthKey(m.date)) || 0) + 1);
+  const bdays = new Set();
+  for (const m of state.visible) {
+    const k = monthKey(m.date);
+    counts.set(k, (counts.get(k) || 0) + 1);
+    if (isBirthday(m.date)) bdays.add(k);
+  }
   const months = monthRange();
   const years = [...new Set(months.map((k) => k.slice(0, 4)))];
   if (state.sort === 'desc') years.reverse();
@@ -145,10 +162,10 @@ function renderTimeline() {
   if (state.sort === 'desc') ym = ym.reverse();
   $('#months').innerHTML = ym.map((k) => {
     const n = counts.get(k) || 0;
-    return `<button type="button" data-month="${k}" class="${n ? 'has' : ''}" ${n ? '' : 'disabled'}>${Number(k.slice(5))}月<small>${n ? `${n} 則` : '—'}</small></button>`;
+    const cls = [n && 'has', bdays.has(k) && 'bday'].filter(Boolean).join(' ');
+    return `<button type="button" data-month="${k}" class="${cls}" ${n ? '' : 'disabled'}>${bdays.has(k) ? '🎂' : ''}${Number(k.slice(5))}月<small>${n ? `${n} 則` : '—'}</small></button>`;
   }).join('');
-  const [first, last] = [months[0], months[months.length - 1]].map((k) => k.replace('-', '.'));
-  $('#range-text').textContent = `${first} — ${last}`;
+  $('#today').textContent = formatDate(todayStr());
 }
 
 function syncButtons() {
@@ -157,30 +174,35 @@ function syncButtons() {
 }
 
 /* ---------- 詳細內容 ---------- */
-function mediaHtml(item) {
+function photoHtml(src, fallback, full, link, alt, cls) {
+  return `<figure class="${cls}"><button class="photo" type="button" data-full="${escapeHtml(full)}" data-link="${escapeHtml(link || '')}">
+    <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy" referrerpolicy="no-referrer"${fallback ? ` onerror="this.onerror=null;this.src='${escapeHtml(fallback)}'"` : ''}>
+  </button>${alt ? `<figcaption>${escapeHtml(alt)}</figcaption>` : ''}</figure>`;
+}
+
+function mediaHtml(item, single) {
   const cap = item.caption ? `<figcaption>${escapeHtml(item.caption)}</figcaption>` : '';
   const src = escapeHtml(item.src || '');
+  const photoCls = single ? 'single' : '';
   switch (item.type) {
     case 'image':
-      return `<figure><img src="${src}" alt="${escapeHtml(item.caption || '')}" loading="lazy" referrerpolicy="no-referrer">${cap}</figure>`;
+      return photoHtml(item.src, null, item.src, null, item.caption || '', photoCls);
     case 'video':
-      return `<figure><video src="${src}" controls playsinline preload="metadata"${item.thumb ? ` poster="${escapeHtml(item.thumb)}"` : ''}></video>${cap}</figure>`;
+      return `<figure class="wide"><video src="${src}" controls playsinline preload="metadata"></video>${cap}</figure>`;
     case 'drive':
-      if (item.kind === 'image') {
-        return `<figure><img src="https://drive.google.com/thumbnail?id=${item.id}&sz=w2000" alt="${escapeHtml(item.caption || '')}" loading="lazy" referrerpolicy="no-referrer">${cap}</figure>`;
+      if (item.kind !== 'video') {
+        return photoHtml(driveImage(item.id, single ? 2000 : 1000), driveImageFallback(item.id, 1000),
+          driveImage(item.id, 2400), `https://drive.google.com/file/d/${item.id}/view`, item.caption || '', photoCls);
       }
-      return `<figure><div class="embed"><iframe src="https://drive.google.com/file/d/${item.id}/preview" allow="autoplay; fullscreen" allowfullscreen loading="lazy" title="Google 雲端硬碟"></iframe></div>${cap}</figure>`;
+      return `<figure class="wide"><div class="embed"><iframe src="https://drive.google.com/file/d/${item.id}/preview" allow="autoplay; fullscreen" allowfullscreen loading="lazy" title="Google 雲端硬碟影片"></iframe></div>${cap}</figure>`;
     case 'youtube':
-      return `<figure><div class="embed"><iframe src="https://www.youtube-nocookie.com/embed/${item.id}" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen loading="lazy" title="YouTube"></iframe></div>${cap}</figure>`;
+      return `<figure class="wide"><div class="embed"><iframe src="https://www.youtube-nocookie.com/embed/${item.id}" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen loading="lazy" title="YouTube"></iframe></div>${cap}</figure>`;
     case 'instagram':
-      return `<figure><div class="embed tall"><iframe src="https://www.instagram.com/${item.id}/embed" loading="lazy" title="Instagram"></iframe></div>${cap}</figure>`;
+      return `<figure class="wide"><div class="embed tall"><iframe src="https://www.instagram.com/${item.id}/embed" loading="lazy" title="Instagram"></iframe></div>${cap}</figure>`;
     case 'x':
-      return `<figure><div class="tweet-box" data-tweet="${item.id}"><a class="link-card" href="${src}" target="_blank" rel="noopener"><span class="ico">𝕏</span>在 X 上查看貼文</a></div>${cap}</figure>`;
-    default: {
-      let host = item.src;
-      try { host = new URL(item.src).hostname; } catch { /* 保留原字串 */ }
-      return `<figure><a class="link-card" href="${src}" target="_blank" rel="noopener"><span class="ico">🔗</span><span>${escapeHtml(item.caption || host)}<br><small>${escapeHtml(MEDIA_LABELS.link)} · ${escapeHtml(host)}</small></span></a></figure>`;
-    }
+      return `<figure class="wide"><div class="tweet-box" data-tweet="${item.id}"><a class="link-card" href="${src}" target="_blank" rel="noopener"><span class="ico">𝕏</span>在 X 上查看貼文</a></div>${cap}</figure>`;
+    default:
+      return `<figure class="wide"><a class="link-card" href="${src}" target="_blank" rel="noopener"><span class="ico">🔗</span><span>${escapeHtml(item.caption || hostOf(item.src))}<br><small>${escapeHtml(hostOf(item.src))}</small></span></a></figure>`;
   }
 }
 
@@ -209,28 +231,44 @@ function openDetail(index) {
   if (!m) return;
   state.current = index;
   const { weekday } = parseDate(m.date);
+  const bday = isBirthday(m.date);
+  const dlg = $('#detail');
+  dlg.classList.toggle('birthday', bday);
+  $('#detail-birthday').hidden = !bday;
   $('#detail-date').textContent = `${formatDate(m.date)}（週${weekday}）`;
+  $('#detail-callno').textContent = callNo(m);
   $('#detail-title').textContent = m.title || '無標題';
-  $('#detail-tags').innerHTML = (m.tags || []).map((t) => `<span class="tag">#${escapeHtml(t)}</span>`).join('');
+  $('#detail-tags').innerHTML = sortTags(m.tags || []).map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+  const media = m.media || [];
   const mediaBox = $('#detail-media');
-  mediaBox.innerHTML = (m.media || []).map(mediaHtml).join('');
-  mediaBox.hidden = !(m.media || []).length;
+  mediaBox.innerHTML = media.map((item) => mediaHtml(item, media.length === 1)).join('');
+  mediaBox.hidden = !media.length;
   loadTweets(mediaBox);
   $('#detail-text').innerHTML = richText(m.content || '');
+  const source = $('#detail-source');
+  source.hidden = !m.source;
+  if (m.source) {
+    source.innerHTML = `📎 資訊來源：<a href="${escapeHtml(m.source)}" target="_blank" rel="noopener">${escapeHtml(hostOf(m.source))}</a>`;
+  }
   $('[data-nav="prev"]').disabled = index <= 0;
   $('[data-nav="next"]').disabled = index >= state.visible.length - 1;
-  const dlg = $('#detail');
   if (!dlg.open) dlg.showModal();
   dlg.scrollTop = 0;
   history.replaceState(null, '', `#m=${encodeURIComponent(m.id)}`);
 }
 
 function closeDetail() {
-  const dlg = $('#detail');
-  // 停止播放中的影片
-  $('#detail-media').innerHTML = '';
-  if (dlg.open) dlg.close();
+  $('#detail-media').innerHTML = ''; // 停止播放中的影片
+  if ($('#detail').open) $('#detail').close();
   history.replaceState(null, '', location.pathname + location.search);
+}
+
+function openLightbox(full, link) {
+  $('#lightbox-img').src = full;
+  const a = $('#lightbox-link');
+  a.hidden = !link;
+  if (link) a.href = link;
+  $('#lightbox').showModal();
 }
 
 /* ---------- 事件 ---------- */
@@ -243,9 +281,11 @@ function bindEvents() {
     else if ('tag' in t.dataset) { state.tag = t.dataset.tag || null; renderTags(); render(); }
     else if (t.dataset.year) { state.year = t.dataset.year; renderTimeline(); }
     else if (t.dataset.month) { document.getElementById(`sec-${t.dataset.month}`)?.scrollIntoView(); }
+    else if (t.dataset.full) { openLightbox(t.dataset.full, t.dataset.link); }
     else if (t.dataset.index && !t.closest('dialog')) { openDetail(Number(t.dataset.index)); }
     else if (t.dataset.nav) { openDetail(state.current + (t.dataset.nav === 'next' ? 1 : -1)); }
     else if ('close' in t.dataset) { closeDetail(); }
+    else if ('closeLightbox' in t.dataset) { $('#lightbox').close(); }
   });
 
   let timer;
@@ -262,6 +302,8 @@ function bindEvents() {
     if (e.key === 'ArrowRight' && state.current < state.visible.length - 1) openDetail(state.current + 1);
     if (e.key === 'ArrowLeft' && state.current > 0) openDetail(state.current - 1);
   });
+  const lb = $('#lightbox');
+  lb.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
 }
 
 function openFromHash() {
@@ -274,6 +316,8 @@ function openFromHash() {
 
 async function init() {
   bindEvents();
+  $('#today').textContent = formatDate(todayStr());
+  onNewDay(() => renderTimeline());
   try {
     state.all = await fetchMoments();
   } catch (err) {
