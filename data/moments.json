@@ -217,7 +217,9 @@
           "id": "18b1YGpjiXPBQclqSK5VqmI2m2r1na-nF",
           "kind": "video",
           "name": "20261001_分離焦慮的大型犬_01.mp4",
-          "src": "https://drive.google.com/file/d/18b1YGpjiXPBQclqSK5VqmI2m2r1na-nF/view"
+          "src": "https://drive.google.com/file/d/18b1YGpjiXPBQclqSK5VqmI2m2r1na-nF/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1AINakF3hIcLSm_vsYBaFsEsaaVtba216&sz=w800",
+          "thumbId": "1AINakF3hIcLSm_vsYBaFsEsaaVtba216"
         },
         {
           "type": "drive",
@@ -238,7 +240,7 @@
       ],
       "cover": 0,
       "createdAt": "2026-10-03T17:26:07.110Z",
-      "updatedAt": "2026-10-03T17:26:19.695Z"
+      "updatedAt": "2026-10-03T17:36:48.418Z"
     },
     {
       "id": "m-20261002-wucmwn",
