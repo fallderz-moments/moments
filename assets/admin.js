@@ -1,7 +1,7 @@
 import {
   START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
-  mediaThumb, parseMediaUrl, driveId, isVideoPath, isBirthday, fetchMoments, storageGet, storageSet, MEDIA_LABELS,
-} from './common.js?v=202610031705';
+  mediaThumb, driveId, driveImage, isVideoPath, isBirthday, fetchMoments, storageGet, storageSet, MEDIA_LABELS,
+} from './common.js?v=202610031731';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';
@@ -527,6 +527,7 @@ function renderMedia() {
         </div>
         <div class="tools">
           <button type="button" data-cover="${i}" aria-pressed="${isCover}" title="設為便利貼縮圖">★</button>
+          ${item.type === 'drive' && item.kind === 'video' && !item._file ? `<button type="button" data-frame="${i}" title="${item.thumb ? '重新擷取影片封面' : '擷取影片封面'}">🎞</button>` : ''}
           <button type="button" data-move="${i}:-1" title="往前" ${i === 0 ? 'disabled' : ''}>↑</button>
           <button type="button" data-move="${i}:1" title="往後" ${i === media.length - 1 ? 'disabled' : ''}>↓</button>
           <button type="button" data-remove-media="${i}" title="移除">✕</button>
@@ -550,16 +551,78 @@ function addFiles(files) {
   if (added && (!state.cfg.clientId || !state.cfg.folderId)) toast('提醒：尚未設定 Google 雲端硬碟或上傳資料夾，儲存前請先到「連線設定」填寫', true, 6000);
 }
 
-function addLink() {
-  const input = $('#link-entry');
-  const url = input.value.trim();
-  if (!url) return;
-  if (!/^https?:\/\//i.test(url)) { toast('請輸入以 http(s):// 開頭的網址', true); return; }
-  const item = { ...parseMediaUrl(url), caption: '' };
-  state.draft.media.push(item);
-  input.value = '';
-  renderMedia();
-  toast(`已加入：${MEDIA_LABELS[item.type]}`);
+/** 從影片擷取一個畫面當封面（約影片 10% 處，至少 0.5 秒）；無法解碼時回傳 null */
+function captureFrame(src, maxWidth = 1280) {
+  return new Promise((resolve) => {
+    const v = document.createElement('video');
+    v.muted = true;
+    v.playsInline = true;
+    v.preload = 'auto';
+    let done = false;
+    const finish = (blob) => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      v.removeAttribute('src');
+      v.load();
+      resolve(blob);
+    };
+    const timer = setTimeout(() => finish(null), 30000);
+    v.onerror = () => finish(null);
+    v.onloadedmetadata = () => {
+      const d = Number.isFinite(v.duration) ? v.duration : 0;
+      v.currentTime = d ? Math.min(Math.max(d * 0.1, 0.5), Math.max(d - 0.1, 0)) : 0.5;
+    };
+    v.onseeked = () => {
+      if (!v.videoWidth) { finish(null); return; }
+      const scale = Math.min(1, maxWidth / v.videoWidth);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(v.videoWidth * scale);
+      canvas.height = Math.round(v.videoHeight * scale);
+      try {
+        canvas.getContext('2d').drawImage(v, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((b) => finish(b), 'image/jpeg', 0.85);
+      } catch {
+        finish(null);
+      }
+    };
+    v.src = src;
+  });
+}
+
+/** 把擷取的封面上傳到雲端資料夾，並設為該影片的縮圖 */
+async function uploadCover(item, blob, baseName) {
+  const coverName = baseName.replace(/\.[^.]+$/, '') + '_cover.jpg';
+  const cover = await driveUpload(blob, coverName, () => {});
+  item.thumb = driveImage(cover.id, 800);
+  item.thumbId = cover.id;
+}
+
+/** 已上傳到雲端的影片：下載後擷取封面（必須在點擊當下呼叫，才能跳出授權視窗） */
+async function makeCoverForExisting(i) {
+  const item = state.draft.media[i];
+  const tokenReady = ensureDriveToken();
+  try {
+    setBusy(true, '下載影片以擷取封面…');
+    await tokenReady;
+    if (!drive.folderName) await checkFolder();
+    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${item.id}?alt=media&supportsAllDrives=true`, {
+      headers: { Authorization: `Bearer ${drive.token}` },
+    });
+    if (!res.ok) throw new Error(driveAuthError(res.status, `無法下載影片（${res.status}）`));
+    const url = URL.createObjectURL(await res.blob());
+    const blob = await captureFrame(url);
+    URL.revokeObjectURL(url);
+    if (!blob) throw new Error('這支影片的格式無法在瀏覽器中擷取畫面');
+    setBusy(true, '上傳封面中…');
+    await uploadCover(item, blob, item.name || `${state.draft.date.replace(/-/g, '')}_video.mp4`);
+    setBusy(false);
+    renderMedia();
+    toast('封面已擷取，按「儲存並發佈」後生效');
+  } catch (err) {
+    setBusy(false);
+    toast(`擷取封面失敗：${err.message}`, true, 7000);
+  }
 }
 
 function uploadName(date, title, file, n) {
@@ -614,13 +677,21 @@ async function onSave(e) {
           const b = bar();
           if (b) b.style.width = `${p * 100}%`;
         });
-        URL.revokeObjectURL(item._preview);
         const isVideo = item._isVideo || (result.mimeType || '').startsWith('video/');
+        let coverBlob = null;
+        if (isVideo) {
+          toast(`擷取影片封面 ${i + 1}/${pending.length}…`, false, 0);
+          coverBlob = await captureFrame(item._preview);
+        }
+        URL.revokeObjectURL(item._preview);
         for (const k of ['_file', '_preview', '_isVideo']) delete item[k];
         Object.assign(item, {
           type: 'drive', id: result.id, kind: isVideo ? 'video' : 'image', name: result.name,
           src: `https://drive.google.com/file/d/${result.id}/view`,
         });
+        if (coverBlob) {
+          try { await uploadCover(item, coverBlob, result.name); } catch (err) { console.warn('封面上傳失敗', err); }
+        }
         renderMedia();
       }
     }
@@ -781,8 +852,6 @@ function bindEvents() {
   dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
   dz.addEventListener('drop', (e) => { e.preventDefault(); dz.classList.remove('drag'); addFiles([...e.dataTransfer.files]); });
 
-  $('#btn-add-link').addEventListener('click', addLink);
-  $('#link-entry').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addLink(); } });
 
   const mediaList = $('#media-list');
   mediaList.addEventListener('input', (e) => {
@@ -795,6 +864,10 @@ function bindEvents() {
     const b = e.target.closest('button');
     if (!b || state.busy) return;
     const media = state.draft.media;
+    if (b.dataset.frame) {
+      makeCoverForExisting(Number(b.dataset.frame));
+      return;
+    }
     if (b.dataset.cover) {
       state.draft.cover = Number(b.dataset.cover);
     } else if (b.dataset.move) {

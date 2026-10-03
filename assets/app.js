@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, STICKERS,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet,
-} from './common.js?v=202610031705';
+} from './common.js?v=202610031731';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -89,8 +89,9 @@ function noteHtml(m, index) {
   const cover = momentCover(m);
   const count = (m.media || []).length;
   let thumb;
+  const coverIsVideo = cover.item && (cover.item.type === 'video' || (cover.item.type === 'drive' && cover.item.kind === 'video'));
   if (cover.url) {
-    thumb = `<img src="${escapeHtml(cover.url)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'placeholder',textContent:'🖼'}))">`;
+    thumb = `<img src="${escapeHtml(cover.url)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'placeholder',textContent:'${coverIsVideo ? '🎬' : '🖼'}'}))">${coverIsVideo ? '<span class="badge play">▶</span>' : ''}`;
   } else if (cover.item?.type === 'video' && cover.item.src) {
     // 影片沒有縮圖時，直接顯示影片的第一個畫面
     thumb = `<video src="${escapeHtml(cover.item.src)}#t=0.5" muted playsinline preload="metadata" tabindex="-1"></video><span class="badge play">▶</span>`;

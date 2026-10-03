@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:wght@400;700&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610031705">
-  <link rel="stylesheet" href="assets/admin.css?v=202610031705">
+  <link rel="stylesheet" href="assets/style.css?v=202610031731">
+  <link rel="stylesheet" href="assets/admin.css?v=202610031731">
 </head>
 <body class="admin">
   <header class="admin-bar">
@@ -76,13 +76,8 @@
             <label class="dropzone" id="dropzone">
               <input type="file" id="file-media" accept="image/*,video/*" multiple hidden>
               <strong>上傳到 Google 雲端硬碟</strong>
-              <span>點擊或拖曳多張照片、多支影片到這裡，按「儲存並發佈」時會以原檔上傳到你的雲端資料夾。</span>
+              <span>點擊或拖曳多張照片、多支影片到這裡，按「儲存並發佈」時會以原檔上傳到雲端資料夾備份；影片會自動擷取一個畫面當封面。</span>
             </label>
-            <div class="link-add">
-              <input class="field" type="url" id="link-entry" placeholder="或貼上 YouTube / X / Instagram / 雲端硬碟連結">
-              <button class="btn" type="button" id="btn-add-link">加入連結</button>
-              <p class="hint">影片與貼文會直接嵌入顯示。</p>
-            </div>
           </div>
           <ol class="media-list" id="media-list"></ol>
         </div>
@@ -145,6 +140,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="assets/admin.js?v=202610031705"></script>
+  <script type="module" src="assets/admin.js?v=202610031731"></script>
 </body>
 </html>

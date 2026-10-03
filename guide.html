@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610031705">
+  <link rel="stylesheet" href="assets/style.css?v=202610031731">
   <style>
     .guide { max-width: 860px; margin: 0 auto; padding: 0 16px 60px; }
     .guide-hero { text-align: center; padding: 34px 0 10px; }
@@ -93,7 +93,7 @@
       <p>Fallderz Moments 由 <b>KONOKI</b> 建立與管理。通過申請後，你可以在<a href="admin.html">館員後台</a>：</p>
       <ul>
         <li>新增、編輯、刪除紀錄（日期、標題、內容、分類、資訊來源）。</li>
-        <li>上傳照片與影片，或貼上 YouTube、X、Instagram 連結。</li>
+        <li>上傳照片與影片（原檔會備份在雲端資料夾），並附上資訊來源網址。</li>
         <li>匯出與匯入備份。</li>
       </ul>
       <p>網站背後的運作方式：</p>
@@ -196,12 +196,12 @@
         <tr><td>資訊來源網址（選填）</td><td>原始貼文、文章、直播頁面的網址，前台會顯示在內容最下方。</td></tr>
         <tr><td>內容</td><td>可換行；文字裡的網址會自動變成連結。</td></tr>
         <tr><td>分類標籤</td><td>點選預設分類（可複選）；其他標籤在下方輸入後按 Enter 或逗號。</td></tr>
-        <tr><td>照片／影片</td><td>點擊或拖曳檔案到虛線框，<b>可一次選多張照片、多支影片</b>。檔案會在按「儲存並發佈」時才上傳。</td></tr>
-        <tr><td>加入連結</td><td>貼上 YouTube、X、Instagram 或雲端硬碟連結，前台會直接嵌入顯示。</td></tr>
+        <tr><td>照片／影片</td><td>點擊或拖曳檔案到虛線框，<b>可一次選多張照片、多支影片</b>。檔案會在按「儲存並發佈」時以原檔上傳到雲端資料夾備份。原始貼文網址請填在「資訊來源網址」。</td></tr>
       </table></div>
       <h3>整理媒體</h3>
       <ul>
         <li><b>★</b>：設為便利貼的代表縮圖。</li>
+        <li><b>🎞</b>：（雲端影片）重新擷取影片封面。上傳影片時會自動擷取一個畫面當封面，舊的影片可用這個按鈕補上。</li>
         <li><b>↑ ↓</b>：調整顯示順序。</li>
         <li><b>✕</b>：移除（尚未儲存前移除不會上傳）。</li>
         <li><b>說明文字</b>：顯示在照片下方，可留空。</li>
@@ -212,7 +212,7 @@
         <li>畫面下方會顯示上傳進度（例如「上傳中 1/3：IMG_0001.jpg　45%」），大型影片需要一些時間，<b>上傳完成前請不要關閉頁面</b>。</li>
         <li>出現「已儲存！前台約 1 分鐘後更新」即完成。</li>
       </ol>
-      <div class="note-box">上傳的檔案會自動命名為「日期_標題_序號」，並設為「知道連結的任何人可檢視」，前台才能顯示。新上傳的影片需要 Google 處理幾分鐘才能播放。</div>
+      <div class="note-box">上傳的檔案會自動命名為「日期_標題_序號」，並設為「知道連結的任何人可檢視」，前台才能顯示。影片會自動擷取一個畫面另存為「…_cover.jpg」當封面；新上傳的影片需要 Google 處理幾分鐘才能播放。</div>
     </section>
 
     <section class="page" id="edit">

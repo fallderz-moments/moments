@@ -62,15 +62,13 @@ legend { color: var(--teal-ink); padding: 0 6px; }
 .chip { display: inline-flex; align-items: center; gap: 4px; background: var(--mint); color: var(--teal-ink); border-radius: 999px; padding: .05em .3em .05em .8em; }
 .chip button { border: 0; background: transparent; cursor: pointer; color: var(--teal-ink); font-size: .9rem; padding: 0 .3em; }
 
-.media-add { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.media-add { display: grid; grid-template-columns: 1fr; gap: 12px; }
 .dropzone {
   display: flex; flex-direction: column; gap: 4px; justify-content: center; border: 2px dashed var(--teal); border-radius: 14px;
   padding: 16px; cursor: pointer; background: #F7FAF8; text-align: center; color: var(--ink-soft); font-size: .85rem;
 }
 .dropzone strong { color: var(--teal-ink); font-size: 1rem; font-weight: 400; }
 .dropzone.drag { background: var(--mint); }
-.link-add { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
-.link-add .field { flex: 1 1 200px; }
 
 .media-list { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 10px; }
 .media-item {
