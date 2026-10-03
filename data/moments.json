@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "moments": [
+    {
+      "id": "m-20211201-start",
+      "date": "2021-12-01",
+      "title": "Fallderz moments 的第一天",
+      "content": "這是一則範例片段，代表時間軸的起點。\n\n到「後台」可以編輯或刪除它，換成你真正的第一個生活片段。",
+      "tags": ["範例", "紀念日"],
+      "media": [
+        { "type": "image", "src": "media/samples/first-day.svg", "caption": "範例插圖" }
+      ],
+      "cover": 0,
+      "createdAt": "2026-10-03T00:00:00.000Z",
+      "updatedAt": "2026-10-03T00:00:00.000Z"
+    },
+    {
+      "id": "m-20220514-tea",
+      "date": "2022-05-14",
+      "title": "午後的一杯茶",
+      "content": "範例片段：可以上傳照片、影片，也能貼上 Google 雲端硬碟、YouTube、X、Instagram 的連結。\n標籤可以用來分類，例如「日常」「旅行」。",
+      "tags": ["範例", "日常"],
+      "media": [
+        { "type": "image", "src": "media/samples/tea-time.svg", "caption": "" }
+      ],
+      "cover": 0,
+      "createdAt": "2026-10-03T00:00:00.000Z",
+      "updatedAt": "2026-10-03T00:00:00.000Z"
+    },
+    {
+      "id": "m-20231008-note",
+      "date": "2023-10-08",
+      "title": "只有文字的一天",
+      "content": "範例片段：沒有照片的時候，便利貼會顯示標題字樣。",
+      "tags": ["範例", "隨筆"],
+      "media": [],
+      "cover": 0,
+      "createdAt": "2026-10-03T00:00:00.000Z",
+      "updatedAt": "2026-10-03T00:00:00.000Z"
+    }
+  ]
+}

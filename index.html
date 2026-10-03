@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fallderz moments</title>
+  <meta name="description" content="Fallderz 的生活片段，從 2021 年 12 月開始。">
+  <meta name="theme-color" content="#D2E0D3">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Zen+Maru+Gothic:wght@500&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./">
+      <span class="brand-badge">LIFE · DIARY</span>
+      <h1>Fallderz <span>moments</span></h1>
+    </a>
+    <p class="tagline">生活片段 · <span id="range-text">2021.12 — 現在</span></p>
+  </header>
+
+  <div class="toolbar">
+    <div class="toolbar-inner">
+      <div class="segmented" role="group" aria-label="瀏覽方式">
+        <button type="button" data-view="notes" aria-pressed="true">便利貼</button>
+        <button type="button" data-view="list" aria-pressed="false">列表</button>
+      </div>
+      <div class="segmented" role="group" aria-label="排序">
+        <button type="button" data-sort="desc" aria-pressed="true">新 → 舊</button>
+        <button type="button" data-sort="asc" aria-pressed="false">舊 → 新</button>
+      </div>
+      <span class="toolbar-spacer"></span>
+      <label class="search">
+        <span class="visually-hidden">搜尋</span>
+        <input id="search" class="field" type="search" placeholder="搜尋標題、內容、標籤…">
+      </label>
+    </div>
+    <div class="tag-filter" id="tag-filter" aria-label="標籤篩選"></div>
+    <nav class="timeline-nav" aria-label="時間軸">
+      <div class="years" id="years"></div>
+      <div class="months" id="months"></div>
+    </nav>
+  </div>
+
+  <main id="content">
+    <p class="status">載入中…</p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="palette-strip" aria-hidden="true">
+      <i style="background:#97B3AE"></i><i style="background:#D2E0D3"></i><i style="background:#F0DDD6"></i>
+      <i style="background:#F2C3B9"></i><i style="background:#D6CBBF"></i><i style="background:#F0EEEA"></i>
+    </div>
+    <p>© Fallderz moments · <a href="admin.html">後台</a></p>
+  </footer>
+
+  <dialog class="detail" id="detail" aria-labelledby="detail-title">
+    <div class="detail-head">
+      <button class="icon-btn" type="button" data-nav="prev" aria-label="上一則">‹</button>
+      <span class="date" id="detail-date"></span>
+      <button class="icon-btn" type="button" data-nav="next" aria-label="下一則">›</button>
+      <button class="icon-btn" type="button" data-close aria-label="關閉">✕</button>
+    </div>
+    <div class="detail-body">
+      <h2 id="detail-title"></h2>
+      <div class="note-tags" id="detail-tags"></div>
+      <div class="media-stack" id="detail-media"></div>
+      <div class="detail-text" id="detail-text"></div>
+    </div>
+  </dialog>
+
+  <script type="module" src="assets/app.js"></script>
+</body>
+</html>

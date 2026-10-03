@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>後台 · Fallderz moments</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Zen+Maru+Gothic:wght@500&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body class="admin">
+  <header class="admin-bar">
+    <a class="admin-brand" href="./">Fallderz <span>moments</span> <small>後台</small></a>
+    <span class="conn" id="conn">未連線</span>
+    <span class="toolbar-spacer"></span>
+    <button class="btn small" type="button" id="btn-export">匯出備份</button>
+    <label class="btn small">匯入備份<input type="file" id="file-import" accept="application/json,.json" hidden></label>
+    <button class="btn small" type="button" id="btn-settings">連線設定</button>
+    <a class="btn small" href="./" target="_blank" rel="noopener">查看前台 ↗</a>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="admin-side">
+      <button class="btn primary new-btn" type="button" id="btn-new">＋ 新增生活片段</button>
+      <input class="field" id="admin-search" type="search" placeholder="搜尋…">
+      <ol class="admin-list" id="admin-list"></ol>
+    </aside>
+
+    <section class="admin-main">
+      <div class="empty-editor" id="empty-editor">
+        <p>從左側選擇一則片段編輯，或按「新增生活片段」。</p>
+      </div>
+
+      <form class="editor" id="editor" hidden autocomplete="off">
+        <h2 id="editor-heading">新增生活片段</h2>
+
+        <div class="row">
+          <label class="col">日期
+            <input class="field" type="date" name="date" required>
+          </label>
+          <label class="col grow">標題
+            <input class="field" type="text" name="title" maxlength="80" placeholder="這一天的小標題">
+          </label>
+        </div>
+
+        <label>內容
+          <textarea class="field" name="content" rows="7" placeholder="寫下這個片段的故事…（網址會自動變成連結）"></textarea>
+        </label>
+
+        <div>
+          <span class="label">標籤</span>
+          <div class="tag-input" id="tag-input">
+            <span id="tag-chips"></span>
+            <input type="text" id="tag-entry" list="tag-suggest" placeholder="輸入後按 Enter 或逗號">
+          </div>
+          <datalist id="tag-suggest"></datalist>
+        </div>
+
+        <div>
+          <span class="label">照片 / 影片</span>
+          <div class="media-add">
+            <label class="dropzone" id="dropzone">
+              <input type="file" id="file-media" accept="image/*,video/*" multiple hidden>
+              <strong>上傳檔案</strong>
+              <span>點擊或拖曳照片、影片到這裡。照片會自動壓縮；大型影片建議放雲端硬碟或 YouTube 再貼連結。</span>
+            </label>
+            <div class="link-add">
+              <input class="field" type="url" id="link-entry" placeholder="貼上 Google 雲端硬碟 / YouTube / X / Instagram / 圖片網址">
+              <button class="btn" type="button" id="btn-add-link">加入連結</button>
+              <p class="hint">Google 雲端硬碟檔案請將共用設定改為「知道連結的任何人」皆可檢視。</p>
+            </div>
+          </div>
+          <ol class="media-list" id="media-list"></ol>
+        </div>
+
+        <div class="editor-actions">
+          <button class="btn danger" type="button" id="btn-delete">刪除這則</button>
+          <span class="toolbar-spacer"></span>
+          <button class="btn" type="button" id="btn-cancel">取消</button>
+          <button class="btn primary" type="submit" id="btn-save">儲存並發佈</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <dialog class="settings" id="settings">
+    <form method="dialog" id="settings-form">
+      <h2>連線設定</h2>
+      <p class="hint">
+        後台會透過 GitHub 把內容寫回這個網站的儲存庫，存檔後約 1 分鐘前台就會更新。
+        權杖只儲存在這台裝置的瀏覽器中。
+      </p>
+      <div class="row">
+        <label class="col grow">GitHub 帳號<input class="field" name="owner" required></label>
+        <label class="col grow">儲存庫名稱<input class="field" name="repo" required></label>
+        <label class="col">分支<input class="field" name="branch" required></label>
+      </div>
+      <label>存取權杖（Personal access token）
+        <input class="field" name="token" type="password" required placeholder="github_pat_…">
+      </label>
+      <p class="hint">
+        建立方式：<a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → Fine-grained token</a>，
+        Repository access 只選這個儲存庫，Permissions 的 <b>Contents</b> 設為 <b>Read and write</b>。
+      </p>
+      <p class="settings-msg" id="settings-msg"></p>
+      <div class="editor-actions">
+        <button class="btn danger" type="button" id="btn-logout">清除權杖</button>
+        <span class="toolbar-spacer"></span>
+        <button class="btn" value="cancel" formnovalidate>關閉</button>
+        <button class="btn primary" type="submit" id="btn-connect">連線</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="assets/admin.js"></script>
+</body>
+</html>
