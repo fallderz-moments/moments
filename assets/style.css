@@ -168,6 +168,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .name-card::before { content: ''; position: absolute; left: 0; right: 0; top: 34px; border-top: 2px solid var(--coral); }
 .name-card-label { display: block; font-family: var(--font-pixel); font-size: .78rem; letter-spacing: .15em; color: var(--coral-deep); margin-bottom: 10px; }
 .name-formula { margin: 0; font-family: var(--font-title); font-size: 1.08rem; color: var(--teal-ink); line-height: 2; overflow-wrap: anywhere; }
+.mailbox { border-left-color: var(--coral-deep); }
+.mailbox-btn {
+  display: inline-flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 6px; padding: .7em 1.6em;
+  background: var(--coral); color: #5e2f27; border-radius: 14px; text-decoration: none; font-size: 1.05rem; font-weight: 600;
+  box-shadow: 0 3px 0 var(--coral-deep); transition: transform .15s;
+}
+.mailbox-btn small { font-weight: 400; font-size: .78rem; opacity: .8; }
+.mailbox-btn:hover { transform: translateY(-2px); }
 .disclaimer { font-size: .85rem; color: var(--ink-soft); background: var(--ivory); border-radius: 10px; padding: 10px 14px; line-height: 1.8; }
 .team-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
 .team-card {
@@ -351,6 +359,14 @@ button.series-item:hover { background: rgba(255, 255, 255, .8); }
 li[aria-current="true"] .series-item { cursor: default; font-weight: 600; }
 @media (max-width: 640px) {
   .series-pager { grid-template-columns: 1fr; }
+  /* 手機版影片：iOS Safari 的 iframe 會依內容撐開寬度，強制貼齊容器 */
+  dialog.detail { overflow-x: hidden; }
+  .media-grid, .media-grid figure { min-width: 0; max-width: 100%; }
+  .embed { max-width: 100%; }
+  .embed iframe { width: 1px; min-width: 100%; max-width: 100%; }
+  .embed[style] { aspect-ratio: var(--ar); }
+  .embed.portrait { width: min(100%, calc(72vh * var(--arw))); margin: 0 auto; }
+  .media-grid video { max-height: 72vh; object-fit: contain; }
   .series-nav.next { text-align: left; align-items: flex-start; }
 }
 

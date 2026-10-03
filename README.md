@@ -137,6 +137,8 @@ tools/pixel_sprites.py       小型像素圖案產生器（蛋糕、書本、愛
 tools/sprites_from_image.py  把狗狗、花栗鼠原圖轉成像素 SVG（含戴派對帽的生日版）
 tools/bookshelf_bg.py        手繪書櫃背景產生器
 tools/bump_version.py        更新 CSS/JS 版本號（修改 assets 後執行，避免瀏覽器快取舊檔）
+tests/                       端對端測試（先 python3 -m http.server 8765，再 node tests/e2e.cjs 等）
+CLAUDE.md                    給接手維護的 Claude 的工作說明
 ```
 
 字體：英文標題使用 Libre Baskerville、內文英數使用 Nunito、像素標籤使用 Pixelify Sans，**中文使用粉圓體（Huninn）**。

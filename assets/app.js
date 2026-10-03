@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, STICKERS,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet,
-} from './common.js?v=202610031806';
+} from './common.js?v=202610031947';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -242,7 +242,7 @@ function mediaHtml(item, single) {
         return photoHtml(driveImage(item.id, single ? 2000 : 1000), driveImageFallback(item.id, 1000),
           driveImage(item.id, 2400), `https://drive.google.com/file/d/${item.id}/view`, item.caption || '', photoCls);
       }
-      return `<figure class="wide"><div class="embed"><iframe src="https://drive.google.com/file/d/${item.id}/preview" allow="autoplay; fullscreen" allowfullscreen loading="lazy" title="Google 雲端硬碟影片"></iframe></div>${cap}</figure>`;
+      return `<figure class="wide"><div class="embed${videoShape(item)} data-shape-src="${escapeHtml(item.thumb || driveImage(item.id, 400))}"><iframe src="https://drive.google.com/file/d/${item.id}/preview" allow="autoplay; fullscreen" allowfullscreen loading="lazy" title="Google 雲端硬碟影片"></iframe></div>${cap}</figure>`;
     case 'youtube':
       return `<figure class="wide"><div class="embed"><iframe src="https://www.youtube-nocookie.com/embed/${item.id}" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen loading="lazy" title="YouTube"></iframe></div>${cap}</figure>`;
     case 'instagram':
@@ -252,6 +252,30 @@ function mediaHtml(item, single) {
     default:
       return `<figure class="wide"><a class="link-card" href="${src}" target="_blank" rel="noopener"><span class="ico">🔗</span><span>${escapeHtml(item.caption || hostOf(item.src))}<br><small>${escapeHtml(hostOf(item.src))}</small></span></a></figure>`;
   }
+}
+
+/** 依影片長寬標記直式影片（只在手機版樣式中使用，電腦版不受影響） */
+function videoShape(item) {
+  const w = Number(item.w), h = Number(item.h);
+  if (!(w > 0 && h > 0)) return '"';
+  return `${h > w ? ' portrait' : ''}" style="--ar:${w} / ${h};--arw:${(w / h).toFixed(4)}"`;
+}
+
+/** 手機版：沒有記錄長寬的影片，從縮圖判斷直式或橫式 */
+function fitVideoShapes(container) {
+  if (!window.matchMedia('(max-width: 640px)').matches) return;
+  container.querySelectorAll('.embed[data-shape-src]:not([style])').forEach((box) => {
+    const img = new Image();
+    img.referrerPolicy = 'no-referrer';
+    img.onload = () => {
+      const w = img.naturalWidth, h = img.naturalHeight;
+      if (!(w > 0 && h > 0)) return;
+      box.style.setProperty('--ar', `${w} / ${h}`);
+      box.style.setProperty('--arw', (w / h).toFixed(4));
+      box.classList.toggle('portrait', h > w);
+    };
+    img.src = box.dataset.shapeSrc;
+  });
 }
 
 let twitterLoader;
@@ -295,6 +319,7 @@ function openDetail(index) {
   mediaBox.innerHTML = media.map((item) => mediaHtml(item, media.length === 1)).join('');
   mediaBox.hidden = !media.length;
   loadTweets(mediaBox);
+  fitVideoShapes(mediaBox);
   $('#detail-text').innerHTML = richText(m.content || '');
   const source = $('#detail-source');
   source.hidden = !m.source;

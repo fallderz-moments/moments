@@ -1,7 +1,7 @@
 import {
   START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
   mediaThumb, driveId, driveImage, isVideoPath, isBirthday, fetchMoments, storageGet, storageSet, MEDIA_LABELS,
-} from './common.js?v=202610031806';
+} from './common.js?v=202610031947';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';
@@ -557,7 +557,7 @@ function addFiles(files) {
   if (added && (!state.cfg.clientId || !state.cfg.folderId)) toast('提醒：尚未設定 Google 雲端硬碟或上傳資料夾，儲存前請先到「連線設定」填寫', true, 6000);
 }
 
-/** 從影片擷取一個畫面當封面（約影片 10% 處，至少 0.5 秒）；無法解碼時回傳 null */
+/** 從影片擷取一個畫面當封面（約影片 10% 處，至少 0.5 秒），回傳 { blob, w, h }；無法解碼時回傳 null */
 function captureFrame(src, maxWidth = 1280) {
   return new Promise((resolve) => {
     const v = document.createElement('video');
@@ -587,7 +587,7 @@ function captureFrame(src, maxWidth = 1280) {
       canvas.height = Math.round(v.videoHeight * scale);
       try {
         canvas.getContext('2d').drawImage(v, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob((b) => finish(b), 'image/jpeg', 0.85);
+        canvas.toBlob((b) => finish(b && { blob: b, w: v.videoWidth, h: v.videoHeight }), 'image/jpeg', 0.85);
       } catch {
         finish(null);
       }
@@ -597,11 +597,14 @@ function captureFrame(src, maxWidth = 1280) {
 }
 
 /** 把擷取的封面上傳到雲端資料夾，並設為該影片的縮圖 */
-async function uploadCover(item, blob, baseName) {
+async function uploadCover(item, frame, baseName) {
   const coverName = baseName.replace(/\.[^.]+$/, '') + '_cover.jpg';
-  const cover = await driveUpload(blob, coverName, () => {});
+  const cover = await driveUpload(frame.blob, coverName, () => {});
   item.thumb = driveImage(cover.id, 800);
   item.thumbId = cover.id;
+  // 記錄影片長寬，手機版會依直式／橫式調整播放器比例
+  item.w = frame.w;
+  item.h = frame.h;
 }
 
 /** 已上傳到雲端的影片：下載後擷取封面（必須在點擊當下呼叫，才能跳出授權視窗） */
@@ -617,11 +620,11 @@ async function makeCoverForExisting(i) {
     });
     if (!res.ok) throw new Error(driveAuthError(res.status, `無法下載影片（${res.status}）`));
     const url = URL.createObjectURL(await res.blob());
-    const blob = await captureFrame(url);
+    const frame = await captureFrame(url);
     URL.revokeObjectURL(url);
-    if (!blob) throw new Error('這支影片的格式無法在瀏覽器中擷取畫面');
+    if (!frame) throw new Error('這支影片的格式無法在瀏覽器中擷取畫面');
     setBusy(true, '上傳封面中…');
-    await uploadCover(item, blob, item.name || `${state.draft.date.replace(/-/g, '')}_video.mp4`);
+    await uploadCover(item, frame, item.name || `${state.draft.date.replace(/-/g, '')}_video.mp4`);
     setBusy(false);
     renderMedia();
     toast('封面已擷取，按「儲存並發佈」後生效');
