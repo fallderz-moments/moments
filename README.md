@@ -26,7 +26,7 @@
 
 1. 確認儲存庫有 `main` 分支（沒有的話：儲存庫首頁 → 分支選單 → View all branches → New branch，名稱 `main`，來源選目前的分支）。
 2. **Settings → Pages**：Source 選 **Deploy from a branch**，Branch 選 `main`、資料夾 `/ (root)`。
-3. 約 1～2 分鐘後網站會出現在 `https://slam0615.github.io/moments/`。
+3. 約 1～2 分鐘後網站會出現在 `https://<GitHub 帳號>.github.io/moments/`。
 
 ## 設定後台：① GitHub（文字資料）
 
@@ -48,7 +48,7 @@
    - 發布狀態維持 **測試中（Testing）** 即可
 4. 進入 **用戶端（Clients）→ 建立用戶端**：
    - 應用程式類型：**網頁應用程式**
-   - 已授權的 JavaScript 來源：新增 `https://slam0615.github.io`（本機測試可再加 `http://localhost:8000`）
+   - 已授權的 JavaScript 來源：新增 `https://<GitHub 帳號>.github.io`（本機測試可再加 `http://localhost:8000`）
 5. 複製產生的 **用戶端 ID**（`….apps.googleusercontent.com`），貼到後台「連線設定」的 OAuth 用戶端 ID。
    上傳資料夾已預設為你提供的資料夾，需要時可改貼其他資料夾網址。
 6. 按後台上方「連結 Google 雲端硬碟」，登入擁有該資料夾的 Google 帳號。
@@ -71,13 +71,28 @@
 **對方要做的**
 1. **建立自己的 GitHub 權杖**：因為儲存庫屬於你的個人帳號，協作者要用 classic token：
    <https://github.com/settings/tokens/new> → Note 填 `Fallderz Moments`、Expiration 建議選 90 天 → 勾選 **public_repo** → Generate token。
-2. 打開網站 `admin.html` →「連線設定」：GitHub 帳號填 **slam0615**（儲存庫擁有者，不是自己的帳號）、儲存庫 `moments`、分支 `main`，貼上自己的權杖；
-   OAuth 用戶端 ID 填你提供的同一組（若已寫進 `assets/admin.js` 的 `DEFAULT_CLIENT_ID` 就會自動帶入），再按「連結 Google 雲端硬碟」用自己的 Gmail 登入。
+2. 打開網站 `admin.html` →「連線設定」貼上自己的權杖（儲存庫位置會依網址自動帶入）；
+   OAuth 用戶端 ID 填擁有者提供的同一組（若已寫進 `assets/admin.js` 的 `DEFAULT_CLIENT_ID` 就會自動帶入），再按「連結 Google 雲端硬碟」用自己的 Gmail 登入。
 
 > - 不要把你自己的權杖給別人：每個人用自己的權杖，GitHub 會記錄是誰新增或修改了哪一則，也能隨時單獨停用。
 > - 停止某人的權限：在 Collaborators 移除對方、取消雲端資料夾共用即可。
 > - 對方上傳到資料夾的檔案，擁有者是對方，佔用的是**對方**的雲端硬碟空間。
 > - 多人同時存檔時，後台會自動重新讀取最新資料再合併，不會互相覆蓋。
+
+## 更改網站網址
+
+網址 `https://<帳號>.github.io/moments/` 中的帳號名稱來自擁有儲存庫的 GitHub 帳號或組織。程式會依網址自動判斷儲存庫，改網址不需要修改程式。
+
+| 方式 | 新網址 | 說明 |
+| --- | --- | --- |
+| 建立 GitHub 組織並轉移儲存庫（建議） | `https://<組織名稱>.github.io/moments/` | 免費。組織名稱不可與現有帳號重複（例如 `konoki` 已被使用），可用 `konoki-moments` 等。共同編輯者也能改用權限更小的 Fine-grained token。 |
+| 更改自己的 GitHub 帳號名稱 | `https://<新帳號>.github.io/moments/` | 會影響整個帳號；舊網址不會自動轉址。 |
+| 自訂網域 | 例如 `https://moments.example.com` | 需購買網域（約每年 NT$300～1,000），在 Settings → Pages → Custom domain 設定。 |
+
+改完網址後務必：
+1. Google Cloud → 用戶端 → 「已授權的 JavaScript 來源」加入新網址（例如 `https://konoki-moments.github.io`）。
+2. 每位編輯者重新開啟新網址的 `admin.html`，貼上權杖（瀏覽器設定是依網址分開儲存的）。
+3. 轉移到組織時：儲存庫 Settings → General → Danger Zone → **Transfer ownership**，轉移後到新儲存庫確認 Settings → Pages 仍為 `main` / `(root)`，並確認儲存庫的 Collaborators 名單中仍有每位編輯者（不在名單中的請重新邀請）。
 
 ## 常見問題
 
@@ -85,7 +100,7 @@
 儲存庫沒有那個分支。請依「上線步驟」建立 `main`，或在「連線設定」改成 GitHub Pages 實際使用的分支。
 
 **授權時出現 `redirect_uri_mismatch` 或 `origin_mismatch`**
-OAuth 用戶端的「已授權的 JavaScript 來源」沒有加上網站網址（只填 `https://slam0615.github.io`，不要加路徑或結尾斜線）。
+OAuth 用戶端的「已授權的 JavaScript 來源」沒有加上網站網址（只填 `https://<GitHub 帳號>.github.io`，不要加路徑或結尾斜線）。
 
 **授權時出現「存取遭拒／access_denied」**
 登入的帳號不在「測試使用者」名單內，請到 Google Auth Platform → 目標對象新增。

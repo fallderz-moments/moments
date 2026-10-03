@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610031452">
+  <link rel="stylesheet" href="assets/style.css?v=202610031506">
   <style>
     .guide { max-width: 860px; margin: 0 auto; padding: 0 16px 60px; }
     .guide-hero { text-align: center; padding: 34px 0 10px; }
@@ -93,8 +93,8 @@
       <ul>
         <li><b>前台</b>：<a href="./">網站首頁</a>，所有人都能瀏覽。</li>
         <li><b>館員後台</b>：<a href="admin.html">admin.html</a>，只有完成設定的編輯者能新增、修改、刪除紀錄。</li>
-        <li><b>文字資料</b>（日期、標題、內容、分類…）存在 GitHub 儲存庫 <code>slam0615/moments</code>。</li>
-        <li><b>照片與影片</b>以原檔上傳到 Google 雲端硬碟的共用資料夾「Fallderz 素材」。</li>
+        <li><b>文字資料</b>（日期、標題、內容、分類…）存在網站的 GitHub 儲存庫。</li>
+        <li><b>照片與影片</b>以原檔上傳到擁有者指定的 Google 雲端硬碟共用資料夾。</li>
         <li>按下「儲存並發佈」後，約 <b>1～2 分鐘</b>前台就會更新。</li>
       </ul>
       <p>因此每位編輯者都需要兩把「鑰匙」：</p>
@@ -107,10 +107,10 @@
     </section>
 
     <section class="page owner" id="owner">
-      <h2><span class="chapter">CHAPTER 2</span>擁有者：新增共同編輯者 <span class="who">由 slam0615 操作</span></h2>
+      <h2><span class="chapter">CHAPTER 2</span>擁有者：新增共同編輯者 <span class="who">由擁有者 KONOKI 操作</span></h2>
       <p>先向對方要兩樣資料：<b>GitHub 使用者名稱</b>（不是 email）和 <b>Gmail 信箱</b>。</p>
       <ul class="check">
-        <li><b>GitHub 協作者</b>：開啟 <a href="https://github.com/slam0615/moments/settings/access" target="_blank" rel="noopener">儲存庫 Settings → Collaborators</a> → <b>Add people</b> → 輸入對方的 GitHub 使用者名稱 → 送出邀請。</li>
+        <li><b>GitHub 協作者</b>：開啟 <a data-repo="settings/access" href="#" target="_blank" rel="noopener">儲存庫 Settings → Collaborators</a> → <b>Add people</b> → 輸入對方的 GitHub 使用者名稱 → 送出邀請。</li>
         <li><b>雲端資料夾</b>：在 Google 雲端硬碟對上傳資料夾按右鍵 → <b>共用</b> → 輸入對方的 Gmail → 權限選 <b>編輯者</b> → 傳送。</li>
         <li><b>Google 測試使用者</b>：開啟 <a href="https://console.cloud.google.com/auth/audience" target="_blank" rel="noopener">Google Auth Platform → 目標對象</a> → 測試使用者 → <b>Add users</b> → 輸入對方的 Gmail → 儲存（最多 100 人）。</li>
         <li>把這份手冊的網址和 <b>OAuth 用戶端 ID</b> 傳給對方（如果用戶端 ID 已寫進網站設定，就不用另外提供）。</li>
@@ -129,7 +129,7 @@
 
       <h3>步驟 2　接受 GitHub 邀請</h3>
       <ol>
-        <li>打開 GitHub 寄來的邀請信，或直接前往 <a href="https://github.com/slam0615/moments/invitations" target="_blank" rel="noopener">github.com/slam0615/moments/invitations</a>。</li>
+        <li>打開 GitHub 寄來的邀請信，或直接前往 <a data-repo="invitations" href="#" target="_blank" rel="noopener">儲存庫的邀請頁面</a>。</li>
         <li>按 <b>Accept invitation</b>。</li>
       </ol>
 
@@ -142,7 +142,7 @@
         <li>拉到最下面按 <b>Generate token</b>，複製以 <code>ghp_</code> 開頭的權杖。</li>
       </ol>
       <div class="warn-box">權杖只會顯示一次，請先貼到後台（步驟 5）。權杖等同你的鑰匙，<b>不要傳給任何人</b>，也不要貼在聊天室。</div>
-      <div class="note-box">為什麼不是 Fine-grained token？因為儲存庫屬於擁有者的個人帳號，協作者的 Fine-grained token 無法存取它，所以共同編輯者要用 classic token。</div>
+      <div class="note-box">為什麼不是 Fine-grained token？儲存庫屬於擁有者的<b>個人帳號</b>時，協作者的 Fine-grained token 無法存取它，所以要用 classic token。若之後儲存庫轉移到 GitHub 組織，就能改用權限更小的 Fine-grained token（屆時擁有者會另行通知）。</div>
 
       <h3>步驟 4　確認雲端資料夾已共用給你</h3>
       <p>打開 Google 雲端硬碟 →「與我共用」，應該能看到上傳資料夾，而且你的權限是「編輯者」。看不到的話請擁有者確認第 2 章。</p>
@@ -150,21 +150,20 @@
       <h3>步驟 5　填寫後台的連線設定</h3>
       <ol>
         <li>開啟 <a href="admin.html">館員後台</a>，會自動跳出「連線設定」（之後可按右上角「連線設定」再打開）。</li>
-        <li><b>GitHub 帳號</b>：一律填 <code>slam0615</code>（儲存庫擁有者，<b>不是你自己的帳號</b>）。</li>
-        <li><b>儲存庫名稱</b>：<code>moments</code>；<b>分支</b>：<code>main</code>。</li>
         <li><b>存取權杖</b>：貼上步驟 3 的權杖。</li>
+        <li><b>進階設定</b>（儲存庫位置）會依網站網址自動帶入，<b>不用填寫</b>。</li>
         <li><b>OAuth 用戶端 ID</b>：填擁有者提供的那一組（已自動帶入就不用改）。</li>
         <li><b>上傳資料夾</b>：保持預設即可。</li>
         <li>按「儲存並連線」，出現「GitHub 連線成功」就完成了。</li>
       </ol>
-      <figure class="narrow"><img src="assets/guide/settings.png" alt="連線設定畫面" loading="lazy"><figcaption>連線設定畫面（權杖會以圓點隱藏）</figcaption></figure>
+      <figure class="narrow"><img src="assets/guide/settings.png" alt="連線設定畫面" loading="lazy"><figcaption>連線設定畫面（截圖中的權杖、用戶端 ID 與資料夾已打碼）</figcaption></figure>
 
       <h3>步驟 6　連結 Google 雲端硬碟</h3>
       <ol>
         <li>按後台上方的「<b>連結 Google 雲端硬碟</b>」。</li>
         <li>選擇擁有者共用資料夾給你的那個 Gmail 帳號。</li>
         <li>看到「<b>Google 尚未驗證這個應用程式</b>」時，按「繼續」（這是擁有者自己建立的私人應用程式）。</li>
-        <li>勾選允許存取 Google 雲端硬碟 → 繼續。</li>
+        <li>在權限畫面<b>勾選</b>「查看、編輯、建立及刪除您所有的 Google 雲端硬碟檔案」→ 繼續。<b>沒有勾選的話上傳會失敗</b>，請重新連結並勾選。</li>
         <li>上方出現兩個 ✓ 就代表一切就緒：</li>
       </ol>
       <figure><img src="assets/guide/topbar.png" alt="後台上方狀態列" loading="lazy"><figcaption>「GitHub ✓」與「雲端硬碟 ✓」都出現即設定完成</figcaption></figure>
@@ -253,6 +252,7 @@
         <li>在公用或別人的電腦上使用後，請到「連線設定」按「<b>清除權杖</b>」。</li>
         <li>懷疑權杖外流時，立即到 <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub → Settings → Tokens</a> 刪除，再建立新的。</li>
         <li>網站與上傳的照片影片是<b>公開</b>的，請勿上傳私密或不適合公開的內容。</li>
+        <li>網站的 GitHub 儲存庫也是公開的：每次存檔都會以<b>你的 GitHub 使用者名稱</b>留下紀錄（不會顯示 email）。如果不想公開本名，請使用暱稱註冊 GitHub。</li>
         <li>上傳到資料夾的檔案擁有者是上傳的人，佔用的是<b>上傳者自己</b>的雲端硬碟空間。</li>
       </ul>
     </section>
@@ -262,13 +262,14 @@
       <div class="table-wrap"><table>
         <tr><th>看到的訊息</th><th>原因與解決方式</th></tr>
         <tr><td>權杖無效或已過期</td><td>權杖輸入錯誤或已到期，請重新建立權杖（第 3 章步驟 3）並貼上。</td></tr>
-        <tr><td>找不到儲存庫，或權杖沒有存取權</td><td>①「GitHub 帳號」要填 <code>slam0615</code> ② 尚未接受協作邀請 ③ 權杖沒有勾選 public_repo。</td></tr>
+        <tr><td>找不到儲存庫，或權杖沒有存取權</td><td>① 尚未接受協作邀請 ② 權杖沒有勾選 public_repo ③ 權杖是用其他 GitHub 帳號建立的。</td></tr>
         <tr><td>這個權杖沒有寫入權限</td><td>尚未成為協作者，或權杖權限不足。請確認已接受邀請。</td></tr>
-        <tr><td>找不到分支</td><td>「分支」請填 <code>main</code>。</td></tr>
+        <tr><td>找不到分支</td><td>打開「連線設定 → 進階設定」，分支請填 <code>main</code>。</td></tr>
         <tr><td>access_denied／存取遭拒</td><td>你的 Gmail 不在 Google 測試使用者名單，請擁有者加入（第 2 章）。</td></tr>
-        <tr><td>origin_mismatch</td><td>擁有者的 OAuth 用戶端沒有加入網站網址，請通知擁有者。</td></tr>
+        <tr><td>origin_mismatch／redirect_uri_mismatch</td><td>擁有者的 OAuth 用戶端沒有加入網站網址，請通知擁有者。</td></tr>
         <tr><td>找不到上傳資料夾</td><td>登入的 Google 帳號沒有該資料夾的權限，或資料夾網址錯誤。請確認用的是被共用的 Gmail。</td></tr>
         <tr><td>沒有權限把檔案放進資料夾</td><td>你的資料夾權限是「檢視者」，請擁有者改成「編輯者」。</td></tr>
+        <tr><td>雲端硬碟權限不足</td><td>連結 Google 時沒有勾選雲端硬碟權限。再按一次「連結 Google 雲端硬碟」，在權限畫面勾選後繼續。</td></tr>
         <tr><td>已取消 Google 授權</td><td>授權視窗被關掉了，再按一次「儲存並發佈」或「連結 Google 雲端硬碟」。若視窗沒跳出，請允許瀏覽器的彈出式視窗。</td></tr>
         <tr><td>前台沒有更新</td><td>等 1～2 分鐘，再按 <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>（Mac：<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>）重新整理；手機請關掉分頁重開。</td></tr>
         <tr><td>照片顯示不出來</td><td>剛上傳的檔案需要幾分鐘處理；若是手動貼的雲端連結，請把共用設定改成「知道連結的任何人」。</td></tr>
@@ -278,9 +279,9 @@
     </section>
 
     <section class="page owner" id="remove">
-      <h2><span class="chapter">CHAPTER 10</span>擁有者：移除共同編輯者 <span class="who">由 slam0615 操作</span></h2>
+      <h2><span class="chapter">CHAPTER 10</span>擁有者：移除共同編輯者 <span class="who">由擁有者 KONOKI 操作</span></h2>
       <ol>
-        <li><a href="https://github.com/slam0615/moments/settings/access" target="_blank" rel="noopener">儲存庫 Settings → Collaborators</a> → 對方旁的 <b>Remove</b>。對方的權杖會立即無法寫入。</li>
+        <li><a data-repo="settings/access" href="#" target="_blank" rel="noopener">儲存庫 Settings → Collaborators</a> → 對方旁的 <b>Remove</b>。對方的權杖會立即無法寫入。</li>
         <li>雲端資料夾 → 共用 → 把對方改成「移除存取權」。</li>
         <li>（可選）<a href="https://console.cloud.google.com/auth/audience" target="_blank" rel="noopener">Google 測試使用者</a>中刪除對方。</li>
       </ol>
@@ -296,5 +297,17 @@
     </div>
     <p><a href="./">回到 Fallderz Moments</a> · <a href="admin.html">館員後台</a></p>
   </footer>
+  <script>
+    // 依網站網址產生儲存庫連結（帳號名稱改變時不用修改手冊）
+    (() => {
+      const m = location.hostname.match(/^([\w-]+)\.github\.io$/i);
+      const seg = location.pathname.split('/').filter(Boolean)[0];
+      const base = m ? `https://github.com/${m[1]}/${seg && !seg.endsWith('.html') ? seg : location.hostname}` : null;
+      document.querySelectorAll('[data-repo]').forEach((a) => {
+        if (base) a.href = `${base}/${a.dataset.repo}`;
+        else a.removeAttribute('href');
+      });
+    })();
+  </script>
 </body>
 </html>

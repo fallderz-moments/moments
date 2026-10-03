@@ -123,3 +123,7 @@ dialog.settings h2 { margin: 0; font-weight: 400; color: var(--teal-ink); }
   .media-item .preview { width: 72px; height: 56px; }
   .media-item .tools { grid-column: 1 / -1; max-width: none; }
 }
+
+details#advanced summary { cursor: pointer; color: var(--ink-soft); font-size: .88rem; }
+details#advanced[open] summary { margin-bottom: 8px; }
+.field[readonly] { background: var(--ivory); color: var(--ink-soft); }

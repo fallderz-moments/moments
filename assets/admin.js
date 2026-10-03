@@ -1,7 +1,7 @@
 import {
   START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
   mediaThumb, parseMediaUrl, driveId, isVideoPath, isBirthday, fetchMoments, storageGet, storageSet, MEDIA_LABELS,
-} from './common.js?v=202610031452';
+} from './common.js?v=202610031506';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';
@@ -12,7 +12,7 @@ const DEFAULT_CLIENT_ID = '';
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive';
 
 const state = {
-  cfg: { ...guessConfig(), ...storageGet(CFG_KEY, {}) },
+  cfg: { ...guessConfig(), ...storageGet(CFG_KEY, {}), ...siteRepo() },
   connected: false,
   moments: [],
   sha: null,
@@ -31,13 +31,18 @@ const drive = {
   ...storageGet(DRIVE_TOKEN_KEY, {}, 'sessionStorage'),
 };
 
-function guessConfig() {
-  const host = location.hostname;
-  const m = host.match(/^([\w-]+)\.github\.io$/i);
+/** 架在 GitHub Pages 時，從網址自動判斷儲存庫（帳號改名或轉移後也不用改程式） */
+function siteRepo() {
+  const m = location.hostname.match(/^([\w-]+)\.github\.io$/i);
+  if (!m) return {};
   const seg = location.pathname.split('/').filter(Boolean)[0];
+  return { owner: m[1], repo: seg && !seg.endsWith('.html') ? seg : location.hostname };
+}
+
+function guessConfig() {
   return {
-    owner: m ? m[1] : 'slam0615',
-    repo: m ? (seg && !seg.endsWith('.html') ? seg : host) : 'moments',
+    owner: '',
+    repo: 'moments',
     branch: 'main',
     token: '',
     clientId: DEFAULT_CLIENT_ID,
@@ -245,6 +250,17 @@ function ensureDriveToken() {
   });
 }
 
+/** Google 授權失效或權限不足時清掉授權，下次會重新跳出同意畫面 */
+function driveAuthError(status, message) {
+  if (status === 401 || (status === 403 && /insufficient/i.test(message || ''))) {
+    drive.token = null;
+    storageSet(DRIVE_TOKEN_KEY, {}, 'sessionStorage');
+    updateDriveConn();
+    if (status === 403) return '雲端硬碟權限不足：請按「連結 Google 雲端硬碟」重新授權，並勾選雲端硬碟權限';
+  }
+  return message;
+}
+
 async function gd(url, { method = 'GET', body } = {}) {
   const res = await fetch(url, {
     method,
@@ -253,8 +269,7 @@ async function gd(url, { method = 'GET', body } = {}) {
   });
   if (!res.ok) {
     const info = await res.json().catch(() => ({}));
-    if (res.status === 401) { drive.token = null; updateDriveConn(); }
-    const err = new Error(info.error?.message || res.statusText);
+    const err = new Error(driveAuthError(res.status, info.error?.message || res.statusText));
     err.status = res.status;
     throw err;
   }
@@ -299,7 +314,7 @@ async function driveUpload(file, name, onProgress) {
   });
   if (!init.ok) {
     const info = await init.json().catch(() => ({}));
-    throw new Error(info.error?.message || `無法建立上傳（${init.status}）`);
+    throw new Error(driveAuthError(init.status, info.error?.message || `無法建立上傳（${init.status}）`));
   }
   const uploadUrl = init.headers.get('Location');
   if (!uploadUrl) throw new Error('無法取得上傳網址');
@@ -325,8 +340,7 @@ async function driveUpload(file, name, onProgress) {
 /* ---------- 連線狀態與設定 ---------- */
 function updateConn() {
   const el = $('#conn');
-  const { owner, repo, branch } = state.cfg;
-  el.textContent = state.connected ? `GitHub ✓ ${owner}/${repo} · ${branch}` : 'GitHub 未連線（唯讀）';
+  el.textContent = state.connected ? 'GitHub ✓ 已連線' : 'GitHub 未連線（唯讀）';
   el.classList.toggle('ok', state.connected);
 }
 
@@ -341,6 +355,10 @@ function updateDriveConn() {
 function openSettings(msg = '') {
   const form = $('#settings-form');
   for (const k of ['owner', 'repo', 'branch', 'token', 'clientId']) form.elements[k].value = state.cfg[k] || '';
+  // 網址已能判斷儲存庫時不需要手動填寫；否則（例如本機測試）展開進階設定
+  const auto = !!siteRepo().owner;
+  form.elements.owner.readOnly = form.elements.repo.readOnly = auto;
+  $('#advanced').open = !auto || !state.cfg.owner;
   form.elements.folder.value = state.cfg.folderId || '';
   const m = $('#settings-msg');
   m.textContent = msg;
@@ -357,6 +375,7 @@ async function onSettingsSubmit(e) {
   state.cfg = {
     ...Object.fromEntries(['owner', 'repo', 'branch', 'token', 'clientId'].map((k) => [k, form.elements[k].value.trim()])),
     folderId: driveId(folderRaw) || folderRaw || DEFAULT_FOLDER,
+    ...siteRepo(),
   };
   storageSet(CFG_KEY, state.cfg);
   if (state.cfg.clientId !== prevClient) { drive.token = null; initDrive(); }
@@ -365,7 +384,7 @@ async function onSettingsSubmit(e) {
   msg.textContent = '連線中…';
   try {
     const info = await gh('');
-    if (info.permissions && !info.permissions.push) throw new Error('這個權杖沒有寫入權限（Contents: Read and write）');
+    if (info.permissions && !info.permissions.push) throw new Error('這個權杖沒有寫入權限：請確認已接受協作邀請，且權杖已勾選 public_repo（擁有者的 Fine-grained token 需將 Contents 設為 Read and write）');
     await connect();
     msg.classList.add('ok');
     msg.textContent = `GitHub 連線成功，共 ${state.moments.length} 則紀錄`;

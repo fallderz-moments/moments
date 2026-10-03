@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:wght@400;700&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610031452">
-  <link rel="stylesheet" href="assets/admin.css?v=202610031452">
+  <link rel="stylesheet" href="assets/style.css?v=202610031506">
+  <link rel="stylesheet" href="assets/admin.css?v=202610031506">
 </head>
 <body class="admin">
   <header class="admin-bar">
@@ -103,19 +103,22 @@
 
       <fieldset>
         <legend>① GitHub（儲存文字資料）</legend>
-        <div class="row">
-          <label class="col grow">GitHub 帳號<input class="field" name="owner" required></label>
-          <label class="col grow">儲存庫名稱<input class="field" name="repo" required></label>
-          <label class="col grow">分支<input class="field" name="branch" required></label>
-        </div>
         <label>存取權杖（Personal access token）
-          <input class="field" name="token" type="password" required placeholder="github_pat_…">
+          <input class="field" name="token" type="password" required placeholder="ghp_… 或 github_pat_…" autocomplete="off">
         </label>
         <p class="hint">
           擁有者：<a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">建立 Fine-grained token</a>（只選這個儲存庫，Contents 設為 Read and write）。<br>
-          共同編輯者：<a href="https://github.com/settings/tokens/new?scopes=public_repo&amp;description=Fallderz%20Moments" target="_blank" rel="noopener">建立 classic token</a>（勾選 public_repo），GitHub 帳號一律填 <b>slam0615</b>。
-          詳見 <a href="guide.html" target="_blank" rel="noopener">共同編輯者手冊</a>。
+          共同編輯者：<a href="https://github.com/settings/tokens/new?scopes=public_repo&amp;description=Fallderz%20Moments" target="_blank" rel="noopener">建立 classic token</a>（勾選 public_repo）。
+          詳見 <a href="guide.html" target="_blank" rel="noopener">使用手冊</a>。
         </p>
+        <details id="advanced">
+          <summary>進階設定（儲存庫位置，通常會自動帶入）</summary>
+          <div class="row">
+            <label class="col grow">GitHub 帳號<input class="field" name="owner" required></label>
+            <label class="col grow">儲存庫名稱<input class="field" name="repo" required></label>
+            <label class="col grow">分支<input class="field" name="branch" required></label>
+          </div>
+        </details>
       </fieldset>
 
       <fieldset>
@@ -142,6 +145,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="assets/admin.js?v=202610031452"></script>
+  <script type="module" src="assets/admin.js?v=202610031506"></script>
 </body>
 </html>

@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet,
-} from './common.js?v=202610031452';
+} from './common.js?v=202610031506';
 
 const $ = (sel) => document.querySelector(sel);
 
