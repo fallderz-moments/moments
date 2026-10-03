@@ -6,7 +6,7 @@ export const TIME_ZONE = 'Asia/Taipei';
 export const NOTE_TINTS = ['mint', 'blush', 'coral', 'sand', 'ivory', 'teal'];
 
 /** 預設分類標籤（依顯示順序） */
-export const PRESET_TAGS = ['YouTube', 'Berriz', 'Universe', '花絮', '綜藝', 'Bubble', 'Instagram', 'FanClub', 'LIVE', 'FanSign'];
+export const PRESET_TAGS = ['YouTube', 'Berriz', 'Universe', '花絮', '綜藝', 'Bubble', 'Instagram', 'X(twitter)', 'FanClub', 'LIVE', 'FanSign', '其他'];
 
 /** 貼圖數量（assets/stickers/dog-01.webp …、chipmunk-01.webp …） */
 export const STICKERS = { dog: 44, chipmunk: 60 };

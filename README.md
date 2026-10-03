@@ -19,7 +19,7 @@
 
 ## 分類標籤
 
-預設分類：YouTube、Berriz、Universe、花絮、綜藝、Bubble、Instagram、FanClub、LIVE、FanSign。
+預設分類：YouTube、Berriz、Universe、花絮、綜藝、Bubble、Instagram、X(twitter)、FanClub、LIVE、FanSign、其他。
 後台點一下即可選取，也能另外輸入自訂標籤。預設分類可在 `assets/common.js` 的 `PRESET_TAGS` 修改。
 
 ## 上線步驟（GitHub Pages）
