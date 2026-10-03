@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet,
-} from './common.js';
+} from './common.js?v=202610031428';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -69,9 +69,15 @@ function noteHtml(m, index) {
   const bday = isBirthday(m.date);
   const cover = momentCover(m);
   const count = (m.media || []).length;
-  const thumb = cover.url
-    ? `<img src="${escapeHtml(cover.url)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'placeholder',textContent:'🖼'}))">`
-    : `<span class="placeholder">${cover.item ? mediaIcon(cover.item.type) + ' ' : ''}${escapeHtml(excerpt(m.content) || m.title || '無標題')}</span>`;
+  let thumb;
+  if (cover.url) {
+    thumb = `<img src="${escapeHtml(cover.url)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'placeholder',textContent:'🖼'}))">`;
+  } else if (cover.item?.type === 'video' && cover.item.src) {
+    // 影片沒有縮圖時，直接顯示影片的第一個畫面
+    thumb = `<video src="${escapeHtml(cover.item.src)}#t=0.5" muted playsinline preload="metadata" tabindex="-1"></video><span class="badge play">▶</span>`;
+  } else {
+    thumb = `<span class="placeholder"><span>${cover.item ? mediaIcon(cover.item.type) + ' ' : ''}${escapeHtml(excerpt(m.content) || m.title || '無標題')}</span></span>`;
+  }
   return `
     <button class="note${bday ? ' birthday' : ''}" type="button" data-index="${index}" data-tint="${tint}" style="--tilt:${tilt}deg">
       ${bday ? `<span class="bday-ribbon">HAPPY BIRTHDAY</span>

@@ -57,6 +57,26 @@
 > 為了把檔案放進你既有的資料夾，網站會要求雲端硬碟的存取權限。授權只存在你目前的瀏覽器分頁，約 1 小時後失效，
 > 下次上傳時會自動再跳出授權視窗。其他人沒有你的 Google 帳號與 GitHub 權杖，就無法編修。
 
+## 讓其他人一起上傳
+
+每位上傳者都需要「GitHub 寫入權限」（儲存文字）與「雲端資料夾的編輯權限」（儲存照片影片）。由你（擁有者）做 3 件事，對方做 2 件事：
+
+**你要做的**
+1. **邀請對方加入 GitHub 儲存庫**：儲存庫 **Settings → Collaborators → Add people**，輸入對方的 GitHub 帳號（對方需先註冊 GitHub），對方到信箱接受邀請。
+2. **分享雲端資料夾**：在 Google 雲端硬碟對上傳資料夾按「共用」，加入對方的 Gmail，權限選 **編輯者**。
+3. **加入 Google 測試使用者**：<https://console.cloud.google.com/auth/audience> → 測試使用者 → Add users，加入對方的 Gmail（最多 100 人）。
+
+**對方要做的**
+1. **建立自己的 GitHub 權杖**：因為儲存庫屬於你的個人帳號，協作者要用 classic token：
+   <https://github.com/settings/tokens/new> → Note 填 `Fallderz Moments`、Expiration 建議選 90 天 → 勾選 **public_repo** → Generate token。
+2. 打開網站 `admin.html` →「連線設定」：GitHub 帳號填 **slam0615**（儲存庫擁有者，不是自己的帳號）、儲存庫 `moments`、分支 `main`，貼上自己的權杖；
+   OAuth 用戶端 ID 填你提供的同一組（若已寫進 `assets/admin.js` 的 `DEFAULT_CLIENT_ID` 就會自動帶入），再按「連結 Google 雲端硬碟」用自己的 Gmail 登入。
+
+> - 不要把你自己的權杖給別人：每個人用自己的權杖，GitHub 會記錄是誰新增或修改了哪一則，也能隨時單獨停用。
+> - 停止某人的權限：在 Collaborators 移除對方、取消雲端資料夾共用即可。
+> - 對方上傳到資料夾的檔案，擁有者是對方，佔用的是**對方**的雲端硬碟空間。
+> - 多人同時存檔時，後台會自動重新讀取最新資料再合併，不會互相覆蓋。
+
 ## 常見問題
 
 **存檔時出現「Branch main not found」／連線時顯示「找不到分支」**

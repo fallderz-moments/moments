@@ -1,12 +1,14 @@
 import {
   START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
   mediaThumb, parseMediaUrl, driveId, isVideoPath, isBirthday, fetchMoments, storageGet, storageSet, MEDIA_LABELS,
-} from './common.js';
+} from './common.js?v=202610031428';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';
 const DRIVE_TOKEN_KEY = 'fm.driveToken';
 const DEFAULT_FOLDER = '1FUYYyQomHMSPIXnTlBSWNqTbP2MAtUUp';
+// 填入 Google OAuth 用戶端 ID 後，每位上傳者就不必自己輸入（用戶端 ID 不是密碼，可以公開）
+const DEFAULT_CLIENT_ID = '';
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive';
 
 const state = {
@@ -38,7 +40,7 @@ function guessConfig() {
     repo: m ? (seg && !seg.endsWith('.html') ? seg : host) : 'moments',
     branch: 'main',
     token: '',
-    clientId: '',
+    clientId: DEFAULT_CLIENT_ID,
     folderId: DEFAULT_FOLDER,
   };
 }

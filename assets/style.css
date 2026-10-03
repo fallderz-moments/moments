@@ -40,15 +40,18 @@ body {
   font-family: var(--font);
   color: var(--ink);
   background-color: var(--paper);
+  /* 溫暖的檯燈光暈 */
   background-image:
-    linear-gradient(90deg, rgba(214, 203, 191, .18) 1px, transparent 1px),
-    linear-gradient(rgba(214, 203, 191, .18) 1px, transparent 1px);
-  background-size: 28px 28px;
+    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(247, 222, 178, .45), transparent 70%),
+    radial-gradient(ellipse 40% 30% at 100% 100%, rgba(242, 195, 185, .18), transparent 70%),
+    url("bookshelf-faint.svg");  /* 手繪書櫃背景 */
+  background-size: auto, auto, 520px 300px;
   line-height: 1.75;
   letter-spacing: .02em;
   -webkit-font-smoothing: antialiased;
 }
 img, video, iframe { max-width: 100%; display: block; }
+
 a { color: var(--teal-deep); }
 button, input, select, textarea { font: inherit; color: inherit; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -87,7 +90,15 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .field:focus { border-color: var(--teal); }
 
 /* ---------- 頁首：圖書館招牌 + 書架 ---------- */
-.site-header { padding: 34px 16px 0; text-align: center; }
+.site-header { position: relative; padding: 34px 16px 0; text-align: center; isolation: isolate; }
+.site-header::before { /* 頁首後方較清楚的書櫃，往下漸漸淡出 */
+  content: ''; position: absolute; inset: 0 0 -20px; z-index: -1; pointer-events: none;
+  background: url("bookshelf-bg.svg") repeat-x 50% 4px / 520px 300px;
+  opacity: .5;
+  -webkit-mask-image: linear-gradient(#000 20%, transparent 95%);
+  mask-image: linear-gradient(#000 20%, transparent 95%);
+}
+.brand h1, .tagline { text-shadow: 0 0 12px var(--paper), 0 0 4px var(--paper); }
 .plaque {
   display: inline-block; margin: 0; font-family: var(--font-pixel); font-size: .78rem; letter-spacing: .25em;
   color: var(--teal-ink); background: var(--mint); padding: .1em 1em; border-radius: 3px;
@@ -108,11 +119,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
   box-shadow: 0 6px 0 var(--wood-deep);
   padding: 0 16px;
 }
-.shelf .sprite { height: 76px; }
+.shelf .sprite { flex: 0 0 auto; width: auto; height: 76px; }
 .shelf .sprite.books { height: 40px; }
 .shelf .sprite.flip { transform: scaleX(-1); }
 .shelf .dog { margin-right: auto; }
-.shelf .chipmunk { margin-left: auto; height: 64px; }
+.shelf .chipmunk { margin-left: auto; height: 70px; }
 .today-stamp {
   display: inline-flex; flex-direction: column; align-items: center; line-height: 1.1; margin-bottom: 8px;
   border: 2px solid var(--coral-deep); color: var(--coral-deep); border-radius: 6px; padding: 4px 10px;
@@ -216,7 +227,8 @@ main { max-width: 1200px; margin: 0 auto; padding: 28px 16px 60px; min-height: 5
 .note-thumb {
   display: block; position: relative; aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,.55);
 }
-.note-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.note-thumb img, .note-thumb video { width: 100%; height: 100%; object-fit: cover; }
+.note-thumb .placeholder span { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .note-thumb .placeholder {
   width: 100%; height: 100%; display: grid; place-items: center; padding: 12px; text-align: center;
   color: var(--teal-deep); font-size: .95rem; line-height: 28px; overflow: hidden;
@@ -226,6 +238,8 @@ main { max-width: 1200px; margin: 0 auto; padding: 28px 16px 60px; min-height: 5
   position: absolute; right: 8px; bottom: 8px; background: rgba(62, 74, 72, .75); color: var(--white);
   font-size: .72rem; padding: .05em .55em; border-radius: 999px;
 }
+.badge.play { right: auto; bottom: auto; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: .95rem; padding: .25em .75em; }
+.note-thumb video { pointer-events: none; background: var(--ivory); }
 .note-title { display: block; margin: 0; font-size: 1rem; font-weight: 600; line-height: 1.5; color: var(--ink); overflow-wrap: anywhere; }
 .note-tags { display: flex; flex-wrap: wrap; gap: 4px; }
 .note-tags .tag { background: rgba(255, 255, 255, .72); font-size: .72rem; }
@@ -383,7 +397,7 @@ dialog.lightbox .icon-btn { position: absolute; top: 14px; right: 14px; }
   .site-header { padding-top: 24px; }
   .shelf { height: 70px; gap: 6px; }
   .shelf .sprite { height: 56px; }
-  .shelf .chipmunk { height: 48px; }
+  .shelf .chipmunk { height: 52px; }
   .shelf .sprite.books { height: 28px; }
   .shelf .sprite.books.flip { display: none; }
   .notes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; }
