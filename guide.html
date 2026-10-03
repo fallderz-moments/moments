@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>共同編輯者手冊 · Fallderz Moments</title>
+  <link rel="icon" href="assets/pixel/chipmunk.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
+  <link rel="stylesheet" href="assets/style.css?v=202610031452">
+  <style>
+    .guide { max-width: 860px; margin: 0 auto; padding: 0 16px 60px; }
+    .guide-hero { text-align: center; padding: 34px 0 10px; }
+    .guide-hero h1 { font-family: var(--font-title); font-weight: 700; color: var(--teal-ink); font-size: clamp(1.7rem, 5vw, 2.5rem); margin: .3em 0 .1em; line-height: 1.25; }
+    .guide-hero h1 em { color: var(--coral-deep); font-weight: 400; }
+    .guide-hero p { color: var(--ink-soft); margin: 0; }
+    .guide-hero .pair { display: flex; justify-content: center; align-items: flex-end; gap: 18px; margin-top: 14px; }
+    .guide-hero .pair img { height: 64px; }
+    .page {
+      background: var(--card); border: 1.5px solid var(--sand); border-left: 8px solid var(--teal); border-radius: 12px;
+      padding: 22px 26px; margin: 22px 0; box-shadow: 0 3px 0 var(--sand);
+    }
+    .page.owner { border-left-color: var(--coral-deep); }
+    .page h2 { font-weight: 600; color: var(--teal-ink); margin: 0 0 6px; font-size: 1.35rem; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .page.owner h2 { color: #8f4e43; }
+    .chapter { font-family: var(--font-pixel); font-size: .78rem; letter-spacing: .15em; color: var(--ink-soft); }
+    .page h3 { font-size: 1.05rem; font-weight: 600; margin: 20px 0 6px; color: var(--ink); }
+    .page p, .page li { line-height: 1.95; overflow-wrap: anywhere; }
+    .page a { word-break: break-all; }
+    .page ol, .page ul { padding-left: 1.3em; margin: 6px 0; }
+    .page figure { margin: 14px 0; }
+    .page figure img { width: 100%; height: auto; border: 1.5px solid var(--line); border-radius: 10px; background: var(--white); }
+    .page figure.narrow img { max-width: 460px; display: block; margin: 0 auto; }
+    .page figcaption { font-size: .82rem; color: var(--ink-soft); text-align: center; margin-top: 4px; }
+    .who { display: inline-block; font-size: .78rem; padding: 0 .7em; border-radius: 4px; background: var(--mint); color: var(--teal-ink); }
+    .page.owner .who { background: var(--blush); color: #8f4e43; }
+    .note-box { background: #FBF6E9; border: 1.5px dashed var(--gold); border-radius: 10px; padding: 10px 14px; margin: 12px 0; font-size: .95rem; }
+    .warn-box { background: var(--blush); border: 1.5px dashed var(--coral-deep); border-radius: 10px; padding: 10px 14px; margin: 12px 0; font-size: .95rem; }
+    kbd, code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .88em; background: var(--ivory); border: 1px solid var(--line); border-radius: 4px; padding: 0 .35em; overflow-wrap: anywhere; }
+    .toc { columns: 2; column-gap: 28px; }
+    .toc li { break-inside: avoid; }
+    table { width: 100%; border-collapse: collapse; font-size: .93rem; }
+    th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+    th { background: var(--mint); color: var(--teal-ink); font-weight: 600; }
+    td:first-child { white-space: nowrap; font-weight: 600; }
+    .table-wrap { overflow-x: auto; }
+    .check { list-style: none; padding-left: 0 !important; }
+    .check li::before { content: '☐ '; color: var(--teal-deep); }
+    @media (max-width: 640px) {
+      .page { padding: 16px; }
+      .toc { columns: 1; }
+      td:first-child { white-space: normal; }
+    }
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; break-inside: avoid-page; }
+    }
+  </style>
+</head>
+<body>
+  <main class="guide">
+    <header class="guide-hero">
+      <p class="plaque">LIBRARIAN HANDBOOK</p>
+      <h1>Fallderz <em>Moments</em><br>共同編輯者手冊</h1>
+      <p>狗狗鼠鼠觀察日誌 ‧ 館員後台使用說明</p>
+      <div class="pair" aria-hidden="true">
+        <img class="sprite" src="assets/pixel/dog.svg" alt="">
+        <img class="sprite" src="assets/pixel/books.svg" alt="" style="height:32px">
+        <img class="sprite" src="assets/pixel/chipmunk.svg" alt="">
+      </div>
+    </header>
+
+    <section class="page">
+      <h2><span class="chapter">CONTENTS</span>目錄</h2>
+      <ol class="toc">
+        <li><a href="#overview">網站是怎麼運作的</a></li>
+        <li><a href="#owner">擁有者：新增共同編輯者</a></li>
+        <li><a href="#setup">共同編輯者：第一次設定</a></li>
+        <li><a href="#create">新增一則紀錄</a></li>
+        <li><a href="#edit">編輯與刪除</a></li>
+        <li><a href="#rules">分類、生日與日期規則</a></li>
+        <li><a href="#browse">前台瀏覽方式</a></li>
+        <li><a href="#safety">安全守則</a></li>
+        <li><a href="#faq">常見問題與錯誤訊息</a></li>
+        <li><a href="#remove">擁有者：移除共同編輯者</a></li>
+      </ol>
+    </section>
+
+    <section class="page" id="overview">
+      <h2><span class="chapter">CHAPTER 1</span>網站是怎麼運作的</h2>
+      <ul>
+        <li><b>前台</b>：<a href="./">網站首頁</a>，所有人都能瀏覽。</li>
+        <li><b>館員後台</b>：<a href="admin.html">admin.html</a>，只有完成設定的編輯者能新增、修改、刪除紀錄。</li>
+        <li><b>文字資料</b>（日期、標題、內容、分類…）存在 GitHub 儲存庫 <code>slam0615/moments</code>。</li>
+        <li><b>照片與影片</b>以原檔上傳到 Google 雲端硬碟的共用資料夾「Fallderz 素材」。</li>
+        <li>按下「儲存並發佈」後，約 <b>1～2 分鐘</b>前台就會更新。</li>
+      </ul>
+      <p>因此每位編輯者都需要兩把「鑰匙」：</p>
+      <div class="table-wrap"><table>
+        <tr><th>鑰匙</th><th>用途</th><th>怎麼取得</th></tr>
+        <tr><td>GitHub 權杖</td><td>寫入文字資料</td><td>擁有者邀請你成為協作者 → 你自己建立權杖（第 3 章）</td></tr>
+        <tr><td>Google 授權</td><td>上傳照片與影片</td><td>擁有者共用資料夾並把你加為測試使用者 → 你用自己的 Gmail 登入（第 3 章）</td></tr>
+      </table></div>
+      <div class="note-box">共同編輯者擁有和擁有者相同的後台權限：可以新增、編輯、刪除所有紀錄，也能匯出與匯入備份。</div>
+    </section>
+
+    <section class="page owner" id="owner">
+      <h2><span class="chapter">CHAPTER 2</span>擁有者：新增共同編輯者 <span class="who">由 slam0615 操作</span></h2>
+      <p>先向對方要兩樣資料：<b>GitHub 使用者名稱</b>（不是 email）和 <b>Gmail 信箱</b>。</p>
+      <ul class="check">
+        <li><b>GitHub 協作者</b>：開啟 <a href="https://github.com/slam0615/moments/settings/access" target="_blank" rel="noopener">儲存庫 Settings → Collaborators</a> → <b>Add people</b> → 輸入對方的 GitHub 使用者名稱 → 送出邀請。</li>
+        <li><b>雲端資料夾</b>：在 Google 雲端硬碟對上傳資料夾按右鍵 → <b>共用</b> → 輸入對方的 Gmail → 權限選 <b>編輯者</b> → 傳送。</li>
+        <li><b>Google 測試使用者</b>：開啟 <a href="https://console.cloud.google.com/auth/audience" target="_blank" rel="noopener">Google Auth Platform → 目標對象</a> → 測試使用者 → <b>Add users</b> → 輸入對方的 Gmail → 儲存（最多 100 人）。</li>
+        <li>把這份手冊的網址和 <b>OAuth 用戶端 ID</b> 傳給對方（如果用戶端 ID 已寫進網站設定，就不用另外提供）。</li>
+      </ul>
+    </section>
+
+    <section class="page" id="setup">
+      <h2><span class="chapter">CHAPTER 3</span>共同編輯者：第一次設定 <span class="who">約 10 分鐘</span></h2>
+      <p>建議用<b>電腦</b>完成第一次設定；之後用手機也能上傳。</p>
+
+      <h3>步驟 1　準備 GitHub 帳號</h3>
+      <ol>
+        <li>沒有帳號的話，到 <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a> 免費註冊。</li>
+        <li>把你的 <b>GitHub 使用者名稱</b>和 <b>Gmail</b> 告訴擁有者，等擁有者完成第 2 章。</li>
+      </ol>
+
+      <h3>步驟 2　接受 GitHub 邀請</h3>
+      <ol>
+        <li>打開 GitHub 寄來的邀請信，或直接前往 <a href="https://github.com/slam0615/moments/invitations" target="_blank" rel="noopener">github.com/slam0615/moments/invitations</a>。</li>
+        <li>按 <b>Accept invitation</b>。</li>
+      </ol>
+
+      <h3>步驟 3　建立你自己的 GitHub 權杖</h3>
+      <ol>
+        <li>開啟 <a href="https://github.com/settings/tokens/new?scopes=public_repo&amp;description=Fallderz%20Moments" target="_blank" rel="noopener">建立 classic token</a>（連結已預先勾選好權限）。</li>
+        <li><b>Note</b>：<code>Fallderz Moments</code>。</li>
+        <li><b>Expiration</b>：建議選 <b>90 days</b>，到期再建立新的。</li>
+        <li><b>Select scopes</b>：確認只勾選 <b>public_repo</b>。</li>
+        <li>拉到最下面按 <b>Generate token</b>，複製以 <code>ghp_</code> 開頭的權杖。</li>
+      </ol>
+      <div class="warn-box">權杖只會顯示一次，請先貼到後台（步驟 5）。權杖等同你的鑰匙，<b>不要傳給任何人</b>，也不要貼在聊天室。</div>
+      <div class="note-box">為什麼不是 Fine-grained token？因為儲存庫屬於擁有者的個人帳號，協作者的 Fine-grained token 無法存取它，所以共同編輯者要用 classic token。</div>
+
+      <h3>步驟 4　確認雲端資料夾已共用給你</h3>
+      <p>打開 Google 雲端硬碟 →「與我共用」，應該能看到上傳資料夾，而且你的權限是「編輯者」。看不到的話請擁有者確認第 2 章。</p>
+
+      <h3>步驟 5　填寫後台的連線設定</h3>
+      <ol>
+        <li>開啟 <a href="admin.html">館員後台</a>，會自動跳出「連線設定」（之後可按右上角「連線設定」再打開）。</li>
+        <li><b>GitHub 帳號</b>：一律填 <code>slam0615</code>（儲存庫擁有者，<b>不是你自己的帳號</b>）。</li>
+        <li><b>儲存庫名稱</b>：<code>moments</code>；<b>分支</b>：<code>main</code>。</li>
+        <li><b>存取權杖</b>：貼上步驟 3 的權杖。</li>
+        <li><b>OAuth 用戶端 ID</b>：填擁有者提供的那一組（已自動帶入就不用改）。</li>
+        <li><b>上傳資料夾</b>：保持預設即可。</li>
+        <li>按「儲存並連線」，出現「GitHub 連線成功」就完成了。</li>
+      </ol>
+      <figure class="narrow"><img src="assets/guide/settings.png" alt="連線設定畫面" loading="lazy"><figcaption>連線設定畫面（權杖會以圓點隱藏）</figcaption></figure>
+
+      <h3>步驟 6　連結 Google 雲端硬碟</h3>
+      <ol>
+        <li>按後台上方的「<b>連結 Google 雲端硬碟</b>」。</li>
+        <li>選擇擁有者共用資料夾給你的那個 Gmail 帳號。</li>
+        <li>看到「<b>Google 尚未驗證這個應用程式</b>」時，按「繼續」（這是擁有者自己建立的私人應用程式）。</li>
+        <li>勾選允許存取 Google 雲端硬碟 → 繼續。</li>
+        <li>上方出現兩個 ✓ 就代表一切就緒：</li>
+      </ol>
+      <figure><img src="assets/guide/topbar.png" alt="後台上方狀態列" loading="lazy"><figcaption>「GitHub ✓」與「雲端硬碟 ✓」都出現即設定完成</figcaption></figure>
+      <div class="note-box">Google 授權約 <b>1 小時</b>後失效，下次上傳時會自動跳出授權視窗，再按一次允許即可。GitHub 權杖則會保存在這台裝置的瀏覽器裡，換裝置要重新填寫。</div>
+    </section>
+
+    <section class="page" id="create">
+      <h2><span class="chapter">CHAPTER 4</span>新增一則紀錄</h2>
+      <p>按左上角「<b>＋ 新增紀錄</b>」，依序填寫：</p>
+      <figure><img src="assets/guide/editor-full.png" alt="新增紀錄畫面" loading="lazy"><figcaption>新增紀錄的編輯畫面</figcaption></figure>
+      <div class="table-wrap"><table>
+        <tr><th>欄位</th><th>說明</th></tr>
+        <tr><td>日期（必填）</td><td>可選 2021/12/01 到<b>今天</b>；過了午夜就能選隔天。日期是 9/1 或 9/24 時會顯示 🎂 提示。</td></tr>
+        <tr><td>標題</td><td>這一天的小標題，最多 80 字。</td></tr>
+        <tr><td>資訊來源網址（選填）</td><td>原始貼文、文章、直播頁面的網址，前台會顯示在內容最下方。</td></tr>
+        <tr><td>內容</td><td>可換行；文字裡的網址會自動變成連結。</td></tr>
+        <tr><td>分類標籤</td><td>點選預設分類（可複選）；其他標籤在下方輸入後按 Enter 或逗號。</td></tr>
+        <tr><td>照片／影片</td><td>點擊或拖曳檔案到虛線框，<b>可一次選多張照片、多支影片</b>。檔案會在按「儲存並發佈」時才上傳。</td></tr>
+        <tr><td>加入連結</td><td>貼上 YouTube、X、Instagram 或雲端硬碟連結，前台會直接嵌入顯示。</td></tr>
+      </table></div>
+      <h3>整理媒體</h3>
+      <ul>
+        <li><b>★</b>：設為便利貼的代表縮圖。</li>
+        <li><b>↑ ↓</b>：調整顯示順序。</li>
+        <li><b>✕</b>：移除（尚未儲存前移除不會上傳）。</li>
+        <li><b>說明文字</b>：顯示在照片下方，可留空。</li>
+      </ul>
+      <h3>儲存</h3>
+      <ol>
+        <li>按右下角「<b>儲存並發佈</b>」。</li>
+        <li>畫面下方會顯示上傳進度（例如「上傳中 1/3：IMG_0001.jpg　45%」），大型影片需要一些時間，<b>上傳完成前請不要關閉頁面</b>。</li>
+        <li>出現「已儲存！前台約 1 分鐘後更新」即完成。</li>
+      </ol>
+      <div class="note-box">上傳的檔案會自動命名為「日期_標題_序號」，並設為「知道連結的任何人可檢視」，前台才能顯示。新上傳的影片需要 Google 處理幾分鐘才能播放。</div>
+    </section>
+
+    <section class="page" id="edit">
+      <h2><span class="chapter">CHAPTER 5</span>編輯與刪除</h2>
+      <figure class="narrow"><img src="assets/guide/sidebar.png" alt="後台左側清單" loading="lazy"><figcaption>左側清單依年份排列，🎂 代表生日紀錄</figcaption></figure>
+      <ul>
+        <li><b>編輯</b>：在左側清單點選紀錄（可用搜尋框找），修改後按「儲存並發佈」。</li>
+        <li><b>刪除</b>：打開紀錄後按左下角「刪除這則」並確認。</li>
+        <li>刪除紀錄或移除媒體時，<b>雲端硬碟裡的原始檔案會保留</b>，不會被刪除；需要的話請到雲端硬碟手動處理。</li>
+        <li>多人同時編輯不同紀錄不會互相覆蓋；但請避免兩個人同時編輯<b>同一則</b>，以後存檔的版本為準。</li>
+        <li><b>匯出備份</b>：下載全部文字資料（JSON 檔）。<b>匯入備份</b>會<b>取代</b>目前所有資料，請謹慎使用。</li>
+      </ul>
+    </section>
+
+    <section class="page" id="rules">
+      <h2><span class="chapter">CHAPTER 6</span>分類、生日與日期規則</h2>
+      <h3>預設分類</h3>
+      <p>
+        <span class="tag">YouTube</span> <span class="tag">Berriz</span> <span class="tag">Universe</span> <span class="tag">花絮</span> <span class="tag">綜藝</span>
+        <span class="tag">Bubble</span> <span class="tag">Instagram</span> <span class="tag">FanClub</span> <span class="tag">LIVE</span> <span class="tag">FanSign</span>
+      </p>
+      <p>請優先使用預設分類，前台才能正確篩選；自訂標籤請保持一致的寫法（例如都用「生日」，不要混用「生日快樂」）。</p>
+      <h3>生日紀錄</h3>
+      <p>日期為 <b>9 月 1 日</b>或 <b>9 月 24 日</b>的紀錄，前台會自動加上彩帶、蛋糕和戴派對帽的狗狗鼠鼠，不需要另外設定。</p>
+      <p style="display:flex;gap:16px;align-items:flex-end">
+        <img class="sprite" src="assets/pixel/dog-party.svg" alt="戴派對帽的黃金獵犬" style="height:70px">
+        <img class="sprite" src="assets/pixel/cake.svg" alt="蛋糕" style="height:44px">
+        <img class="sprite" src="assets/pixel/chipmunk-party.svg" alt="戴派對帽的花栗鼠" style="height:70px">
+      </p>
+      <h3>日期</h3>
+      <p>時間軸從 2021 年 12 月 1 日開始，以<b>台北時間</b>為準，每天午夜自動延伸到新的一天。</p>
+    </section>
+
+    <section class="page" id="browse">
+      <h2><span class="chapter">CHAPTER 7</span>前台瀏覽方式</h2>
+      <figure><img src="assets/guide/front-toolbar.png" alt="前台工具列" loading="lazy"><figcaption>選擇 2025 年 10 月時的工具列</figcaption></figure>
+      <ul>
+        <li><b>預設</b>：打開網站時顯示「本月」的紀錄。</li>
+        <li><b>選年份</b>：只顯示該年的紀錄；<b>再選月份</b>：只顯示該年該月。再按一次已選的月份會回到整年。</li>
+        <li><b>全部</b>：顯示所有紀錄。</li>
+        <li><b>分類</b>：只顯示該分類，可和年份、月份一起使用。</li>
+        <li><b>搜尋</b>：搜尋全部時間的標題、內容與標籤。</li>
+        <li><b>便利貼／列表</b>：切換兩種瀏覽方式；<b>新→舊／舊→新</b>：切換排序。</li>
+        <li>點開紀錄後可用 ← → 切換上下則；網址可以直接分享給別人。</li>
+      </ul>
+    </section>
+
+    <section class="page" id="safety">
+      <h2><span class="chapter">CHAPTER 8</span>安全守則</h2>
+      <ul>
+        <li><b>每個人使用自己的權杖</b>，不要共用、不要傳給別人。</li>
+        <li>在公用或別人的電腦上使用後，請到「連線設定」按「<b>清除權杖</b>」。</li>
+        <li>懷疑權杖外流時，立即到 <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub → Settings → Tokens</a> 刪除，再建立新的。</li>
+        <li>網站與上傳的照片影片是<b>公開</b>的，請勿上傳私密或不適合公開的內容。</li>
+        <li>上傳到資料夾的檔案擁有者是上傳的人，佔用的是<b>上傳者自己</b>的雲端硬碟空間。</li>
+      </ul>
+    </section>
+
+    <section class="page" id="faq">
+      <h2><span class="chapter">CHAPTER 9</span>常見問題與錯誤訊息</h2>
+      <div class="table-wrap"><table>
+        <tr><th>看到的訊息</th><th>原因與解決方式</th></tr>
+        <tr><td>權杖無效或已過期</td><td>權杖輸入錯誤或已到期，請重新建立權杖（第 3 章步驟 3）並貼上。</td></tr>
+        <tr><td>找不到儲存庫，或權杖沒有存取權</td><td>①「GitHub 帳號」要填 <code>slam0615</code> ② 尚未接受協作邀請 ③ 權杖沒有勾選 public_repo。</td></tr>
+        <tr><td>這個權杖沒有寫入權限</td><td>尚未成為協作者，或權杖權限不足。請確認已接受邀請。</td></tr>
+        <tr><td>找不到分支</td><td>「分支」請填 <code>main</code>。</td></tr>
+        <tr><td>access_denied／存取遭拒</td><td>你的 Gmail 不在 Google 測試使用者名單，請擁有者加入（第 2 章）。</td></tr>
+        <tr><td>origin_mismatch</td><td>擁有者的 OAuth 用戶端沒有加入網站網址，請通知擁有者。</td></tr>
+        <tr><td>找不到上傳資料夾</td><td>登入的 Google 帳號沒有該資料夾的權限，或資料夾網址錯誤。請確認用的是被共用的 Gmail。</td></tr>
+        <tr><td>沒有權限把檔案放進資料夾</td><td>你的資料夾權限是「檢視者」，請擁有者改成「編輯者」。</td></tr>
+        <tr><td>已取消 Google 授權</td><td>授權視窗被關掉了，再按一次「儲存並發佈」或「連結 Google 雲端硬碟」。若視窗沒跳出，請允許瀏覽器的彈出式視窗。</td></tr>
+        <tr><td>前台沒有更新</td><td>等 1～2 分鐘，再按 <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>（Mac：<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>）重新整理；手機請關掉分頁重開。</td></tr>
+        <tr><td>照片顯示不出來</td><td>剛上傳的檔案需要幾分鐘處理；若是手動貼的雲端連結，請把共用設定改成「知道連結的任何人」。</td></tr>
+        <tr><td>日期選不到明天</td><td>只能選到今天（台北時間），午夜後就能選新的一天。</td></tr>
+      </table></div>
+      <p>其他問題請截圖後聯絡網站擁有者。</p>
+    </section>
+
+    <section class="page owner" id="remove">
+      <h2><span class="chapter">CHAPTER 10</span>擁有者：移除共同編輯者 <span class="who">由 slam0615 操作</span></h2>
+      <ol>
+        <li><a href="https://github.com/slam0615/moments/settings/access" target="_blank" rel="noopener">儲存庫 Settings → Collaborators</a> → 對方旁的 <b>Remove</b>。對方的權杖會立即無法寫入。</li>
+        <li>雲端資料夾 → 共用 → 把對方改成「移除存取權」。</li>
+        <li>（可選）<a href="https://console.cloud.google.com/auth/audience" target="_blank" rel="noopener">Google 測試使用者</a>中刪除對方。</li>
+      </ol>
+      <p>所有新增與修改都會留在 GitHub 的歷史紀錄中（儲存庫的 Commits 頁面），可查看是誰在什麼時候做了哪些變更。</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-shelf" aria-hidden="true">
+      <img class="sprite" src="assets/pixel/dog.svg" alt="">
+      <img class="sprite small" src="assets/pixel/heart.svg" alt="">
+      <img class="sprite" src="assets/pixel/chipmunk.svg" alt="">
+    </div>
+    <p><a href="./">回到 Fallderz Moments</a> · <a href="admin.html">館員後台</a></p>
+  </footer>
+</body>
+</html>

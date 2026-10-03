@@ -174,7 +174,12 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .months button small { display: block; font-size: .7rem; color: var(--ink-soft); }
 .months button.has { border-color: var(--teal); }
 .months button.bday { border-color: var(--coral-deep); background: var(--blush); }
-.months button:disabled { opacity: .35; cursor: default; }
+.months button[aria-pressed="true"] { background: var(--teal-deep); border-color: var(--teal-deep); color: var(--white); }
+.months button[aria-pressed="true"] small { color: rgba(255,255,255,.85); }
+.months button:not(.has):not([aria-pressed="true"]) { color: var(--ink-soft); opacity: .6; }
+.years button[aria-pressed="true"]:not(.whole) { background: var(--mint); color: var(--teal-ink); }
+.period-caption { margin: -8px 0 18px; color: var(--ink-soft); font-size: .9rem; letter-spacing: .05em; }
+.status .btn { margin-top: 4px; }
 
 /* ---------- 主內容 ---------- */
 main { max-width: 1200px; margin: 0 auto; padding: 28px 16px 60px; min-height: 50vh; }

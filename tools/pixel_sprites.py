@@ -1,4 +1,4 @@
-"""產生網站使用的像素風 SVG 圖案：python3 tools/pixel_sprites.py"""
+"""產生網站使用的小型像素圖案（蛋糕、書本、愛心…）：python3 tools/pixel_sprites.py"""
 from pathlib import Path
 
 OUT = Path(__file__).resolve().parent.parent / 'assets' / 'pixel'
@@ -19,54 +19,6 @@ PALETTE = {
 }
 
 SPRITES = {
-    # 正面坐著的 Q 版黃金獵犬
-    'dog': """
-.......OOOOOOOO.......
-....OOOGGGGGGGGOOO....
-...OGGGGGGGGGGGGGGO...
-..ODDGGGGGGGGGGGGDDO..
-.ODDDGGGGGGGGGGGGDDDO.
-ODDDDGGGGGGGGGGGGDDDDO
-ODDDDGGEEGGGGEEGGDDDDO
-ODDDDGEEWGGGGEEWGDDDDO
-ODDDDGEEEGGGGEEEGDDDDO
-.ODDDGPPGLLLLLGPPGDDO.
-.ODDGGGGLLLnnLLLGGGDO.
-..OOGGGGLLLnnLLLGGGOO.
-....OGGGLLOLLOLLGGO...
-.....OGGGLLTTLLGGO....
-......OOGGLLLLGGOOO...
-.....OGGGGLLLLGGGGO.OO
-....OGGGGLLLLLLGGGGOGO
-....OGGGGLLLLLLGGGGOGO
-....OGGOGLLLLLLGOGGGO.
-....OGGOGGLLLLGGOGGO..
-....OLLOOGGGGGGOOLLO..
-....OOOO.OOOOOO.OOOO..
-""",
-    # 正面坐著抱橡實的 Q 版花栗鼠
-    'chipmunk': """
-...OOO.........OOO....
-..OPPBO.......OBPPO...
-..OPBBOOOOOOOOOBBPO...
-...OBBBBBBSSBBBBBO....
-..OBBBBBBBSSBBBBBBO...
-.OBSSSBBBBSSBBBBSSSBO.
-.OBBEEBBBBBBBBBBEEBBO.
-.OBBEWBBBBBBBBBBEWBBO.
-.OKKEEKBBBBBBBBKEEKKO.
-.OBPPCCCCCnnCCCCCPPBO.
-..OBCCCCCOCCOCCCCCBO..
-...OOBCCCCCCCCCCBOO.OO
-....OBBCCCCCCCCBBO.OBSO
-...OBBCCaaaaaaCCBBOBBSO
-...OBBCaaaaaaaaCBBOBSBO
-...OBCCOAAAAAAOCCBOSBO.
-...OBCCCOAAAAOCCCBOBO..
-...OBBCCCOOOOCCCBBOO...
-....OBBPOOOOOOPBBO.....
-....OOOO......OOOO.....
-""",
     'cake': """
 .......Y........
 ......YFY.......
@@ -138,8 +90,7 @@ def compose(base: str, top: str, ox: int, overlap: int = 1) -> str:
     return '\n'.join(''.join(r) for r in rows)
 
 
-SPRITES['dog-party'] = compose(SPRITES['dog'], SPRITES['hat'], 7, overlap=1)
-SPRITES['chipmunk-party'] = compose(SPRITES['chipmunk'], SPRITES['hat'], 7, overlap=0)
+# 狗狗與花栗鼠（含生日版）改由 tools/sprites_from_image.py 從原圖轉換
 
 
 def to_svg(art: str) -> str:

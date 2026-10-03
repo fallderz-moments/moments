@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet,
-} from './common.js?v=202610031428';
+} from './common.js?v=202610031452';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -12,20 +12,39 @@ const state = {
   sort: storageGet('fm.sort', 'desc'),
   tag: null,
   q: '',
-  year: null,
+  // 目前瀏覽的期間：預設為「本月」；year 為 'all' 時顯示全部
+  year: todayStr().slice(0, 4),
+  month: monthKey(todayStr()),
+  periodPicked: false,
   visible: [],
   current: -1,
 };
 
 /* ---------- 篩選 ---------- */
+function byTag(list) {
+  return state.tag ? list.filter((m) => (m.tags || []).includes(state.tag)) : list;
+}
+
+function inPeriod(m) {
+  if (state.year === 'all') return true;
+  if (state.month) return monthKey(m.date) === state.month;
+  return m.date.startsWith(state.year);
+}
+
 function filtered() {
   const q = state.q.trim().toLowerCase();
-  const list = state.all.filter((m) => {
-    if (state.tag && !(m.tags || []).includes(state.tag)) return false;
-    if (!q) return true;
+  const list = byTag(state.all).filter((m) => {
+    // 有輸入搜尋時搜尋全部時間；否則只顯示選擇的年份／月份
+    if (!q) return inPeriod(m);
     return [m.title, m.content, ...(m.tags || []), m.date].join(' ').toLowerCase().includes(q);
   });
   return sortMoments(list, state.sort);
+}
+
+function periodLabel() {
+  if (state.year === 'all') return '全部時間';
+  if (state.month) return `${state.month.slice(0, 4)} 年 ${Number(state.month.slice(5))} 月`;
+  return `${state.year} 年`;
 }
 
 function groupByMonth(list) {
@@ -108,9 +127,15 @@ function ledgerHtml(m, index) {
 function render() {
   state.visible = filtered();
   const main = $('#content');
+  const searching = state.q.trim();
   if (!state.visible.length) {
+    const latest = sortMoments(byTag(state.all), 'desc')[0];
+    const hint = searching
+      ? '找不到符合的館藏'
+      : state.all.length ? `${periodLabel()}還沒有紀錄` : '還沒有任何紀錄，到館員後台新增第一則吧！';
     main.innerHTML = `<p class="status"><img class="sprite" src="assets/pixel/${state.all.length ? 'chipmunk' : 'dog'}.svg" alt="">
-      ${state.all.length ? '找不到符合條件的館藏' : '還沒有任何紀錄，到館員後台新增第一則吧！'}</p>`;
+      ${escapeHtml(hint)}
+      ${!searching && latest ? `<button class="btn small" type="button" data-goto="${monthKey(latest.date)}">看最近一則紀錄（${formatDate(latest.date)}）</button>` : ''}</p>`;
   } else {
     let index = 0;
     const html = [];
@@ -126,7 +151,10 @@ function render() {
           ${body}
         </section>`);
     }
-    main.innerHTML = html.join('');
+    const caption = searching
+      ? `<p class="period-caption">「${escapeHtml(searching)}」的搜尋結果（全部時間）· ${state.visible.length} 則</p>`
+      : `<p class="period-caption">${periodLabel()} · ${state.visible.length} 則</p>`;
+    main.innerHTML = caption + html.join('');
   }
   renderTimeline();
   syncButtons();
@@ -149,7 +177,7 @@ function renderTags() {
 function renderTimeline() {
   const counts = new Map();
   const bdays = new Set();
-  for (const m of state.visible) {
+  for (const m of byTag(state.all)) {
     const k = monthKey(m.date);
     counts.set(k, (counts.get(k) || 0) + 1);
     if (isBirthday(m.date)) bdays.add(k);
@@ -157,21 +185,32 @@ function renderTimeline() {
   const months = monthRange();
   const years = [...new Set(months.map((k) => k.slice(0, 4)))];
   if (state.sort === 'desc') years.reverse();
-  if (!state.year || !years.includes(state.year)) {
-    state.year = years.find((y) => [...counts.keys()].some((k) => k.startsWith(y))) || years[0];
-  }
-  $('#years').innerHTML = years.map((y) => {
-    const n = [...counts.entries()].filter(([k]) => k.startsWith(y)).reduce((s, [, c]) => s + c, 0);
-    return `<button type="button" data-year="${y}" aria-pressed="${y === state.year}">${y}${n ? ` <small>(${n})</small>` : ''}</button>`;
-  }).join('');
+  const total = [...counts.values()].reduce((a, b) => a + b, 0);
+  const yearOnly = state.year !== 'all' && !state.month;
+  $('#years').innerHTML = `<button type="button" data-year="all" aria-pressed="${state.year === 'all'}">全部 <small>(${total})</small></button>` +
+    years.map((y) => {
+      const n = [...counts.entries()].filter(([k]) => k.startsWith(y)).reduce((sum, [, c]) => sum + c, 0);
+      const pressed = state.year === y;
+      return `<button type="button" data-year="${y}" aria-pressed="${pressed}" class="${pressed && yearOnly ? 'whole' : ''}">${y}${n ? ` <small>(${n})</small>` : ''}</button>`;
+    }).join('');
+  const monthsBox = $('#months');
+  monthsBox.hidden = state.year === 'all';
   let ym = months.filter((k) => k.startsWith(state.year));
   if (state.sort === 'desc') ym = ym.reverse();
-  $('#months').innerHTML = ym.map((k) => {
+  monthsBox.innerHTML = ym.map((k) => {
     const n = counts.get(k) || 0;
     const cls = [n && 'has', bdays.has(k) && 'bday'].filter(Boolean).join(' ');
-    return `<button type="button" data-month="${k}" class="${cls}" ${n ? '' : 'disabled'}>${bdays.has(k) ? '🎂' : ''}${Number(k.slice(5))}月<small>${n ? `${n} 則` : '—'}</small></button>`;
+    return `<button type="button" data-month="${k}" class="${cls}" aria-pressed="${state.month === k}">${bdays.has(k) ? '🎂' : ''}${Number(k.slice(5))}月<small>${n ? `${n} 則` : '—'}</small></button>`;
   }).join('');
   $('#today').textContent = formatDate(todayStr());
+}
+
+function setPeriod(year, month = null) {
+  state.year = year;
+  state.month = month;
+  state.periodPicked = true;
+  render();
+  document.querySelector('.toolbar')?.scrollIntoView({ block: 'start' });
 }
 
 function syncButtons() {
@@ -285,8 +324,12 @@ function bindEvents() {
     if (t.dataset.view) { state.view = t.dataset.view; storageSet('fm.view', state.view); render(); }
     else if (t.dataset.sort) { state.sort = t.dataset.sort; storageSet('fm.sort', state.sort); render(); }
     else if ('tag' in t.dataset) { state.tag = t.dataset.tag || null; renderTags(); render(); }
-    else if (t.dataset.year) { state.year = t.dataset.year; renderTimeline(); }
-    else if (t.dataset.month) { document.getElementById(`sec-${t.dataset.month}`)?.scrollIntoView(); }
+    else if (t.dataset.year) { setPeriod(t.dataset.year); }
+    else if (t.dataset.month) {
+      // 再按一次已選的月份 → 回到整年
+      setPeriod(state.year, state.month === t.dataset.month ? null : t.dataset.month);
+    }
+    else if (t.dataset.goto) { setPeriod(t.dataset.goto.slice(0, 4), t.dataset.goto); }
     else if (t.dataset.full) { openLightbox(t.dataset.full, t.dataset.link); }
     else if (t.dataset.index && !t.closest('dialog')) { openDetail(Number(t.dataset.index)); }
     else if (t.dataset.nav) { openDetail(state.current + (t.dataset.nav === 'next' ? 1 : -1)); }
@@ -316,14 +359,27 @@ function openFromHash() {
   const match = location.hash.match(/^#m=(.+)$/);
   if (!match) return;
   const id = decodeURIComponent(match[1]);
-  const index = state.visible.findIndex((m) => m.id === id);
+  const target = state.all.find((m) => m.id === id);
+  if (!target) return;
+  if (!state.visible.includes(target)) { // 分享的連結不在目前期間時，切換到該月份
+    state.tag = null;
+    state.year = target.date.slice(0, 4);
+    state.month = monthKey(target.date);
+    renderTags();
+    render();
+  }
+  const index = state.visible.indexOf(target);
   if (index >= 0) openDetail(index);
 }
 
 async function init() {
   bindEvents();
   $('#today').textContent = formatDate(todayStr());
-  onNewDay(() => renderTimeline());
+  onNewDay((today) => {
+    // 沒有手動選過期間時，換月自動切到新的「本月」
+    if (!state.periodPicked) { state.year = today.slice(0, 4); state.month = monthKey(today); render(); }
+    else renderTimeline();
+  });
   try {
     state.all = await fetchMoments();
   } catch (err) {

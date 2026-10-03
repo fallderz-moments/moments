@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:wght@400;700&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610031428">
-  <link rel="stylesheet" href="assets/admin.css?v=202610031428">
+  <link rel="stylesheet" href="assets/style.css?v=202610031452">
+  <link rel="stylesheet" href="assets/admin.css?v=202610031452">
 </head>
 <body class="admin">
   <header class="admin-bar">
@@ -22,6 +22,7 @@
     <button class="btn small" type="button" id="btn-export">匯出備份</button>
     <label class="btn small">匯入備份<input type="file" id="file-import" accept="application/json,.json" hidden></label>
     <button class="btn small" type="button" id="btn-settings">連線設定</button>
+    <a class="btn small" href="guide.html" target="_blank" rel="noopener">使用手冊</a>
     <a class="btn small" href="./" target="_blank" rel="noopener">查看前台 ↗</a>
   </header>
 
@@ -111,8 +112,9 @@
           <input class="field" name="token" type="password" required placeholder="github_pat_…">
         </label>
         <p class="hint">
-          <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">建立 Fine-grained token</a>：
-          Repository access 只選這個儲存庫，Permissions 的 <b>Contents</b> 設為 <b>Read and write</b>。
+          擁有者：<a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">建立 Fine-grained token</a>（只選這個儲存庫，Contents 設為 Read and write）。<br>
+          共同編輯者：<a href="https://github.com/settings/tokens/new?scopes=public_repo&amp;description=Fallderz%20Moments" target="_blank" rel="noopener">建立 classic token</a>（勾選 public_repo），GitHub 帳號一律填 <b>slam0615</b>。
+          詳見 <a href="guide.html" target="_blank" rel="noopener">共同編輯者手冊</a>。
         </p>
       </fieldset>
 
@@ -124,7 +126,7 @@
         <label>上傳資料夾（網址或 ID）
           <input class="field" name="folder" placeholder="https://drive.google.com/…">
         </label>
-        <p class="hint">建立 Client ID 的步驟請見 README「設定 Google 雲端硬碟上傳」。</p>
+        <p class="hint">由網站擁有者提供；建立步驟請見 README「設定 Google 雲端硬碟上傳」。</p>
       </fieldset>
 
       <p class="hint">以上資料只儲存在這台裝置的瀏覽器中。</p>
@@ -140,6 +142,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="assets/admin.js?v=202610031428"></script>
+  <script type="module" src="assets/admin.js?v=202610031452"></script>
 </body>
 </html>
