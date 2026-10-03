@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:wght@400;700&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610031543">
-  <link rel="stylesheet" href="assets/admin.css?v=202610031543">
+  <link rel="stylesheet" href="assets/style.css?v=202610031629">
+  <link rel="stylesheet" href="assets/admin.css?v=202610031629">
 </head>
 <body class="admin">
   <header class="admin-bar">
@@ -127,9 +127,9 @@
           <input class="field" name="clientId" placeholder="xxxxxxxx.apps.googleusercontent.com">
         </label>
         <label>上傳資料夾（網址或 ID）
-          <input class="field" name="folder" placeholder="https://drive.google.com/…">
+          <input class="field" name="folder" placeholder="貼上 KONOKI 私下提供的資料夾網址" autocomplete="off">
         </label>
-        <p class="hint">由網站擁有者提供；建立步驟請見 README「設定 Google 雲端硬碟上傳」。</p>
+        <p class="hint">用戶端 ID 與資料夾網址皆由網站擁有者私下提供，請勿公開分享。</p>
       </fieldset>
 
       <p class="hint">以上資料只儲存在這台裝置的瀏覽器中。</p>
@@ -145,6 +145,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="assets/admin.js?v=202610031543"></script>
+  <script type="module" src="assets/admin.js?v=202610031629"></script>
 </body>
 </html>

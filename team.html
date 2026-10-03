@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>協作者名單 · Fallderz Moments</title>
+  <meta name="description" content="Fallderz Moments 的館員與協作者名單。">
+  <meta name="theme-color" content="#D2E0D3">
+  <link rel="icon" href="assets/pixel/chipmunk.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
+  <link rel="stylesheet" href="assets/style.css?v=202610031629">
+</head>
+<body>
+  <header class="site-header">
+    <p class="plaque">READING ROOM · EST. 2021</p>
+    <a class="brand" href="./">
+      <h1>Fallderz <em>Moments</em></h1>
+    </a>
+    <p class="tagline">狗狗鼠鼠觀察日誌 ‧ 2021.12 — </p>
+    <div class="shelf" aria-hidden="true">
+      <img class="sprite dog" src="assets/pixel/dog.svg" alt="">
+      <img class="sprite books" src="assets/pixel/books.svg" alt="">
+      <img class="sprite books flip" src="assets/pixel/books.svg" alt="">
+      <img class="sprite chipmunk" src="assets/pixel/chipmunk.svg" alt="">
+    </div>
+    <nav class="site-nav" aria-label="網站導覽">
+      <a href="./">館藏首頁</a>
+      <a href="about.html">關於</a>
+      <a href="team.html" aria-current="page">協作者名單</a>
+    </nav>
+  </header>
+  <main class="subpage">
+    <section class="paper">
+      <img class="sticker corner-sticker" data-random-sticker src="assets/stickers/dog-06.webp" alt="">
+      <h2><span class="chapter">LIBRARIANS</span>協作者名單</h2>
+      <p>這座閱覽室由以下館員一起整理與維護，謝謝每一位幫忙把狗狗鼠鼠的日常收進書架的人！</p>
+      <ul class="team-list">
+        <li class="team-card">
+          <img class="sticker avatar" data-random-sticker="dog" src="assets/stickers/dog-03.webp" alt="">
+          <div>
+            <span class="name">KONOKI</span><span class="role chief">館長</span>
+            <p class="desc">網站建立與管理</p>
+          </div>
+          <a class="x-link" href="https://x.com/idolobservation" target="_blank" rel="noopener">𝕏 @idolobservation</a>
+        </li>
+        <li class="team-card">
+          <img class="sticker avatar" data-random-sticker="chipmunk" src="assets/stickers/chipmunk-05.webp" alt="">
+          <div>
+            <span class="name">一支水特</span><span class="role">館員</span>
+            <p class="desc">共同編輯</p>
+          </div>
+          <a class="x-link" href="https://x.com/yizhishuite" target="_blank" rel="noopener">𝕏 @yizhishuite</a>
+        </li>
+        <li class="team-card">
+          <img class="sticker avatar" data-random-sticker src="assets/stickers/chipmunk-30.webp" alt="">
+          <div>
+            <span class="name">果凍Zero</span><span class="role">館員</span>
+            <p class="desc">共同編輯</p>
+          </div>
+          <a class="x-link" href="https://x.com/L07Chip" target="_blank" rel="noopener">𝕏 @L07Chip</a>
+        </li>
+      </ul>
+    </section>
+    <section class="paper">
+      <h2><span class="chapter">JOIN US</span>想成為館員？</h2>
+      <p>歡迎一起整理館藏！請先閱讀<a href="guide.html">共同編輯者申請與使用手冊</a>，再私訊 KONOKI 提出申請。</p>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-shelf" aria-hidden="true">
+      <img class="sticker" id="footer-dog" src="assets/stickers/dog-01.webp" alt="">
+      <img class="sprite small" src="assets/pixel/heart.svg" alt="">
+      <img class="sticker" id="footer-chipmunk" src="assets/stickers/chipmunk-01.webp" alt="">
+    </div>
+    <a class="support-link" href="https://buymeacoffee.com/shiba48" target="_blank" rel="noopener">☕ 支持網站維運</a>
+    <p>Fallderz Moments ‧ 狗狗鼠鼠觀察日誌 · <a href="./">館藏首頁</a> · <a href="guide.html">編輯者手冊</a></p>
+  </footer>
+  <script>
+    // 頁尾與頁面中的貼圖每次造訪隨機換一組
+    (() => {
+      const pick = (kind, n) => `assets/stickers/${kind}-${String(1 + Math.floor(Math.random() * n)).padStart(2, '0')}.webp`;
+      document.getElementById('footer-dog').src = pick('dog', 44);
+      document.getElementById('footer-chipmunk').src = pick('chipmunk', 60);
+      document.querySelectorAll('[data-random-sticker]').forEach((img) => {
+        const kind = img.dataset.randomSticker || (Math.random() < .5 ? 'dog' : 'chipmunk');
+        img.src = pick(kind, kind === 'dog' ? 44 : 60);
+      });
+    })();
+  </script>
+</body>
+</html>

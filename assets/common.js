@@ -20,7 +20,7 @@ export function sticker(seed, salt = 0) {
   return `assets/stickers/${kind}-${String(i).padStart(2, '0')}.webp`;
 }
 
-/** 生日（MM-DD） */
+/** 生日（MM-DD）：9/1 安俞真（狗狗）、9/24 金秋天（鼠鼠） */
 export const BIRTHDAYS = ['09-01', '09-24'];
 
 const pad = (n) => String(n).padStart(2, '0');

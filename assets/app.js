@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, STICKERS,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet,
-} from './common.js?v=202610031543';
+} from './common.js?v=202610031629';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -100,7 +100,7 @@ function noteHtml(m, index) {
   return `
     <button class="note${bday ? ' birthday' : ''}" type="button" data-index="${index}" data-tint="${tint}" style="--tilt:${tilt}deg">
       ${bday ? `<span class="bday-ribbon">HAPPY BIRTHDAY</span>
-        <img class="sprite bday-sprite" src="assets/pixel/${h % 2 ? 'dog' : 'chipmunk'}-party.svg" alt="">` : ''}
+        <img class="sprite bday-sprite" src="assets/pixel/${m.date.endsWith('09-01') ? 'dog' : 'chipmunk'}-party.svg" alt="">` : ''}
       <span class="note-date"><strong>${formatDate(m.date)}</strong><span>週${weekday}</span></span>
       <span class="note-thumb">${thumb}${count > 1 ? `<span class="badge">${mediaSummary(m.media)}</span>` : ''}</span>
       <span class="note-title">${bday ? '🎂 ' : ''}${escapeHtml(m.title || '無標題')}</span>

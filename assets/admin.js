@@ -1,12 +1,13 @@
 import {
   START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
   mediaThumb, parseMediaUrl, driveId, isVideoPath, isBirthday, fetchMoments, storageGet, storageSet, MEDIA_LABELS,
-} from './common.js?v=202610031543';
+} from './common.js?v=202610031629';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';
 const DRIVE_TOKEN_KEY = 'fm.driveToken';
-const DEFAULT_FOLDER = '1FUYYyQomHMSPIXnTlBSWNqTbP2MAtUUp';
+// 上傳資料夾不寫在公開的程式碼中：由擁有者私下提供，各自在「連線設定」填寫一次（只存在瀏覽器）
+const DEFAULT_FOLDER = '';
 // 填入 Google OAuth 用戶端 ID 後，每位上傳者就不必自己輸入（用戶端 ID 不是密碼，可以公開）
 const DEFAULT_CLIENT_ID = '';
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive';
@@ -277,6 +278,7 @@ async function gd(url, { method = 'GET', body } = {}) {
 }
 
 async function checkFolder() {
+  if (!state.cfg.folderId) throw new Error('尚未設定上傳資料夾：請到「連線設定」貼上 KONOKI 提供的資料夾網址');
   try {
     const f = await gd(`https://www.googleapis.com/drive/v3/files/${state.cfg.folderId}?fields=id,name,mimeType,capabilities(canAddChildren)&supportsAllDrives=true`);
     if (f.mimeType !== 'application/vnd.google-apps.folder') throw new Error('設定的 ID 不是資料夾');
@@ -545,7 +547,7 @@ function addFiles(files) {
     added++;
   }
   renderMedia();
-  if (added && !state.cfg.clientId) toast('提醒：尚未設定 Google 雲端硬碟，儲存前請先到「連線設定」填寫', true, 6000);
+  if (added && (!state.cfg.clientId || !state.cfg.folderId)) toast('提醒：尚未設定 Google 雲端硬碟或上傳資料夾，儲存前請先到「連線設定」填寫', true, 6000);
 }
 
 function addLink() {
