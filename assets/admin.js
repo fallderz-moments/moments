@@ -170,7 +170,23 @@ function updateConn() {
   el.classList.toggle('ok', state.connected);
 }
 
+/** 確認分支存在，避免讀到空資料、存檔時才失敗 */
+async function checkBranch() {
+  try {
+    await gh(`/branches/${encodeURIComponent(state.cfg.branch)}`);
+  } catch (err) {
+    if (err.status !== 404) throw err;
+    const branches = await gh('/branches?per_page=100').catch(() => []);
+    const names = branches.map((b) => b.name);
+    const e = new Error(`找不到分支「${state.cfg.branch}」。` +
+      (names.length ? `這個儲存庫目前的分支有：${names.join('、')}` : '這個儲存庫還沒有任何分支'));
+    e.branches = names;
+    throw e;
+  }
+}
+
 async function connect() {
+  await checkBranch();
   const latest = await readData();
   state.moments = latest.moments;
   state.sha = latest.sha;
@@ -207,7 +223,11 @@ async function onSettingsSubmit(e) {
   } catch (err) {
     state.connected = false;
     updateConn();
-    msg.textContent = err.status === 401 ? '權杖無效或已過期' : err.status === 404 ? '找不到儲存庫，或權杖沒有存取權' : `連線失敗：${err.message}`;
+    if (err.branches?.length === 1) form.elements.branch.value = err.branches[0];
+    msg.textContent = err.branches ? err.message
+      : err.status === 401 ? '權杖無效或已過期'
+      : err.status === 404 ? '找不到儲存庫，或權杖沒有存取權'
+      : `連線失敗：${err.message}`;
   }
 }
 

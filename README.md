@@ -45,6 +45,13 @@
 
 每次儲存都會產生一筆 commit，GitHub Pages 約 1 分鐘後更新前台。後台也提供「匯出備份／匯入備份」（JSON 檔）。
 
+## 常見問題
+
+**存檔時出現「Branch main not found」／連線時顯示「找不到分支」**
+儲存庫還沒有 `main` 分支。到儲存庫首頁 → 分支選單 → **View all branches** → **New branch**，
+名稱填 `main`、來源選 `claude/fallderz-moments-site-rrl8ea` 建立即可；或在「連線設定」把分支改成 GitHub Pages 實際使用的分支。
+後台寫入的分支必須和 GitHub Pages 發佈的分支相同，前台才會顯示新內容。
+
 ## 本機預覽
 
 ```bash
