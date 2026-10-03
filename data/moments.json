@@ -2,26 +2,6 @@
   "version": 1,
   "moments": [
     {
-      "id": "m-20211201-start",
-      "date": "2021-12-01",
-      "title": "觀察日誌的第一天",
-      "content": "這是一則範例紀錄，代表時間軸的起點。\n\n到「館員後台」可以編輯或刪除它，換成真正的第一則觀察紀錄。",
-      "tags": [
-        "花絮"
-      ],
-      "source": "",
-      "media": [
-        {
-          "type": "image",
-          "src": "media/samples/first-day.svg",
-          "caption": "範例插圖"
-        }
-      ],
-      "cover": 0,
-      "createdAt": "2026-10-03T00:00:00.000Z",
-      "updatedAt": "2026-10-03T00:00:00.000Z"
-    },
-    {
       "source": "https://x.com/IVE_twt/status/2094661781134381098",
       "id": "m-20260901-fqh47s",
       "date": "2026-09-01",
