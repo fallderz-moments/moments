@@ -9,55 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610031731">
-  <style>
-    .guide { max-width: 860px; margin: 0 auto; padding: 0 16px 60px; }
-    .guide-hero { text-align: center; padding: 34px 0 10px; }
-    .guide-hero h1 { font-family: var(--font-title); font-weight: 700; color: var(--teal-ink); font-size: clamp(1.7rem, 5vw, 2.5rem); margin: .3em 0 .1em; line-height: 1.25; }
-    .guide-hero h1 em { color: var(--coral-deep); font-weight: 400; }
-    .guide-hero p { color: var(--ink-soft); margin: 0; }
-    .guide-hero .pair { display: flex; justify-content: center; align-items: flex-end; gap: 18px; margin-top: 14px; }
-    .guide-hero .pair img { height: 64px; }
-    .page {
-      background: var(--card); border: 1.5px solid var(--sand); border-left: 8px solid var(--teal); border-radius: 12px;
-      padding: 22px 26px; margin: 22px 0; box-shadow: 0 3px 0 var(--sand);
-    }
-    .page.owner { border-left-color: var(--coral-deep); }
-    .page h2 { font-weight: 600; color: var(--teal-ink); margin: 0 0 6px; font-size: 1.35rem; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-    .page.owner h2 { color: #8f4e43; }
-    .chapter { font-family: var(--font-pixel); font-size: .78rem; letter-spacing: .15em; color: var(--ink-soft); }
-    .page h3 { font-size: 1.05rem; font-weight: 600; margin: 20px 0 6px; color: var(--ink); }
-    .page p, .page li { line-height: 1.95; overflow-wrap: anywhere; }
-    .page a { word-break: break-all; }
-    .page ol, .page ul { padding-left: 1.3em; margin: 6px 0; }
-    .page figure { margin: 14px 0; }
-    .page figure img { width: 100%; height: auto; border: 1.5px solid var(--line); border-radius: 10px; background: var(--white); }
-    .page figure.narrow img { max-width: 460px; display: block; margin: 0 auto; }
-    .page figcaption { font-size: .82rem; color: var(--ink-soft); text-align: center; margin-top: 4px; }
-    .who { display: inline-block; font-size: .78rem; padding: 0 .7em; border-radius: 4px; background: var(--mint); color: var(--teal-ink); }
-    .page.owner .who { background: var(--blush); color: #8f4e43; }
-    .note-box { background: #FBF6E9; border: 1.5px dashed var(--gold); border-radius: 10px; padding: 10px 14px; margin: 12px 0; font-size: .95rem; }
-    .warn-box { background: var(--blush); border: 1.5px dashed var(--coral-deep); border-radius: 10px; padding: 10px 14px; margin: 12px 0; font-size: .95rem; }
-    kbd, code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .88em; background: var(--ivory); border: 1px solid var(--line); border-radius: 4px; padding: 0 .35em; overflow-wrap: anywhere; }
-    .toc { columns: 2; column-gap: 28px; }
-    .toc li { break-inside: avoid; }
-    table { width: 100%; border-collapse: collapse; font-size: .93rem; }
-    th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
-    th { background: var(--mint); color: var(--teal-ink); font-weight: 600; }
-    td:first-child { white-space: nowrap; font-weight: 600; }
-    .table-wrap { overflow-x: auto; }
-    .check { list-style: none; padding-left: 0 !important; }
-    .check li::before { content: '☐ '; color: var(--teal-deep); }
-    @media (max-width: 640px) {
-      .page { padding: 16px; }
-      .toc { columns: 1; }
-      td:first-child { white-space: normal; }
-    }
-    @media print {
-      body { background: #fff; }
-      .page { box-shadow: none; break-inside: avoid-page; }
-    }
-  </style>
+  <link rel="stylesheet" href="assets/style.css?v=202610031801">
+  <link rel="stylesheet" href="assets/guide.css?v=202610031801">
 </head>
 <body>
   <main class="guide">
@@ -78,12 +31,7 @@
         <li><a href="#overview">共同編輯者可以做什麼</a></li>
         <li><a href="#apply">申請流程</a></li>
         <li><a href="#setup">通過後：第一次設定</a></li>
-        <li><a href="#create">新增一則紀錄</a></li>
-        <li><a href="#edit">編輯與刪除</a></li>
-        <li><a href="#rules">分類、生日與日期規則</a></li>
         <li><a href="#browse">前台瀏覽方式</a></li>
-        <li><a href="#safety">編輯守則與安全</a></li>
-        <li><a href="#faq">常見問題與錯誤訊息</a></li>
         <li><a href="#leave">停止擔任共同編輯者</a></li>
       </ol>
     </section>
@@ -92,7 +40,7 @@
       <h2><span class="chapter">CHAPTER 1</span>共同編輯者可以做什麼</h2>
       <p>Fallderz Moments 由 <b>KONOKI</b> 建立與管理。通過申請後，你可以在<a href="admin.html">館員後台</a>：</p>
       <ul>
-        <li>新增、編輯、刪除紀錄（日期、標題、內容、分類、資訊來源）。</li>
+        <li>新增、編輯、刪除紀錄（日期、標題、內容、分類、資訊來源），並遵守館內的編輯守則。</li>
         <li>上傳照片與影片（原檔會備份在雲端資料夾），並附上資訊來源網址。</li>
         <li>匯出與匯入備份。</li>
       </ul>
@@ -157,7 +105,7 @@
         <li><b>Select scopes</b>：確認只勾選 <b>public_repo</b>。</li>
         <li>拉到最下面按 <b>Generate token</b>，複製以 <code>ghp_</code> 開頭的權杖。</li>
       </ol>
-      <div class="warn-box">權杖只會顯示一次，請直接貼到後台（步驟 4）。權杖等同你的鑰匙，<b>不要傳給任何人</b>，包括 KONOKI。</div>
+      <div class="warn-box">權杖只會顯示一次，請直接貼到後台（步驟 4）。權杖等同你的鑰匙，<b>不要傳給任何人</b>，包括 KONOKI。在公用電腦使用後，請到「連線設定」按「清除權杖」。</div>
 
       <h3>步驟 3　確認雲端資料夾已共用給你</h3>
       <p>打開 Google 雲端硬碟 →「與我共用」，應該能看到 KONOKI 共用的資料夾，而且你的權限是「編輯者」。</p>
@@ -182,72 +130,12 @@
         <li>上方出現兩個 ✓ 就代表一切就緒：</li>
       </ol>
       <figure><img src="assets/guide/topbar.png" alt="後台上方狀態列" loading="lazy"><figcaption>「GitHub ✓」與「雲端硬碟 ✓」都出現即設定完成</figcaption></figure>
+      <div class="note-box">設定完成後，新增紀錄的方法、編輯守則與常見問題，都在<b>館員後台右上角的「館員說明」</b>裡。</div>
       <div class="note-box">Google 授權約 <b>1 小時</b>後失效，下次上傳時會自動跳出授權視窗，再按一次允許即可。GitHub 權杖會保存在這台裝置的瀏覽器裡，換裝置要重新填寫。</div>
     </section>
 
-    <section class="page" id="create">
-      <h2><span class="chapter">CHAPTER 4</span>新增一則紀錄</h2>
-      <p>按左上角「<b>＋ 新增紀錄</b>」，依序填寫：</p>
-      <figure><img src="assets/guide/editor-full.png" alt="新增紀錄畫面" loading="lazy"><figcaption>新增紀錄的編輯畫面</figcaption></figure>
-      <div class="table-wrap"><table>
-        <tr><th>欄位</th><th>說明</th></tr>
-        <tr><td>日期（必填）</td><td>可選 2021/12/01 到<b>今天</b>；過了午夜就能選隔天。日期是 9/1 或 9/24 時會顯示 🎂 提示。</td></tr>
-        <tr><td>標題</td><td>這一天的小標題，最多 80 字。</td></tr>
-        <tr><td>資訊來源網址（選填）</td><td>原始貼文、文章、直播頁面的網址，前台會顯示在內容最下方。</td></tr>
-        <tr><td>內容</td><td>可換行；文字裡的網址會自動變成連結。</td></tr>
-        <tr><td>分類標籤</td><td>點選預設分類（可複選）；其他標籤在下方輸入後按 Enter 或逗號。</td></tr>
-        <tr><td>照片／影片</td><td>點擊或拖曳檔案到虛線框，<b>可一次選多張照片、多支影片</b>。檔案會在按「儲存並發佈」時以原檔上傳到雲端資料夾備份。原始貼文網址請填在「資訊來源網址」。</td></tr>
-      </table></div>
-      <h3>整理媒體</h3>
-      <ul>
-        <li><b>★</b>：設為便利貼的代表縮圖。</li>
-        <li><b>🎞</b>：（雲端影片）重新擷取影片封面。上傳影片時會自動擷取一個畫面當封面，舊的影片可用這個按鈕補上。</li>
-        <li><b>↑ ↓</b>：調整顯示順序。</li>
-        <li><b>✕</b>：移除（尚未儲存前移除不會上傳）。</li>
-        <li><b>說明文字</b>：顯示在照片下方，可留空。</li>
-      </ul>
-      <h3>儲存</h3>
-      <ol>
-        <li>按右下角「<b>儲存並發佈</b>」。</li>
-        <li>畫面下方會顯示上傳進度（例如「上傳中 1/3：IMG_0001.jpg　45%」），大型影片需要一些時間，<b>上傳完成前請不要關閉頁面</b>。</li>
-        <li>出現「已儲存！前台約 1 分鐘後更新」即完成。</li>
-      </ol>
-      <div class="note-box">上傳的檔案會自動命名為「日期_標題_序號」，並設為「知道連結的任何人可檢視」，前台才能顯示。影片會自動擷取一個畫面另存為「…_cover.jpg」當封面；新上傳的影片需要 Google 處理幾分鐘才能播放。</div>
-    </section>
-
-    <section class="page" id="edit">
-      <h2><span class="chapter">CHAPTER 5</span>編輯與刪除</h2>
-      <figure class="narrow"><img src="assets/guide/sidebar.png" alt="後台左側清單" loading="lazy"><figcaption>左側清單依年份排列，🎂 代表生日紀錄</figcaption></figure>
-      <ul>
-        <li><b>編輯</b>：在左側清單點選紀錄（可用搜尋框找），修改後按「儲存並發佈」。</li>
-        <li><b>刪除</b>：打開紀錄後按左下角「刪除這則」並確認。刪除別人建立的紀錄前，請先和 KONOKI 確認。</li>
-        <li>刪除紀錄或移除媒體時，<b>雲端硬碟裡的原始檔案會保留</b>，不會被刪除。</li>
-        <li>多人同時編輯不同紀錄不會互相覆蓋；但請避免兩個人同時編輯<b>同一則</b>，以後存檔的版本為準。</li>
-        <li><b>匯出備份</b>：下載全部文字資料（JSON 檔）。<b>匯入備份</b>會<b>取代</b>目前所有資料，請先和 KONOKI 確認再使用。</li>
-      </ul>
-    </section>
-
-    <section class="page" id="rules">
-      <h2><span class="chapter">CHAPTER 6</span>分類、生日與日期規則</h2>
-      <h3>預設分類</h3>
-      <p>
-        <span class="tag">YouTube</span> <span class="tag">Berriz</span> <span class="tag">Universe</span> <span class="tag">花絮</span> <span class="tag">綜藝</span>
-        <span class="tag">Bubble</span> <span class="tag">Instagram</span> <span class="tag">X(twitter)</span> <span class="tag">FanClub</span> <span class="tag">LIVE</span> <span class="tag">FanSign</span> <span class="tag">其他</span>
-      </p>
-      <p>請優先使用預設分類，前台才能正確篩選；自訂標籤請保持一致的寫法（例如都用「生日」，不要混用「生日快樂」）。</p>
-      <h3>生日紀錄</h3>
-      <p>日期為 <b>9 月 1 日</b>或 <b>9 月 24 日</b>的紀錄，前台會自動加上彩帶、蛋糕和戴派對帽的狗狗鼠鼠，不需要另外設定。</p>
-      <p style="display:flex;gap:16px;align-items:flex-end">
-        <img class="sprite" src="assets/pixel/dog-party.svg" alt="戴派對帽的黃金獵犬" style="height:70px">
-        <img class="sprite" src="assets/pixel/cake.svg" alt="蛋糕" style="height:44px">
-        <img class="sprite" src="assets/pixel/chipmunk-party.svg" alt="戴派對帽的花栗鼠" style="height:70px">
-      </p>
-      <h3>日期</h3>
-      <p>時間軸從 2021 年 12 月 1 日開始，以<b>台北時間</b>為準，每天午夜自動延伸到新的一天。</p>
-    </section>
-
     <section class="page" id="browse">
-      <h2><span class="chapter">CHAPTER 7</span>前台瀏覽方式</h2>
+      <h2><span class="chapter">CHAPTER 4</span>前台瀏覽方式</h2>
       <figure><img src="assets/guide/front-toolbar.png" alt="前台工具列" loading="lazy"><figcaption>選擇 2025 年 10 月時的工具列</figcaption></figure>
       <ul>
         <li><b>預設</b>：打開網站時顯示「本月」的紀錄。</li>
@@ -260,47 +148,8 @@
       </ul>
     </section>
 
-    <section class="page" id="safety">
-      <h2><span class="chapter">CHAPTER 8</span>編輯守則與安全</h2>
-      <h3>編輯守則</h3>
-      <ul>
-        <li>盡量附上<b>資訊來源網址</b>，方便大家查證。</li>
-        <li>網站與上傳的照片影片是<b>公開</b>的，請勿上傳私密、未公開或不適合公開的內容。</li>
-        <li>大幅修改或刪除既有紀錄前，先和 KONOKI 討論。</li>
-      </ul>
-      <h3>帳號安全</h3>
-      <ul>
-        <li><b>只使用你自己的權杖</b>，不要共用、不要傳給任何人。</li>
-        <li>在公用或別人的電腦上使用後，請到「連線設定」按「<b>清除權杖</b>」。</li>
-        <li>懷疑權杖外流時，立即到 <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub → Settings → Tokens</a> 刪除，再建立新的，並告知 KONOKI。</li>
-        <li>每次存檔都會以<b>你的 GitHub 使用者名稱</b>公開留下紀錄（不會顯示 email）。</li>
-        <li>你上傳到資料夾的檔案，擁有者是你自己，佔用的是<b>你的</b>雲端硬碟空間。</li>
-      </ul>
-    </section>
-
-    <section class="page" id="faq">
-      <h2><span class="chapter">CHAPTER 9</span>常見問題與錯誤訊息</h2>
-      <div class="table-wrap"><table>
-        <tr><th>看到的訊息</th><th>原因與解決方式</th></tr>
-        <tr><td>權杖無效或已過期</td><td>權杖輸入錯誤或已到期，請重新建立權杖（第 3 章步驟 2）並貼上。</td></tr>
-        <tr><td>找不到儲存庫，或權杖沒有存取權</td><td>① 尚未接受協作邀請 ② 權杖沒有勾選 public_repo ③ 權杖是用其他 GitHub 帳號建立的。</td></tr>
-        <tr><td>這個權杖沒有寫入權限</td><td>尚未接受邀請，或權杖權限不足。請確認已按下 Accept invitation。</td></tr>
-        <tr><td>找不到分支</td><td>打開「連線設定 → 進階設定」，分支請填 <code>main</code>。</td></tr>
-        <tr><td>access_denied／存取遭拒</td><td>你的 Gmail 還沒被加入授權名單，請聯絡 KONOKI。</td></tr>
-        <tr><td>origin_mismatch／redirect_uri_mismatch</td><td>網站的 Google 設定需要更新，請截圖通知 KONOKI。</td></tr>
-        <tr><td>找不到上傳資料夾</td><td>登入的 Google 帳號沒有資料夾權限。請確認用的是你提供給 KONOKI 的 Gmail。</td></tr>
-        <tr><td>沒有權限把檔案放進資料夾</td><td>你的資料夾權限是「檢視者」，請 KONOKI 改成「編輯者」。</td></tr>
-        <tr><td>雲端硬碟權限不足</td><td>連結 Google 時沒有勾選雲端硬碟權限。再按一次「連結 Google 雲端硬碟」，在權限畫面勾選後繼續。</td></tr>
-        <tr><td>已取消 Google 授權</td><td>授權視窗被關掉了，再按一次「儲存並發佈」或「連結 Google 雲端硬碟」。若視窗沒跳出，請允許瀏覽器的彈出式視窗。</td></tr>
-        <tr><td>前台沒有更新</td><td>等 1～2 分鐘，再按 <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>（Mac：<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>）重新整理；手機請關掉分頁重開。</td></tr>
-        <tr><td>照片顯示不出來</td><td>剛上傳的檔案需要幾分鐘處理；若是手動貼的雲端連結，請把共用設定改成「知道連結的任何人」。</td></tr>
-        <tr><td>日期選不到明天</td><td>只能選到今天（台北時間），午夜後就能選新的一天。</td></tr>
-      </table></div>
-      <p>其他問題請截圖後聯絡 KONOKI。</p>
-    </section>
-
     <section class="page" id="leave">
-      <h2><span class="chapter">CHAPTER 10</span>停止擔任共同編輯者</h2>
+      <h2><span class="chapter">CHAPTER 5</span>停止擔任共同編輯者</h2>
       <ol>
         <li>告訴 KONOKI，KONOKI 會移除你的 GitHub 協作權限與資料夾共用。</li>
         <li>到 <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub → Settings → Tokens</a> 刪除為本網站建立的權杖。</li>

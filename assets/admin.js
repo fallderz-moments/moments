@@ -1,7 +1,7 @@
 import {
   START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
   mediaThumb, driveId, driveImage, isVideoPath, isBirthday, fetchMoments, storageGet, storageSet, MEDIA_LABELS,
-} from './common.js?v=202610031731';
+} from './common.js?v=202610031801';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';
@@ -776,6 +776,12 @@ async function onImport(e) {
 /* ---------- 事件 ---------- */
 function bindEvents() {
   $('#btn-settings').addEventListener('click', () => openSettings());
+  const help = $('#help');
+  const openHelp = () => { if (!help.open) help.showModal(); help.scrollTop = 0; };
+  $('#btn-help').addEventListener('click', openHelp);
+  document.querySelector('[data-open-help]')?.addEventListener('click', openHelp);
+  help.querySelector('[data-close-help]').addEventListener('click', () => help.close());
+  help.addEventListener('click', (e) => { if (e.target === help) help.close(); });
   $('#btn-drive').addEventListener('click', () => {
     if (!state.cfg.clientId) { openSettings('請先填寫 Google OAuth 用戶端 ID。'); return; }
     connectDrive();

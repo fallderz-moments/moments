@@ -125,3 +125,16 @@ dialog.settings h2 { margin: 0; font-weight: 400; color: var(--teal-ink); }
 details#advanced summary { cursor: pointer; color: var(--ink-soft); font-size: .88rem; }
 details#advanced[open] summary { margin-bottom: 8px; }
 .field[readonly] { background: var(--ivory); color: var(--ink-soft); }
+
+/* 館員說明 */
+dialog.help-dialog {
+  width: min(900px, calc(100vw - 24px)); max-height: calc(100vh - 24px); padding: 0; border: 0; border-radius: 16px;
+  background: var(--paper); color: var(--ink); box-shadow: 0 30px 80px rgba(0,0,0,.25);
+}
+dialog.help-dialog::backdrop { background: rgba(62, 74, 72, .45); }
+.help-head { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 10px 18px; background: var(--mint); }
+.help-head h2 { margin: 0; font-weight: 600; color: var(--teal-ink); font-size: 1.2rem; }
+.help-body { padding: 4px 18px 20px; }
+.help-toc { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; }
+.help-toc a { text-decoration: none; background: var(--card); border: 1.5px solid var(--sand); border-radius: 6px; padding: .1em .8em; font-size: .9rem; color: var(--teal-ink); }
+.linklike { border: 0; background: none; padding: 0; color: var(--teal-deep); text-decoration: underline; cursor: pointer; font: inherit; }
