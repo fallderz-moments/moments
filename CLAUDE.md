@@ -19,7 +19,7 @@
 | `guide.html` | 公開的「共同編輯者申請與使用手冊」（申請、設定、前台瀏覽、退出） |
 | 後台「館員說明」對話框（`admin.html` 內） | 新增紀錄、編輯守則、常見問題（不放在公開手冊） |
 | `assets/style.css`、`admin.css`、`guide.css` | 樣式（圖書館風、Lazy Days 色票；中文用粉圓體 Huninn） |
-| `assets/pixel/`、`assets/stickers/` | 像素圖與 104 張狗狗鼠鼠貼圖（`dog-NN.webp` 44 張、`chipmunk-NN.webp` 60 張） |
+| `assets/pixel/`、`assets/stickers/` | 像素圖與 315 張狗狗鼠鼠貼圖（`dog-NN.webp` 151 張、`chipmunk-NN.webp` 164 張；每次重整隨機挑，9/1 生日紀錄只用狗、9/24 只用鼠） |
 | `tools/` | 產生器與版本號工具 |
 | `tests/` | Playwright 端對端測試 |
 

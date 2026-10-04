@@ -1,8 +1,8 @@
 import {
-  NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, STICKERS,
+  NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, birthdayKind,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet,
-} from './common.js?v=202610032009';
+} from './common.js?v=202610040659';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -115,7 +115,7 @@ function noteHtml(m, index) {
       ${m.series ? `<span class="series-chip">📚 ${escapeHtml(m.series)}</span>` : ''}
       ${tagsHtml(m.tags)}
       <span class="call-number">${callNo(m)}</span>
-      ${bday ? '' : `<img class="sticker note-sticker ${h % 3 === 0 ? 'left' : ''}" src="${sticker(m.id)}" alt="" loading="lazy">`}
+      <img class="sticker note-sticker ${h % 3 === 0 ? 'left' : ''}" src="${sticker(m.id, 0, birthdayKind(m.date))}" alt="" loading="lazy">
     </button>`;
 }
 
@@ -129,7 +129,7 @@ function ledgerHtml(m, index) {
           ${bday ? '<span class="bday-mark"><img class="sprite" src="assets/pixel/cake.svg" alt="">BIRTHDAY</span>' : ''}</span>
         <span class="ledger-title"><b>${escapeHtml(m.title || '無標題')}</b>${m.series ? `<span class="series-chip">📚 ${escapeHtml(m.series)}</span>` : ''}<span>${escapeHtml(excerpt(m.content, 80))}</span></span>
         <span class="ledger-tags">${sortTags(m.tags || []).map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</span>
-        <span class="ledger-media">${mediaSummary(m.media)}<img class="sticker ledger-sticker" src="${sticker(m.id)}" alt="" loading="lazy"></span>
+        <span class="ledger-media">${mediaSummary(m.media)}<img class="sticker ledger-sticker" src="${sticker(m.id, 0, birthdayKind(m.date))}" alt="" loading="lazy"></span>
       </button>
     </li>`;
 }
@@ -351,7 +351,12 @@ function openDetail(index) {
   $('#detail-callno').textContent = callNo(m);
   const ds = $('#detail-sticker');
   ds.hidden = bday;
-  ds.src = sticker(m.id, 'detail');
+  ds.src = sticker(m.id, 'detail', birthdayKind(m.date));
+  if (bday) {  // 生日橫幅只放壽星：派對帽像素圖＋一張壽星的隨機貼圖
+    const [party, , pal] = $('#detail-birthday').querySelectorAll('img');
+    party.src = `assets/pixel/${birthdayKind(m.date)}-party.svg`;
+    pal.src = sticker(m.id, 'banner', birthdayKind(m.date));
+  }
   $('#detail-title').textContent = m.title || '無標題';
   $('#detail-tags').innerHTML = sortTags(m.tags || []).map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join('');
   const media = m.media || [];
@@ -493,9 +498,8 @@ function openFromHash() {
 async function init() {
   bindEvents();
   // 頁尾每次造訪隨機換一組狗狗鼠鼠
-  const pick = (kind, n) => `assets/stickers/${kind}-${String(1 + Math.floor(Math.random() * n)).padStart(2, '0')}.webp`;
-  $('#footer-dog').src = pick('dog', STICKERS.dog);
-  $('#footer-chipmunk').src = pick('chipmunk', STICKERS.chipmunk);
+  $('#footer-dog').src = sticker('footer', 0, 'dog');
+  $('#footer-chipmunk').src = sticker('footer', 0, 'chipmunk');
   $('#today').textContent = formatDate(todayStr());
   onNewDay((today) => {
     // 沒有手動選過期間時，換月自動切到新的「本月」

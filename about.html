@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610032009">
+  <link rel="stylesheet" href="assets/style.css?v=202610040659">
 </head>
 <body>
   <header class="site-header">
@@ -98,14 +98,16 @@
     <p>Fallderz Moments ‧ 狗狗鼠鼠觀察日誌 · <a href="./">館藏首頁</a> · <a href="guide.html">編輯者手冊</a></p>
   </footer>
   <script>
-    // 頁尾與頁面中的貼圖每次造訪隨機換一組
+    // 頁尾與頁面中的貼圖每次造訪隨機換一組；9/1（狗狗）、9/24（鼠鼠）生日當天只放壽星
     (() => {
-      const pick = (kind, n) => `assets/stickers/${kind}-${String(1 + Math.floor(Math.random() * n)).padStart(2, '0')}.webp`;
-      document.getElementById('footer-dog').src = pick('dog', 44);
-      document.getElementById('footer-chipmunk').src = pick('chipmunk', 60);
+      const N = { dog: 151, chipmunk: 164 };
+      const md = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei', month: '2-digit', day: '2-digit' }).format(new Date());
+      const star = md === '09-01' ? 'dog' : md === '09-24' ? 'chipmunk' : null;
+      const pick = (kind) => `assets/stickers/${kind}-${String(1 + Math.floor(Math.random() * N[kind])).padStart(2, '0')}.webp`;
+      document.getElementById('footer-dog').src = pick('dog');
+      document.getElementById('footer-chipmunk').src = pick('chipmunk');
       document.querySelectorAll('[data-random-sticker]').forEach((img) => {
-        const kind = img.dataset.randomSticker || (Math.random() < .5 ? 'dog' : 'chipmunk');
-        img.src = pick(kind, kind === 'dog' ? 44 : 60);
+        img.src = pick(star || img.dataset.randomSticker || (Math.random() < .5 ? 'dog' : 'chipmunk'));
       });
     })();
   </script>

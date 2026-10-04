@@ -9,15 +9,32 @@ export const NOTE_TINTS = ['mint', 'blush', 'coral', 'sand', 'ivory', 'teal'];
 export const PRESET_TAGS = ['YouTube', 'Berriz', 'Universe', '花絮', '綜藝', 'Bubble', 'Instagram', 'X(twitter)', 'FanClub', 'LIVE', 'FanSign', '其他'];
 
 /** 貼圖數量（assets/stickers/dog-01.webp …、chipmunk-01.webp …） */
-export const STICKERS = { dog: 44, chipmunk: 60 };
+export const STICKERS = { dog: 151, chipmunk: 164 };
 
-/** 依種子挑一張貼圖：同一則紀錄每次都會拿到同一張，不同紀錄各不相同 */
-export function sticker(seed, salt = 0) {
-  const h = hashString(`${seed}:${salt}`);
-  const total = STICKERS.dog + STICKERS.chipmunk;
-  const n = h % total;
-  const [kind, i] = n < STICKERS.dog ? ['dog', n + 1] : ['chipmunk', n - STICKERS.dog + 1];
-  return `assets/stickers/${kind}-${String(i).padStart(2, '0')}.webp`;
+/** 每次載入頁面換一個種子：重新整理就會換一批貼圖，同一次瀏覽中則保持不變 */
+const PAGE_SEED = Math.floor(Math.random() * 1e9);
+
+/** 生日對應的動物：9/1 安俞真（狗狗）、9/24 金秋天（鼠鼠），其他日子回傳 null */
+export function birthdayKind(date = '') {
+  const md = date.slice(5);
+  return md === '09-01' ? 'dog' : md === '09-24' ? 'chipmunk' : null;
+}
+
+export const stickerUrl = (kind, i) => `assets/stickers/${kind}-${String(i).padStart(2, '0')}.webp`;
+
+/**
+ * 依種子挑一張貼圖：每次重新整理隨機換一批，不同紀錄各不相同。
+ * 指定 kind（'dog'／'chipmunk'）就只從該動物挑；沒指定時，今天若是生日就只用壽星的貼圖。
+ */
+export function sticker(seed, salt = 0, kind = null) {
+  let h = hashString(`${seed}:${salt}`) ^ PAGE_SEED;  // 再打散一次，避免相近的 id 拿到相鄰編號
+  h = Math.imul(h ^ (h >>> 16), 0x45d9f3b);
+  h = Math.imul(h ^ (h >>> 16), 0x45d9f3b);
+  h = (h ^ (h >>> 16)) >>> 0;
+  kind = kind || birthdayKind(todayStr());
+  if (kind) return stickerUrl(kind, (h % STICKERS[kind]) + 1);
+  const n = h % (STICKERS.dog + STICKERS.chipmunk);
+  return n < STICKERS.dog ? stickerUrl('dog', n + 1) : stickerUrl('chipmunk', n - STICKERS.dog + 1);
 }
 
 /** 生日（MM-DD）：9/1 安俞真（狗狗）、9/24 金秋天（鼠鼠） */
