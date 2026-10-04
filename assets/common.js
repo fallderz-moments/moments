@@ -254,6 +254,23 @@ export async function fetchMoments() {
   return Array.isArray(data) ? data : data.moments || [];
 }
 
+/** 公告（後台「發布公告」寫入；前台進站時以浮動視窗顯示沒看過的公告） */
+export const NOTICES_PATH = 'data/notices.json';
+
+export const sortNotices = (list) => [...list]
+  .sort((a, b) => b.date.localeCompare(a.date) || (b.createdAt || '').localeCompare(a.createdAt || ''));
+
+export async function fetchNotices() {
+  try {
+    const res = await fetch(`${NOTICES_PATH}?v=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return sortNotices(Array.isArray(data) ? data : data.notices || []);
+  } catch {
+    return [];
+  }
+}
+
 export function storageGet(key, fallback = null, store = 'localStorage') {
   try {
     const v = window[store].getItem(key);

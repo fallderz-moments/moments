@@ -102,7 +102,7 @@ dialog.settings h2 { margin: 0; font-weight: 400; color: var(--teal-ink); }
 .settings-msg.ok { color: var(--teal-deep); }
 
 .toast {
-  position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 140%); z-index: 100;
+  position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, calc(100% + 40px)); z-index: 100;
   background: var(--teal-ink); color: var(--white); padding: .6em 1.3em; border-radius: 999px; box-shadow: var(--shadow-lift);
   transition: transform .3s; max-width: calc(100vw - 32px); text-align: center;
 }
@@ -146,3 +146,18 @@ dialog.help-dialog::backdrop { background: rgba(62, 74, 72, .45); }
 .editor-history details { flex-basis: 100%; }
 .editor-history summary { cursor: pointer; width: fit-content; }
 .editor-history ol { margin: 6px 0 0; padding-left: 1.4em; }
+
+/* 未連線時：只顯示上鎖畫面，看不到任何紀錄與編輯功能 */
+.locked-note { display: none; max-width: 420px; margin: 12vh max(16px, calc(50% - 210px)) 0; padding: 28px 24px; text-align: center; background: var(--card); border-radius: 16px; }
+.locked-note .sprite { height: 64px; }
+body.locked .locked-note { display: block; }
+body.locked .admin-layout, body.locked #btn-drive, body.locked #btn-export, body.locked #btn-notices,
+body.locked label:has(#file-import), body.locked #drive-conn { display: none !important; }
+
+/* 發布公告 */
+dialog.notice-dialog { width: min(640px, calc(100vw - 24px)); }
+.notice-form textarea { min-height: 84px; }
+.notice-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+.notice-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; background: var(--card); border-radius: 10px; }
+.notice-list .notice-text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.notice-list small { display: block; color: var(--ink-soft); }

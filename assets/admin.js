@@ -1,7 +1,8 @@
 import {
   START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
-  mediaThumb, driveId, driveImage, isVideoPath, isBirthday, fetchMoments, storageGet, storageSet, MEDIA_LABELS,
-} from './common.js?v=202610040739';
+  mediaThumb, driveId, driveImage, isVideoPath, isBirthday, storageGet, storageSet, MEDIA_LABELS,
+  NOTICES_PATH, sortNotices, richText,
+} from './common.js?v=202610040753';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';
@@ -193,6 +194,94 @@ async function connect() {
   updateConn();
   renderList();
   loadHistory();
+}
+
+/* ---------- 公告 ---------- */
+async function readNotices() {
+  try {
+    const meta = await gh(`${contentsPath(NOTICES_PATH)}?ref=${encodeURIComponent(state.cfg.branch)}`);
+    const data = JSON.parse(b64ToUtf8(meta.content));
+    return { notices: Array.isArray(data) ? data : data.notices || [], sha: meta.sha };
+  } catch (err) {
+    if (err.status === 404) return { notices: [], sha: null };
+    throw err;
+  }
+}
+
+/** 讀取最新公告 → 套用變更 → 寫回（公告檔很小，每次都重新讀取以免覆蓋別人剛發布的） */
+async function changeNotices(apply, message) {
+  for (let attempt = 0; ; attempt++) {
+    const latest = await readNotices();
+    const next = sortNotices(apply(latest.notices));
+    try {
+      await gh(contentsPath(NOTICES_PATH), {
+        method: 'PUT',
+        body: {
+          message,
+          content: utf8ToB64(JSON.stringify({ version: 1, notices: next }, null, 2) + '\n'),
+          branch: state.cfg.branch,
+          ...(latest.sha ? { sha: latest.sha } : {}),
+        },
+      });
+      return next;
+    } catch (err) {
+      if (attempt === 0 && (err.status === 409 || err.status === 422)) continue;
+      throw err;
+    }
+  }
+}
+
+function renderNotices(list) {
+  $('#notice-list').innerHTML = list.map((n) => `
+    <li><span class="notice-text"><small>${formatDate(n.date)}</small>${richText(n.content)}</span>
+      <button class="btn small danger" type="button" data-del-notice="${escapeHtml(n.id)}">刪除</button></li>`).join('')
+    || '<li class="hint">還沒有公告</li>';
+}
+
+function bindNotices() {
+  const dlg = $('#notices');
+  const form = $('#notice-form');
+  let list = [];
+  $('#btn-notices').addEventListener('click', async () => {
+    if (!state.connected) { openSettings('請先連線才能發布公告。'); return; }
+    form.elements.date.value = todayStr();
+    form.elements.date.max = todayStr();
+    $('#notice-list').innerHTML = '<li class="hint">讀取中…</li>';
+    dlg.showModal();
+    try { list = sortNotices((await readNotices()).notices); renderNotices(list); } catch (err) { toast(`讀取公告失敗：${err.message}`, true); }
+  });
+  dlg.querySelector('[data-close-notices]').addEventListener('click', () => dlg.close());
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (state.busy) return;
+    const date = form.elements.date.value;
+    const content = form.elements.content.value.trim();
+    if (!date || !content) return;
+    const notice = { id: `n-${date.replace(/-/g, '')}-${randId()}`, date, content, createdAt: new Date().toISOString() };
+    setBusy(true, '發布中…');
+    try {
+      list = await changeNotices((l) => [...l, notice], `發布公告 ${date} [${notice.id}]`);
+      renderNotices(list);
+      form.elements.content.value = '';
+      toast('公告已發布！前台約 1 分鐘後更新');
+    } catch (err) {
+      toast(`發布失敗：${err.message}`, true, 8000);
+    }
+    setBusy(false);
+  });
+  $('#notice-list').addEventListener('click', async (e) => {
+    const id = e.target.closest('[data-del-notice]')?.dataset.delNotice;
+    if (!id || state.busy || !confirm('確定要刪除這則公告嗎？')) return;
+    setBusy(true, '刪除中…');
+    try {
+      list = await changeNotices((l) => l.filter((n) => n.id !== id), `刪除公告 [${id}]`);
+      renderNotices(list);
+      toast('公告已刪除');
+    } catch (err) {
+      toast(`刪除失敗：${err.message}`, true, 8000);
+    }
+    setBusy(false);
+  });
 }
 
 /* ---------- 編輯紀錄（只在後台顯示，資料來自 GitHub 的提交紀錄，無法冒名） ---------- */
@@ -391,8 +480,9 @@ async function driveUpload(file, name, onProgress) {
 /* ---------- 連線狀態與設定 ---------- */
 function updateConn() {
   const el = $('#conn');
-  el.textContent = state.connected ? 'GitHub ✓ 已連線' : 'GitHub 未連線（唯讀）';
+  el.textContent = state.connected ? 'GitHub ✓ 已連線' : 'GitHub 未連線';
   el.classList.toggle('ok', state.connected);
+  document.body.classList.toggle('locked', !state.connected);  // 沒連線就看不到任何紀錄與編輯功能
 }
 
 function updateDriveConn() {
@@ -864,8 +954,20 @@ function bindEvents() {
     updateConn();
     updateDriveConn();
     $('#settings-form').elements.token.value = '';
+    state.moments = [];
+    state.history = null;
+    closeEditor();
     $('#settings-msg').textContent = '已清除這台裝置上的 GitHub 權杖與 Google 授權';
   });
+
+  $('#btn-unlock').addEventListener('click', () => openSettings());
+  // 館員說明裡的儲存庫連結依網站網址產生（網址改變時不用修改說明）
+  const { owner, repo } = siteRepo();
+  document.querySelectorAll('[data-repo]').forEach((a) => {
+    if (owner) a.href = `https://github.com/${owner}/${repo}/${a.dataset.repo}`;
+    else a.removeAttribute('href');
+  });
+  bindNotices();
 
   $('#btn-new').addEventListener('click', () => openEditor(null));
   $('#btn-cancel').addEventListener('click', closeEditor);
@@ -975,9 +1077,7 @@ async function init() {
       toast(`自動連線失敗：${err.message}`, true, 6000);
     }
   }
-  try { state.moments = await fetchMoments(); } catch { state.moments = []; }
-  renderList();
-  openSettings('目前為唯讀模式，請完成連線設定以啟用編修功能。');
+  openSettings('館員專用：請貼上你的 GitHub 權杖。');
 }
 
 init();

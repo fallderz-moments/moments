@@ -570,3 +570,22 @@ dialog.lightbox .icon-btn { position: absolute; top: 14px; right: 14px; }
   * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
   .note { transform: none; }
 }
+
+/* 進站公告（浮動小視窗） */
+.notice-pop {
+  position: fixed; right: 20px; bottom: 20px; z-index: 40; width: 320px; padding: 12px 14px 12px;
+  background: var(--card); border: 1.5px solid var(--sand); border-radius: var(--radius); box-shadow: var(--shadow-lift);
+  animation: notice-in .35s ease-out;
+}
+.notice-pop-head { display: flex; align-items: center; gap: 8px; }
+.notice-pop-head .sticker { height: 36px; margin-top: -26px; }
+.notice-pop-head b { flex: 1; color: var(--teal-ink); }
+.notice-pop-head .icon-btn { width: 28px; height: 28px; font-size: .85rem; }
+.notice-pop ul { list-style: none; margin: 8px 0 10px; padding: 0; display: grid; gap: 8px; max-height: 40vh; overflow-y: auto; }
+.notice-pop li { font-size: .92rem; line-height: 1.5; overflow-wrap: anywhere; }
+.notice-pop li small { display: block; color: var(--coral-deep); font-weight: 700; letter-spacing: .03em; }
+.notice-pop > .btn { display: block; margin-left: auto; }
+@keyframes notice-in { from { opacity: 0; transform: translateY(16px); } }
+@media (max-width: 640px) {
+  .notice-pop { left: 12px; right: 12px; bottom: 12px; width: auto; }
+}

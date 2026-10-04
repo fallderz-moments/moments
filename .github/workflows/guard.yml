@@ -1,0 +1,103 @@
+# 安全警示：main 有異常變更時自動開一則 issue，儲存庫管理員會收到 GitHub 通知（email／App）。
+# 觸發條件：
+#   1. 非管理員修改了 data/ 以外的檔案（網站程式碼、頁面）
+#   2. 一次刪除 3 則以上紀錄，或 data/*.json 格式損壞
+#   3. 強制推送（force push，可能改寫歷史）
+# 復原：issue 內附上變更前的版本，可用 git revert 或後台「匯入備份」還原。
+name: 安全警示
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 檢查這次推送
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.event.after }}
+          FORCED: ${{ github.event.forced }}
+          PUSHER: ${{ github.actor }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+
+          def git(*args):
+              r = subprocess.run(['git', *args], capture_output=True, text=True)
+              return r.stdout if r.returncode == 0 else None
+
+          before, after, pusher = os.environ['BEFORE'], os.environ['AFTER'], os.environ['PUSHER']
+          alerts = []
+          if os.environ['FORCED'] == 'true':
+              alerts.append('偵測到**強制推送**（force push），可能改寫或刪除了歷史紀錄。')
+
+          new_branch = set(before) == {'0'} or git('cat-file', '-e', before) is None
+          changed = [] if new_branch else (git('diff', '--name-only', before, after) or '').split()
+
+          r = subprocess.run(['gh', 'api', f'repos/{os.environ["GITHUB_REPOSITORY"]}/collaborators/{pusher}/permission',
+                              '--jq', '.permission'], capture_output=True, text=True)
+          perm = r.stdout.strip() if r.returncode == 0 and r.stdout.strip() else '未知'
+          code = [f for f in changed if not f.startswith('data/')]
+          if code and perm != 'admin':
+              alerts.append(f'非管理員（權限：{perm}）修改了網站程式或頁面：\n' + '\n'.join(f'- `{f}`' for f in code[:30]))
+
+          def records(rev):
+              text = git('show', f'{rev}:data/moments.json')
+              if text is None:
+                  return None
+              data = json.loads(text)
+              return {m['id']: m for m in (data if isinstance(data, list) else data.get('moments', []))}
+
+          for f in [f for f in changed if f.startswith('data/') and f.endswith('.json')]:
+              text = git('show', f'{after}:{f}')
+              if text is None:
+                  alerts.append(f'`{f}` 被刪除了。')
+                  continue
+              try:
+                  json.loads(text)
+              except ValueError as e:
+                  alerts.append(f'`{f}` 格式損壞，前台可能無法顯示：{e}')
+
+          if 'data/moments.json' in changed and not any('格式損壞' in a for a in alerts):
+              old, new = records(before) or {}, records(after) or {}
+              gone = [m for k, m in old.items() if k not in new]
+              if len(gone) >= 3:
+                  alerts.append(f'一次刪除了 **{len(gone)} 則**紀錄：\n' +
+                                '\n'.join(f'- {m.get("date", "")} {m.get("title", "")}' for m in gone[:30]))
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+              out.write(f'alert={"yes" if alerts else "no"}\n')
+          if alerts:
+              server, repo = os.environ['GITHUB_SERVER_URL'], os.environ['GITHUB_REPOSITORY']
+              body = '\n\n'.join([
+                  f'推送者：`{pusher}`（權限：{perm}）',
+                  f'變更內容：{server}/{repo}/compare/{before}...{after}' if not new_branch else f'最新版本：{server}/{repo}/commit/{after}',
+                  *alerts,
+                  '---',
+                  '**如果這不是你或館員做的**：\n'
+                  '1. 到 Settings → Collaborators 移除可疑的帳號；\n'
+                  f'2. 還原：在電腦上執行 `git revert {after}`，或請 Claude 協助還原到 `{before[:7]}`；\n'
+                  '3. 請所有館員重新建立 GitHub 權杖。\n\n'
+                  '確認沒問題的話，直接關閉這則 issue 即可。',
+              ])
+              open('alert.md', 'w').write(body)
+              print(body)
+          PY
+
+      - name: 開 issue 通知管理員
+        if: steps.check.outputs.alert == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue create --repo "$GITHUB_REPOSITORY" --title "⚠️ 安全警示：main 有異常變更（${GITHUB_SHA::7}）" --body-file alert.md

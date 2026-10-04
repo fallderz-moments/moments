@@ -76,6 +76,20 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     check('系列欄位已儲存（去除多餘空白）', saved && saved.series === '測試 系列', saved && saved.series);
     check('多張照片上傳到雲端資料夾', uploads.length === 2 && uploads.every((u) => u.parents[0] === '1TESTFOLDERxxxxxxxxxxxxxxxx'));
     check('紀錄已寫入（分類、媒體）', saved && saved.tags.includes('LIVE') && saved.tags.includes('X(twitter)') && saved.tags.includes('其他') && saved.media.length === 2 && saved.media.every((m) => m.type === 'drive'));
+    await p.click('#btn-notices'); await p.waitForTimeout(400);
+    await p.fill('#notice-form [name=content]', '更新 IVE ON 花絮相關'); await p.click('#btn-notice-save');
+    await p.waitForFunction(() => document.getElementById('toast').textContent.includes('公告已發布'), null, { timeout: 5000 }).catch(() => {});
+    const notices = files['data/notices.json'] && JSON.parse(files['data/notices.json'].content).notices;
+    check('後台發布公告（更新日期＋內容）', notices && notices.length === 1 && notices[0].content === '更新 IVE ON 花絮相關' && notices[0].date === new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei' }).format(new Date()), JSON.stringify(notices));
+    check('公告列表顯示已發布', (await p.textContent('#notice-list')).includes('IVE ON'));
+    await p.click('[data-close-notices]');
+    const front = await ctx.newPage();
+    await front.route(SITE + 'data/notices.json*', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: files['data/notices.json'].content }));
+    await front.goto(SITE); await front.waitForSelector('.notice-pop', { timeout: 5000 }).catch(() => {});
+    check('前台進站顯示公告', (await front.textContent('.notice-pop').catch(() => '')).includes('更新 IVE ON 花絮相關'));
+    await front.click('.notice-pop > .btn'); await front.reload(); await front.waitForTimeout(1200);
+    check('看過的公告不再跳出', (await front.locator('.notice-pop').count()) === 0);
+    await front.close();
     check('重新整理後仍保持連線', await (async () => { await p.reload(); await p.waitForTimeout(1200); return p.isVisible('#conn.ok'); })());
     check('後台沒有 JS 錯誤', errs.length === 0, errs.join('; '));
     await ctx.close(); }
@@ -122,9 +136,18 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
 
   // C. 手冊連結
   { const { ctx } = await setup();
-    const p = await ctx.newPage(); await p.goto(SITE + 'guide.html'); await p.waitForTimeout(500);
+    const p = await ctx.newPage();
+    await p.goto(SITE + 'admin.html'); await p.waitForTimeout(500);
     const links = await p.$$eval('[data-repo]', (as) => as.map((a) => a.href));
-    check('手冊的儲存庫連結依網址產生', links.length === 1 && links.every((h) => h.startsWith('https://github.com/fallderz-moments/moments/')), links.join(' '));
+    check('館員說明的儲存庫連結依網址產生', links.length === 1 && links.every((h) => h.startsWith('https://github.com/fallderz-moments/moments/')), links.join(' '));
+    check('後台未連線時上鎖、不載入紀錄', await p.isVisible('#locked-note') && !(await p.isVisible('.admin-layout')) && (await p.locator('#admin-list li').count()) === 0);
+    check('館員說明含第一次設定與停止擔任', (await p.locator('#help-setup').count()) === 1 && (await p.locator('#help-leave').count()) === 1);
+    for (const pg of ['', 'about.html', 'team.html', 'guide.html']) {
+      await p.goto(SITE + pg); await p.waitForTimeout(300);
+      check(`前台 ${pg || '首頁'} 沒有後台連結`, (await p.locator('a[href*="admin"]').count()) === 0);
+    }
+    check('公開手冊只到申請', (await p.locator('#setup, #browse, #leave').count()) === 0 && (await p.locator('#apply').count()) === 1);
+    await p.waitForTimeout(200);
     await p.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 600) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 120)); } }); await p.waitForTimeout(500);
     const imgs = await p.$$eval('img', (is) => is.filter((i) => !i.complete || i.naturalWidth === 0).map((i) => i.src));
     check('手冊圖片都能載入', imgs.length === 0, imgs.join(' '));

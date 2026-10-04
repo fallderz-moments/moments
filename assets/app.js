@@ -1,8 +1,8 @@
 import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, birthdayKind,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
-  fetchMoments, storageGet, storageSet,
-} from './common.js?v=202610040739';
+  fetchMoments, storageGet, storageSet, fetchNotices,
+} from './common.js?v=202610040753';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -268,9 +268,13 @@ function photoHtml(src, fallback, full, link, alt, cls) {
   </button>${alt ? `<figcaption>${escapeHtml(alt)}</figcaption>` : ''}</figure>`;
 }
 
+/** 只允許 http(s) 與站內相對路徑，避免資料被竄改時插入 javascript: 等危險網址 */
+const safeHref = (url = '') => /^[a-z][\w+.-]*:/i.test(url.trim()) && !/^https?:/i.test(url.trim()) ? '#' : escapeHtml(url);
+
 function mediaHtml(item, single) {
   const cap = item.caption ? `<figcaption>${escapeHtml(item.caption)}</figcaption>` : '';
-  const src = escapeHtml(item.src || '');
+  const src = safeHref(item.src);
+  const id = escapeHtml(item.id || '');  // 資料只由館員寫入，仍一律跳脫以防萬一
   const photoCls = single ? 'single' : '';
   switch (item.type) {
     case 'image':
@@ -280,15 +284,15 @@ function mediaHtml(item, single) {
     case 'drive':
       if (item.kind !== 'video') {
         return photoHtml(driveImage(item.id, single ? 2000 : 1000), driveImageFallback(item.id, 1000),
-          driveImage(item.id, 2400), `https://drive.google.com/file/d/${item.id}/view`, item.caption || '', photoCls);
+          driveImage(item.id, 2400), `https://drive.google.com/file/d/${id}/view`, item.caption || '', photoCls);
       }
-      return `<figure class="wide"><div class="embed${videoShape(item)} data-shape-src="${escapeHtml(item.thumb || driveImage(item.id, 400))}"><iframe src="https://drive.google.com/file/d/${item.id}/preview" allow="autoplay; fullscreen" allowfullscreen loading="lazy" title="Google 雲端硬碟影片"></iframe></div>${cap}</figure>`;
+      return `<figure class="wide"><div class="embed${videoShape(item)} data-shape-src="${escapeHtml(item.thumb || driveImage(item.id, 400))}"><iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen loading="lazy" title="Google 雲端硬碟影片"></iframe></div>${cap}</figure>`;
     case 'youtube':
-      return `<figure class="wide"><div class="embed"><iframe src="https://www.youtube-nocookie.com/embed/${item.id}" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen loading="lazy" title="YouTube"></iframe></div>${cap}</figure>`;
+      return `<figure class="wide"><div class="embed"><iframe src="https://www.youtube-nocookie.com/embed/${id}" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen loading="lazy" title="YouTube"></iframe></div>${cap}</figure>`;
     case 'instagram':
-      return `<figure class="wide"><div class="embed tall"><iframe src="https://www.instagram.com/${item.id}/embed" loading="lazy" title="Instagram"></iframe></div>${cap}</figure>`;
+      return `<figure class="wide"><div class="embed tall"><iframe src="https://www.instagram.com/${id}/embed" loading="lazy" title="Instagram"></iframe></div>${cap}</figure>`;
     case 'x':
-      return `<figure class="wide"><div class="tweet-box" data-tweet="${item.id}"><a class="link-card" href="${src}" target="_blank" rel="noopener"><span class="ico">𝕏</span>在 X 上查看貼文</a></div>${cap}</figure>`;
+      return `<figure class="wide"><div class="tweet-box" data-tweet="${id}"><a class="link-card" href="${src}" target="_blank" rel="noopener"><span class="ico">𝕏</span>在 X 上查看貼文</a></div>${cap}</figure>`;
     default:
       return `<figure class="wide"><a class="link-card" href="${src}" target="_blank" rel="noopener"><span class="ico">🔗</span><span>${escapeHtml(item.caption || hostOf(item.src))}<br><small>${escapeHtml(hostOf(item.src))}</small></span></a></figure>`;
   }
@@ -369,7 +373,7 @@ function openDetail(index) {
   const source = $('#detail-source');
   source.hidden = !m.source;
   if (m.source) {
-    source.innerHTML = `📎 資訊來源：<a href="${escapeHtml(m.source)}" target="_blank" rel="noopener">${escapeHtml(hostOf(m.source))}</a>`;
+    source.innerHTML = `📎 資訊來源：<a href="${safeHref(m.source)}" target="_blank" rel="noopener">${escapeHtml(hostOf(m.source))}</a>`;
   }
   renderSeries(m);
   $('[data-nav="prev"]').disabled = index <= 0;
@@ -515,6 +519,34 @@ async function init() {
   renderTags();
   render();
   openFromHash();
+  showNotices();
+}
+
+/* ---------- 進站公告：只顯示沒看過的（最多 3 則），按「知道了」後不再跳出 ---------- */
+const NOTICE_SEEN_KEY = 'fm.noticeSeen';
+
+async function showNotices() {
+  const list = await fetchNotices();
+  const seen = new Set(storageGet(NOTICE_SEEN_KEY, []));
+  const fresh = list.filter((n) => !seen.has(n.id)).slice(0, 3);
+  if (!fresh.length) return;
+  const box = document.createElement('aside');
+  box.className = 'notice-pop';
+  box.setAttribute('aria-label', '館藏更新公告');
+  box.innerHTML = `
+    <div class="notice-pop-head">
+      <img class="sticker" src="${sticker('notice')}" alt="">
+      <b>館藏更新</b>
+      <button class="icon-btn" type="button" data-dismiss aria-label="關閉">✕</button>
+    </div>
+    <ul>${fresh.map((n) => `<li><small>${formatDate(n.date)}</small><span>${richText(n.content)}</span></li>`).join('')}</ul>
+    <button class="btn small" type="button" data-dismiss>知道了</button>`;
+  const dismiss = () => {
+    storageSet(NOTICE_SEEN_KEY, list.slice(0, 50).map((n) => n.id));
+    box.remove();
+  };
+  box.addEventListener('click', (e) => { if (e.target.closest('[data-dismiss], a')) dismiss(); });
+  document.body.append(box);
 }
 
 init();

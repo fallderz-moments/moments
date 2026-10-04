@@ -16,8 +16,10 @@
 | `admin.html` + `assets/admin.js` | 館員後台：透過 GitHub Contents API 寫 `data/moments.json`；照片影片以 Google Drive API 上傳到擁有者的資料夾 |
 | `assets/common.js` | 共用設定：`PRESET_TAGS`、`BIRTHDAYS`、`STICKERS`、日期（台北時間）與媒體工具 |
 | `about.html`、`team.html` | 關於、協作者名單 |
-| `guide.html` | 公開的「共同編輯者申請與使用手冊」（申請、設定、前台瀏覽、退出） |
-| 後台「館員說明」對話框（`admin.html` 內） | 新增紀錄、編輯守則、常見問題（不放在公開手冊） |
+| `guide.html` | 公開的「共同編輯者申請手冊」（只到申請為止） |
+| 後台「館員說明」對話框（`admin.html` 內） | 第一次設定、新增紀錄、編輯守則、常見問題、前台瀏覽、停止擔任館員（不放在公開手冊） |
+| 後台「發布公告」→ `data/notices.json` | `{version, notices:[{id, date, content, createdAt}]}`；前台進站時以浮動視窗顯示沒看過的公告（最多 3 則） |
+| `.github/workflows/guard.yml` | 安全警示：非管理員改程式、一次刪 3 則以上、JSON 損壞、強制推送時自動開 issue 通知 |
 | `assets/style.css`、`admin.css`、`guide.css` | 樣式（圖書館風、Lazy Days 色票；中文用粉圓體 Huninn） |
 | `assets/pixel/`、`assets/stickers/` | 像素圖與狗狗鼠鼠貼圖：一般 `dog-NN.webp` 105 張、`chipmunk-NN.webp` 116 張；季節／節慶主題放 `stickers/<主題>/`（目前 `autumn/` 狗 46、鼠 48），期間與數量設在 `common.js` 的 `SEASONS`。每次重整隨機挑；9/1 生日紀錄只用狗、9/24 只用鼠。頁面上的 `data-random-sticker` 圖片由 `randomizeStickers()` 隨機換圖（網站頂部 banner 的兩張像素原圖不動） |
 | `tools/` | 產生器與版本號工具 |
@@ -47,6 +49,7 @@
 - 不得把以下資訊寫進儲存庫：GitHub 權杖、Google OAuth 用戶端 ID、**雲端資料夾 ID**、任何 email。
   用戶端 ID 與資料夾網址由擁有者私下提供，各自存在瀏覽器（`localStorage`）。
 - 網站畫面與手冊中不顯示擁有者的 GitHub 帳號名稱；儲存庫位置由網址自動判斷（`siteRepo()`）。
+- **前台（index／about／team／guide）不得出現館員後台 `admin.html` 的連結**；後台網址由擁有者私下提供。後台未連線時只顯示上鎖畫面，不載入任何資料。
 - 手冊截圖需打碼（`assets/guide/`；用假的資料夾網址並模糊用戶端 ID／資料夾欄位）。
 
 ## 權限模型
