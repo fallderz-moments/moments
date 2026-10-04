@@ -20,8 +20,11 @@ export const SEASONS = [
   { name: 'winter', label: '冬', from: '12-01', to: '02-29', dog: 32, chipmunk: 32, pair: 16 },
 ];
 
-/** 生日主題（assets/stickers/birthday/dog-1.webp …）：9/1、9/24 的紀錄與生日當天使用 */
-export const BIRTHDAY_STICKERS = { dog: 0, chipmunk: 0 };
+/**
+ * 生日主題（assets/stickers/birthday/）：不分季節，9/1、9/24 的紀錄一律使用壽星的生日貼圖；
+ * 生日當天全站貼圖也換成壽星的生日款，頁尾換成生日版「狗鼠一起」。
+ */
+export const BIRTHDAY_STICKERS = { dog: 32, chipmunk: 32, pair: 16 };
 
 /** 指定日期（預設今天）所屬的季節；跨年的期間（12-01 到 02-29）也能判斷 */
 export function seasonOf(date = todayStr()) {
@@ -65,8 +68,11 @@ export function sticker(seed, salt = 0, date = '') {
     : `assets/stickers/${season.name}/chipmunk-${n - season.dog + 1}.webp`;
 }
 
-/** 頁尾「狗鼠一起」貼圖；沒有圖時回傳空字串 */
+/** 頁尾「狗鼠一起」貼圖（生日當天用生日版）；沒有圖時回傳空字串 */
 export function pairSticker() {
+  if (birthdayKind(todayStr()) && BIRTHDAY_STICKERS.pair) {
+    return `assets/stickers/birthday/pair-${(mix('pair', 0) % BIRTHDAY_STICKERS.pair) + 1}.webp`;
+  }
   const season = seasonOf();
   return season?.pair ? `assets/stickers/${season.name}/pair-${(mix('pair', 0) % season.pair) + 1}.webp` : '';
 }

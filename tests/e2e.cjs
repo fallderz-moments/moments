@@ -119,13 +119,14 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
       const c = await import('./assets/common.js');
       const names = ['2026-10-04', '2026-09-01', '2026-11-30', '2026-12-01', '2027-02-28', '2027-04-01', '2027-07-01'].map((d) => c.seasonOf(d)?.name || '-');
       const urls = Array.from({ length: 50 }, (_, i) => c.sticker('t' + i, 0, i % 2 ? '2025-09-01' : '2025-05-05'));
-      const files = c.SEASONS.flatMap((t) => ['dog', 'chipmunk', 'pair'].flatMap((k) => Array.from({ length: t[k] }, (_, i) => `assets/stickers/${t.name}/${k}-${i + 1}.webp`)));
+      const files = [...c.SEASONS, { name: 'birthday', ...c.BIRTHDAY_STICKERS }].flatMap((t) => ['dog', 'chipmunk', 'pair'].flatMap((k) => Array.from({ length: t[k] }, (_, i) => `assets/stickers/${t.name}/${k}-${i + 1}.webp`)));
       return { names, urls, files, pair: c.pairSticker(), imgs: document.querySelectorAll('img.sticker:not([hidden])').length };
     });
     check('季節：秋 9/1–11/30、冬 12/1–2/28、春、夏', lib.names.join() === 'autumn,autumn,autumn,winter,winter,spring,summer', lib.names.join());
     check('秋季貼圖都指向存在的檔案', [...lib.urls, lib.pair].every((u) => u && fs.existsSync(ROOT + u)), JSON.stringify(lib.urls.find((u) => !u || !fs.existsSync(ROOT + u))));
-    check('各季設定的貼圖數量與檔案一致', lib.files.length >= 160 && lib.files.every((f) => fs.existsSync(ROOT + f)), lib.files.find((f) => !fs.existsSync(ROOT + f)));
-    check('9/1 生日紀錄只用狗狗貼圖', lib.urls.filter((_, i) => i % 2).every((u) => /\/dog-\d+\.webp$/.test(u)));
+    check('各季設定的貼圖數量與檔案一致', lib.files.length >= 240 && lib.files.every((f) => fs.existsSync(ROOT + f)), lib.files.find((f) => !fs.existsSync(ROOT + f)));
+    check('9/1 生日紀錄只用生日主題的狗狗貼圖', lib.urls.filter((_, i) => i % 2).every((u) => /\/birthday\/dog-\d+\.webp$/.test(u)));
+    check('一般紀錄不會用到生日貼圖', lib.urls.filter((_, i) => !(i % 2)).every((u) => !u.includes('/birthday/')));
     check('頁尾顯示狗鼠一起', /\/pair-\d+\.webp$/.test(lib.pair) && lib.imgs >= 1);
     check('首頁頁尾有支持網站維運', (await p.getAttribute('.support-link', 'href')) === 'https://buymeacoffee.com/shiba48');
     await p.click('.site-nav a[href="about.html"]'); await p.waitForTimeout(400);
