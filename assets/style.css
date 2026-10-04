@@ -190,6 +190,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
   background: var(--ink); color: var(--white); border-radius: 999px; padding: .3em .9em; font-size: .88rem;
 }
 .x-link:hover { background: var(--teal-ink); }
+.x-link .threads-icon { width: 1.15em; height: 1.15em; vertical-align: -.2em; }
+.x-link { overflow-wrap: anywhere; }
 @media (max-width: 640px) {
   .paper { padding: 18px 16px; }
   .paper .corner-sticker { height: 52px; top: -20px; }

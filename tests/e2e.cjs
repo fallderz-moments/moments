@@ -136,7 +136,8 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     check('關於頁面', (await p.textContent('main')).includes('安俞真') && (await p.textContent('main')).includes('金秋天'));
     await p.click('.site-nav a[href="team.html"]'); await p.waitForTimeout(400);
     const xs = await p.$$eval('.x-link', (as) => as.map((a) => a.href));
-    check('協作者 X 連結', JSON.stringify(xs) === JSON.stringify(['https://x.com/idolobservation', 'https://x.com/yizhishuite', 'https://x.com/L07Chip']), xs.join(' '));
+    check('協作者連結（X 與 Threads）', JSON.stringify(xs) === JSON.stringify(['https://x.com/idolobservation', 'https://x.com/yizhishuite', 'https://x.com/L07Chip', 'https://www.threads.com/@anyujin_dimples0901']), xs.join(' '));
+    check('Threads 館員使用 Threads 圖示而非 𝕏', (await p.locator('.x-link.threads svg').count()) === 1 && !(await p.textContent('.x-link.threads')).includes('𝕏'));
     const broken = await p.$$eval('img', (is) => is.filter((i) => i.getAttribute('src') && i.complete && i.naturalWidth === 0).map((i) => i.src));
     check('協作者頁圖片正常', broken.length === 0, broken.join(' '));
     check('內頁沒有 JS 錯誤', errs.length === 0, errs.join('; '));
