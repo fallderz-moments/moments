@@ -126,7 +126,7 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     });
     check('季節：秋 9/1–11/30、冬 12/1–2/28、春、夏', lib.names.join() === 'autumn,autumn,autumn,winter,winter,spring,summer', lib.names.join());
     check('秋季貼圖都指向存在的檔案', [...lib.urls, lib.pair].every((u) => u && fs.existsSync(ROOT + u)), JSON.stringify(lib.urls.find((u) => !u || !fs.existsSync(ROOT + u))));
-    check('各季設定的貼圖數量與檔案一致', lib.files.length >= 480 && lib.files.every((f) => fs.existsSync(ROOT + f)), lib.files.find((f) => !fs.existsSync(ROOT + f)));
+    check('各季設定的貼圖數量與檔案一致', lib.files.length >= 560 && lib.files.every((f) => fs.existsSync(ROOT + f)), lib.files.find((f) => !fs.existsSync(ROOT + f)));
     check('9/1 生日紀錄只用生日主題的狗狗貼圖', lib.urls.filter((_, i) => i % 2).every((u) => /\/birthday\/dog-\d+\.webp$/.test(u)));
     check('日常組與當季圖一起隨機出現', lib.mix.daily > 100 && lib.mix.season > 100 && lib.mix.daily + lib.mix.season === 400, JSON.stringify(lib.mix));
     check('一般紀錄不會用到生日貼圖', lib.urls.filter((_, i) => !(i % 2)).every((u) => !u.includes('/birthday/')));

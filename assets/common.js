@@ -27,7 +27,7 @@ export const SEASONS = [
 export const BIRTHDAY_STICKERS = { dog: 32, chipmunk: 32, pair: 16 };
 
 /** 日常組（assets/stickers/daily/）：全年不分季節，和當季的圖一起隨機抽（依張數比例） */
-export const DAILY_STICKERS = { dog: 32, chipmunk: 32, pair: 16 };
+export const DAILY_STICKERS = { dog: 64, chipmunk: 64, pair: 32 };
 
 /** 指定日期（預設今天）所屬的季節；跨年的期間（12-01 到 02-29）也能判斷 */
 export function seasonOf(date = todayStr()) {

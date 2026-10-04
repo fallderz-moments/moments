@@ -21,7 +21,7 @@
 | 後台「發布公告」→ `data/notices.json` | `{version, notices:[{id, date, content, createdAt}]}`；前台進站時以浮動視窗顯示沒看過的公告（最多 3 則） |
 | `.github/workflows/guard.yml` | 安全警示：非管理員改程式、一次刪 3 則以上、JSON 損壞、強制推送時自動開 issue 通知 |
 | `assets/style.css`、`admin.css`、`guide.css` | 樣式（圖書館風、Lazy Days 色票；中文用粉圓體 Huninn） |
-| `assets/pixel/`、`assets/stickers/` | 像素圖（頂部 banner 的原始點陣狗鼠、書、愛心、蛋糕、派對帽）與季節貼圖庫。貼圖放 `stickers/<spring|summer|autumn|winter>/dog-N.webp`、`chipmunk-N.webp`、`pair-N.webp`（狗鼠一起，用在頁尾愛心的位置），生日主題放 `stickers/birthday/`；數量設在 `common.js` 的 `SEASONS`／`BIRTHDAY_STICKERS`，數量 0 時畫面不顯示貼圖。目前四季、生日、日常六組都已放入（`spring/`、`summer/`、`autumn/`、`winter/`、`birthday/`、`daily/` 各狗 32、鼠 32、狗鼠一起 16，共 480 張）。日常組 `DAILY_STICKERS` 全年和當季圖依張數比例一起隨機（頁尾狗鼠一起也是）。生日紀錄不分季節一律用壽星的生日貼圖，生日當天頁尾用生日版狗鼠一起。整齊排列的貼圖表用 `tools/split_sprite_sheets.py --grid 4x4` 切圖 |
+| `assets/pixel/`、`assets/stickers/` | 像素圖（頂部 banner 的原始點陣狗鼠、書、愛心、蛋糕、派對帽）與季節貼圖庫。貼圖放 `stickers/<spring|summer|autumn|winter>/dog-N.webp`、`chipmunk-N.webp`、`pair-N.webp`（狗鼠一起，用在頁尾愛心的位置），生日主題放 `stickers/birthday/`；數量設在 `common.js` 的 `SEASONS`／`BIRTHDAY_STICKERS`，數量 0 時畫面不顯示貼圖。目前四季、生日、日常六組都已放入（`spring/`、`summer/`、`autumn/`、`winter/`、`birthday/` 各狗 32、鼠 32、狗鼠一起 16；`daily/` 兩批共狗 64、鼠 64、狗鼠一起 32；合計 560 張）。日常組 `DAILY_STICKERS` 全年和當季圖依張數比例一起隨機（頁尾狗鼠一起也是）。生日紀錄不分季節一律用壽星的生日貼圖，生日當天頁尾用生日版狗鼠一起。整齊排列的貼圖表用 `tools/split_sprite_sheets.py --grid 4x4` 切圖 |
 | `tools/` | 產生器與版本號工具 |
 | `tests/` | Playwright 端對端測試 |
 
