@@ -2,6 +2,36 @@
   "version": 1,
   "moments": [
     {
+      "id": "m-20240222-uphhx8",
+      "date": "2024-02-22",
+      "title": "時裝周的奇蹟早晨與妳",
+      "content": "好喜歡出差的時候還要聯絡彼此的關係......\n越過時差的互相關心互相讚美......\n我不知道......嗚嗚......\n\n看看姐姐的關心與小狗當天的造型\n果然是被誇獎後時裝周火力全開啊",
+      "tags": [
+        "Berriz"
+      ],
+      "media": [
+        {
+          "type": "drive",
+          "caption": "",
+          "id": "16-KzKJiKIrKokTj398wZ1dulETkQZe2G",
+          "kind": "image",
+          "name": "20240222_時裝周的奇蹟早晨與妳_01.png",
+          "src": "https://drive.google.com/file/d/16-KzKJiKIrKokTj398wZ1dulETkQZe2G/view"
+        },
+        {
+          "type": "drive",
+          "caption": "",
+          "id": "1kGNMnmEgx0oUX_7Gvq5iFRrMCfFKDJNL",
+          "kind": "image",
+          "name": "20240222_時裝周的奇蹟早晨與妳_02.png",
+          "src": "https://drive.google.com/file/d/1kGNMnmEgx0oUX_7Gvq5iFRrMCfFKDJNL/view"
+        }
+      ],
+      "cover": 0,
+      "createdAt": "2026-10-04T11:45:35.760Z",
+      "updatedAt": "2026-10-04T11:45:35.760Z"
+    },
+    {
       "source": "https://x.com/IVE_twt/status/2094661781134381098",
       "id": "m-20260901-fqh47s",
       "date": "2026-09-01",
