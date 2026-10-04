@@ -377,14 +377,12 @@ li[aria-current="true"] .series-item { cursor: default; font-weight: 600; }
 
 /* 狗狗鼠鼠貼圖 */
 .sticker { display: block; width: auto; image-rendering: auto; pointer-events: none; user-select: none; }
-.note-sticker {
-  position: absolute; right: -14px; bottom: -16px; height: 58px; z-index: 3;
+.note-sticker {  /* 統一放在便利貼內側右下角，不超出邊界，避免蓋到相鄰的便利貼 */
+  position: absolute; right: 8px; bottom: 6px; height: 46px; max-width: 64px; object-fit: contain; z-index: 3;
   filter: drop-shadow(0 2px 1px rgba(62, 74, 72, .18)); transition: transform .25s;
 }
-.note-sticker.left { right: auto; left: -14px; }
 .note:hover .note-sticker, .note:focus-visible .note-sticker { transform: translateY(-6px) rotate(-4deg); }
-.note .call-number { padding-right: 34px; }
-.note:has(.note-sticker.left) .call-number { padding-right: 0; padding-left: 34px; }
+.note .call-number { padding-right: 66px; }
 .heading-sticker { height: 40px; margin-left: -4px; }
 .ledger-media { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
 .ledger-sticker { height: 34px; }
@@ -550,8 +548,8 @@ dialog.lightbox .icon-btn { position: absolute; top: 14px; right: 14px; }
   .note { padding: 18px 10px 10px; }
   .note.birthday { padding-top: 36px; }
   .note-title { font-size: .92rem; }
-  .note-sticker { height: 44px; right: -8px; bottom: -12px; }
-  .note-sticker.left { left: -8px; }
+  .note-sticker { height: 40px; max-width: 56px; right: 6px; bottom: 5px; }
+  .note .call-number { padding-right: 58px; }
   .detail-sticker { height: 56px; right: 10px; }
   .detail-body .call-no, .detail-body h2 { padding-right: 64px; }
   .ledger-sticker { height: 28px; }

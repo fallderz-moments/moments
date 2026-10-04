@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, randomizeStickers,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet, fetchNotices,
-} from './common.js?v=202610041107';
+} from './common.js?v=202610041111';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -114,7 +114,7 @@ function noteHtml(m, index) {
       ${m.series ? `<span class="series-chip">📚 ${escapeHtml(m.series)}</span>` : ''}
       ${tagsHtml(m.tags)}
       <span class="call-number">${callNo(m)}</span>
-      ${stickerImg(`note-sticker ${h % 3 === 0 ? 'left' : ''}`, sticker(m.id, 0, m.date))}
+      ${stickerImg('note-sticker', sticker(m.id, 0, m.date))}
     </button>`;
 }
 
