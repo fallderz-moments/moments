@@ -19,7 +19,7 @@
 | `guide.html` | 公開的「共同編輯者申請與使用手冊」（申請、設定、前台瀏覽、退出） |
 | 後台「館員說明」對話框（`admin.html` 內） | 新增紀錄、編輯守則、常見問題（不放在公開手冊） |
 | `assets/style.css`、`admin.css`、`guide.css` | 樣式（圖書館風、Lazy Days 色票；中文用粉圓體 Huninn） |
-| `assets/pixel/`、`assets/stickers/` | 像素圖與 315 張狗狗鼠鼠貼圖（`dog-NN.webp` 151 張、`chipmunk-NN.webp` 164 張；每次重整隨機挑，9/1 生日紀錄只用狗、9/24 只用鼠） |
+| `assets/pixel/`、`assets/stickers/` | 像素圖與狗狗鼠鼠貼圖：一般 `dog-NN.webp` 105 張、`chipmunk-NN.webp` 116 張；季節／節慶主題放 `stickers/<主題>/`（目前 `autumn/` 狗 46、鼠 48），期間與數量設在 `common.js` 的 `SEASONS`。每次重整隨機挑；9/1 生日紀錄只用狗、9/24 只用鼠。頁面上的 `data-random-sticker` 圖片由 `randomizeStickers()` 隨機換圖（網站頂部 banner 的兩張像素原圖不動） |
 | `tools/` | 產生器與版本號工具 |
 | `tests/` | Playwright 端對端測試 |
 
@@ -27,6 +27,8 @@
 
 `id`、`date`（YYYY-MM-DD）、`title`、`content`、`tags`、`source`（選填）、`series`（選填，同系列會串接）、
 `media`（`{type:'drive', id, kind:'image'|'video', name, src, thumb?, thumbId?, w?, h?}`）、`cover`（封面索引）、`createdAt`、`updatedAt`。
+
+後台存檔的提交訊息結尾會附上 `[紀錄 id]`，後台據此從 GitHub 提交紀錄顯示「誰在何時編輯」（只在後台顯示，不寫進 `moments.json`）。
 
 **館員會隨時透過後台直接改 `main` 上的 `data/moments.json`。** 推送前一定要先 `git fetch` 並合併 `origin/main`，絕不覆蓋他們的資料。
 

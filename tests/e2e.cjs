@@ -11,7 +11,7 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
   const b = await chromium.launch();
   async function setup({ push = true, scopeOk = true } = {}) {
     const ctx = await b.newContext({ viewport: { width: 1200, height: 900 } });
-    const log = []; const files = { 'data/moments.json': { sha: 's0', content: fs.readFileSync(ROOT + 'data/moments.json', 'utf8') } };
+    const log = []; const commits = []; const files = { 'data/moments.json': { sha: 's0', content: fs.readFileSync(ROOT + 'data/moments.json', 'utf8') } };
     const json = (r, s, body, h = {}) => r.fulfill({ status: s, contentType: 'application/json', headers: { 'access-control-allow-origin': '*', 'access-control-expose-headers': 'Location', ...h }, body: JSON.stringify(body) });
     await ctx.route(SITE + '**', (r) => {
       const rel = new URL(r.request().url()).pathname.replace('/moments/', '') || 'index.html';
@@ -26,8 +26,9 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
       const m = u.match(/^\/repos\/([^/]+)\/([^/]+)(.*)$/); const path = decodeURIComponent(m[3].replace('/contents/', ''));
       if (path === '') return json(r, 200, { permissions: { push } });
       if (path.startsWith('/branches/')) return json(r, 200, {});
+      if (path === '/commits') return json(r, 200, commits);
       if (req.method() === 'GET') { const f = files[path]; return f ? json(r, 200, { sha: f.sha, encoding: 'base64', content: Buffer.from(f.content).toString('base64') }) : json(r, 404, {}); }
-      const body = JSON.parse(req.postData()); files[path] = { sha: 's' + log.length, content: Buffer.from(body.content, 'base64').toString() }; return json(r, 201, { content: { sha: files[path].sha } });
+      const body = JSON.parse(req.postData()); commits.unshift({ commit: { message: body.message, author: { name: '一支水特', date: new Date().toISOString() } } }); files[path] = { sha: 's' + log.length, content: Buffer.from(body.content, 'base64').toString() }; return json(r, 201, { content: { sha: files[path].sha } });
     });
     await ctx.route('https://accounts.google.com/gsi/client', (r) => r.fulfill({ contentType: 'text/javascript', body: `window.google={accounts:{oauth2:{initTokenClient:(c)=>({requestAccessToken:()=>setTimeout(()=>c.callback({access_token:'t',expires_in:3599}),30)}),revoke:()=>{}}}};` }));
     const uploads = [];
@@ -42,11 +43,14 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     });
     await ctx.route('https://drive.google.com/**', (r) => r.fulfill({ status: 404 }));
     await ctx.route('https://i.ytimg.com/**', (r) => r.fulfill({ status: 404 }));
-    return { ctx, log, files, uploads };
+    // 舊格式的提交訊息（沒有 id）也要能對應到紀錄
+    const first = JSON.parse(files['data/moments.json'].content).moments[0];
+    commits.push({ commit: { message: `新增紀錄 ${first.date} ${first.title}`.trim(), author: { name: '果凍Zero', date: '2026-01-01T00:00:00Z' } } });
+    return { ctx, log, commits, files, uploads };
   }
 
   // A. 共同編輯者首次設定 → 新增紀錄（含照片上傳）
-  { const { ctx, log, files, uploads } = await setup();
+  { const { ctx, log, commits, files, uploads } = await setup();
     const p = await ctx.newPage(); const errs = []; p.on('pageerror', (e) => errs.push(e.message)); p.on('dialog', (d) => d.accept());
     await p.goto(SITE + 'admin.html'); await p.waitForTimeout(800);
     check('設定視窗自動開啟', await p.isVisible('#settings'));
@@ -65,6 +69,10 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     await p.click('#btn-save');
     await p.waitForFunction(() => document.getElementById('toast').textContent.includes('已儲存'), null, { timeout: 8000 });
     const saved = JSON.parse(files['data/moments.json'].content).moments.find((m) => m.title === '測試紀錄');
+    check('提交訊息附上紀錄 id', commits[0].commit.message.endsWith(`[${saved && saved.id}]`), commits[0].commit.message);
+    await p.waitForFunction(() => !document.getElementById('editor-history').hidden, null, { timeout: 5000 }).catch(() => {});
+    check('後台顯示這則的編輯者', (await p.textContent('#editor-history')).includes('一支水特'), await p.textContent('#editor-history'));
+    check('舊提交也能對應到編輯者', (await p.textContent('#admin-list')).includes('✎ 果凍Zero'));
     check('系列欄位已儲存（去除多餘空白）', saved && saved.series === '測試 系列', saved && saved.series);
     check('多張照片上傳到雲端資料夾', uploads.length === 2 && uploads.every((u) => u.parents[0] === '1TESTFOLDERxxxxxxxxxxxxxxxx'));
     check('紀錄已寫入（分類、媒體）', saved && saved.tags.includes('LIVE') && saved.tags.includes('X(twitter)') && saved.tags.includes('其他') && saved.media.length === 2 && saved.media.every((m) => m.type === 'drive'));
@@ -93,6 +101,14 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     const p = await ctx.newPage(); const errs = []; p.on('pageerror', (e) => errs.push(e.message));
     await p.goto(SITE); await p.waitForTimeout(500);
     check('首頁有 關於／協作者名單 連結', await p.locator('.site-nav a[href="about.html"]').count() === 1 && await p.locator('.site-nav a[href="team.html"]').count() === 1);
+    const season = await p.evaluate(async () => {
+      const c = await import('./assets/common.js');
+      const names = ['2026-10-04', '2026-09-01', '2026-11-30', '2026-12-01', '2027-07-01'].map((d) => c.seasonOf(d)?.name || '-');
+      const srcs = Array.from({ length: 300 }, (_, i) => c.sticker('t' + i, 0, i % 2 ? 'dog' : null));
+      return { names, srcs };
+    });
+    check('季節主題：9/1–11/30 秋季，冬季圖未放前不啟用', season.names.join() === 'autumn,autumn,autumn,-,-', season.names.join());
+    check('隨機貼圖都指向存在的檔案', season.srcs.every((s) => fs.existsSync(ROOT + s)), season.srcs.find((s) => !fs.existsSync(ROOT + s)));
     check('首頁頁尾有支持網站維運', (await p.getAttribute('.support-link', 'href')) === 'https://buymeacoffee.com/shiba48');
     await p.click('.site-nav a[href="about.html"]'); await p.waitForTimeout(400);
     check('關於頁面', (await p.textContent('main')).includes('安俞真') && (await p.textContent('main')).includes('金秋天'));

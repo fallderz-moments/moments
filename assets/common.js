@@ -8,8 +8,28 @@ export const NOTE_TINTS = ['mint', 'blush', 'coral', 'sand', 'ivory', 'teal'];
 /** 預設分類標籤（依顯示順序） */
 export const PRESET_TAGS = ['YouTube', 'Berriz', 'Universe', '花絮', '綜藝', 'Bubble', 'Instagram', 'X(twitter)', 'FanClub', 'LIVE', 'FanSign', '其他'];
 
-/** 貼圖數量（assets/stickers/dog-01.webp …、chipmunk-01.webp …） */
-export const STICKERS = { dog: 151, chipmunk: 164 };
+/** 一般貼圖數量（assets/stickers/dog-01.webp …、chipmunk-01.webp …），一年四季都會出現 */
+export const STICKERS = { dog: 105, chipmunk: 116 };
+
+/**
+ * 季節／節慶主題貼圖（assets/stickers/<name>/dog-01.webp …）。
+ * 期間內約 2/3 的貼圖換成主題圖，其餘照常混搭一般貼圖；期間外完全不出現。
+ * 多個主題同時符合時，排在前面的優先（節慶寫在季節前面）。數量為 0 代表圖還沒放進來。
+ * 新增主題：把圖放進對應資料夾、填上數量即可。
+ */
+export const SEASONS = [
+  { name: 'halloween', from: '10-25', to: '10-31', dog: 0, chipmunk: 0 },  // 萬聖節（圖待補）
+  { name: 'autumn', from: '09-01', to: '11-30', dog: 46, chipmunk: 48 },   // 秋季
+  { name: 'winter', from: '12-01', to: '02-29', dog: 0, chipmunk: 0 },     // 冬季（圖待補）
+];
+const SEASON_SHARE = 2 / 3;
+
+/** 指定日期（預設今天）適用的主題；跨年的期間（例如 12-01 到 02-29）也能判斷 */
+export function seasonOf(date = todayStr()) {
+  const md = date.slice(5);
+  return SEASONS.find((t) => (t.dog || t.chipmunk) &&
+    (t.from <= t.to ? md >= t.from && md <= t.to : md >= t.from || md <= t.to)) || null;
+}
 
 /** 每次載入頁面換一個種子：重新整理就會換一批貼圖，同一次瀏覽中則保持不變 */
 const PAGE_SEED = Math.floor(Math.random() * 1e9);
@@ -20,10 +40,8 @@ export function birthdayKind(date = '') {
   return md === '09-01' ? 'dog' : md === '09-24' ? 'chipmunk' : null;
 }
 
-export const stickerUrl = (kind, i) => `assets/stickers/${kind}-${String(i).padStart(2, '0')}.webp`;
-
 /**
- * 依種子挑一張貼圖：每次重新整理隨機換一批，不同紀錄各不相同。
+ * 依種子挑一張貼圖：每次重新整理隨機換一批，不同位置各不相同。
  * 指定 kind（'dog'／'chipmunk'）就只從該動物挑；沒指定時，今天若是生日就只用壽星的貼圖。
  */
 export function sticker(seed, salt = 0, kind = null) {
@@ -32,9 +50,20 @@ export function sticker(seed, salt = 0, kind = null) {
   h = Math.imul(h ^ (h >>> 16), 0x45d9f3b);
   h = (h ^ (h >>> 16)) >>> 0;
   kind = kind || birthdayKind(todayStr());
-  if (kind) return stickerUrl(kind, (h % STICKERS[kind]) + 1);
-  const n = h % (STICKERS.dog + STICKERS.chipmunk);
-  return n < STICKERS.dog ? stickerUrl('dog', n + 1) : stickerUrl('chipmunk', n - STICKERS.dog + 1);
+  const season = seasonOf();
+  const useSeason = season && (h % 1000) / 1000 < SEASON_SHARE && (!kind || season[kind]);
+  const counts = useSeason ? season : STICKERS;
+  const dir = useSeason ? `assets/stickers/${season.name}/` : 'assets/stickers/';
+  h = Math.floor(h / 1000);
+  if (!kind) kind = h % (counts.dog + counts.chipmunk) < counts.dog ? 'dog' : 'chipmunk';
+  return `${dir}${kind}-${String((h % counts[kind]) + 1).padStart(2, '0')}.webp`;
+}
+
+/** 頁面上標了 data-random-sticker（值可指定 dog／chipmunk）的圖片，每次載入隨機換圖 */
+export function randomizeStickers(root = document) {
+  root.querySelectorAll('[data-random-sticker]').forEach((img, i) => {
+    img.src = sticker(location.pathname, i, img.dataset.randomSticker || null);
+  });
 }
 
 /** 生日（MM-DD）：9/1 安俞真（狗狗）、9/24 金秋天（鼠鼠） */

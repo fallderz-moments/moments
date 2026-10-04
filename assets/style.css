@@ -561,6 +561,7 @@ dialog.lightbox .icon-btn { position: absolute; top: 14px; right: 14px; }
   .media-grid { gap: 8px; }
   .birthday-banner { font-size: .95rem; gap: 6px; }
   .birthday-banner .sprite { height: 40px; }
+  .birthday-banner span { white-space: nowrap; font-size: .85rem; letter-spacing: .08em; }
   .search { max-width: none; order: 3; flex-basis: 100%; }
   .row-label { display: none; }
 }

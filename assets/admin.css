@@ -138,3 +138,11 @@ dialog.help-dialog::backdrop { background: rgba(62, 74, 72, .45); }
 .help-toc { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; }
 .help-toc a { text-decoration: none; background: var(--card); border: 1.5px solid var(--sand); border-radius: 6px; padding: .1em .8em; font-size: .9rem; color: var(--teal-ink); }
 .linklike { border: 0; background: none; padding: 0; color: var(--teal-deep); text-decoration: underline; cursor: pointer; font: inherit; }
+
+/* 編輯紀錄（誰在什麼時候改過） */
+.admin-list .meta .by { opacity: .8; }
+.editor-history { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: -4px 0 14px; padding: 8px 12px;
+  font-size: .85rem; color: var(--ink-soft); background: rgba(210, 224, 211, .35); border-radius: 8px; }
+.editor-history details { flex-basis: 100%; }
+.editor-history summary { cursor: pointer; width: fit-content; }
+.editor-history ol { margin: 6px 0 0; padding-left: 1.4em; }

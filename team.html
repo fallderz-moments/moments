@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610040659">
+  <link rel="stylesheet" href="assets/style.css?v=202610040739">
 </head>
 <body>
   <header class="site-header">
@@ -70,26 +70,17 @@
   </main>
   <footer class="site-footer">
     <div class="footer-shelf" aria-hidden="true">
-      <img class="sticker" id="footer-dog" src="assets/stickers/dog-01.webp" alt="">
+      <img class="sticker" data-random-sticker="dog" src="assets/stickers/dog-01.webp" alt="">
       <img class="sprite small" src="assets/pixel/heart.svg" alt="">
-      <img class="sticker" id="footer-chipmunk" src="assets/stickers/chipmunk-01.webp" alt="">
+      <img class="sticker" data-random-sticker="chipmunk" src="assets/stickers/chipmunk-01.webp" alt="">
     </div>
     <a class="support-link" href="https://buymeacoffee.com/shiba48" target="_blank" rel="noopener">☕ 支持網站維運</a>
     <p>Fallderz Moments ‧ 狗狗鼠鼠觀察日誌 · <a href="./">館藏首頁</a> · <a href="guide.html">編輯者手冊</a></p>
   </footer>
-  <script>
-    // 頁尾與頁面中的貼圖每次造訪隨機換一組；9/1（狗狗）、9/24（鼠鼠）生日當天只放壽星
-    (() => {
-      const N = { dog: 151, chipmunk: 164 };
-      const md = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei', month: '2-digit', day: '2-digit' }).format(new Date());
-      const star = md === '09-01' ? 'dog' : md === '09-24' ? 'chipmunk' : null;
-      const pick = (kind) => `assets/stickers/${kind}-${String(1 + Math.floor(Math.random() * N[kind])).padStart(2, '0')}.webp`;
-      document.getElementById('footer-dog').src = pick('dog');
-      document.getElementById('footer-chipmunk').src = pick('chipmunk');
-      document.querySelectorAll('[data-random-sticker]').forEach((img) => {
-        img.src = pick(star || img.dataset.randomSticker || (Math.random() < .5 ? 'dog' : 'chipmunk'));
-      });
-    })();
+  <script type="module">
+    // 貼圖每次造訪隨機換一組（季節主題、生日規則見 assets/common.js）
+    import { randomizeStickers } from "./assets/common.js?v=202610040739";
+    randomizeStickers();
   </script>
 </body>
 </html>

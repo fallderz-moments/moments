@@ -1,7 +1,7 @@
 import {
   START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
   mediaThumb, driveId, driveImage, isVideoPath, isBirthday, fetchMoments, storageGet, storageSet, MEDIA_LABELS,
-} from './common.js?v=202610040659';
+} from './common.js?v=202610040739';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';
@@ -192,6 +192,55 @@ async function connect() {
   state.connected = true;
   updateConn();
   renderList();
+  loadHistory();
+}
+
+/* ---------- 編輯紀錄（只在後台顯示，資料來自 GitHub 的提交紀錄，無法冒名） ---------- */
+const HISTORY_RE = /^(新增|更新|刪除)紀錄 (\d{4}-\d{2}-\d{2})\s*(.*?)\s*(?:\[([\w-]+)\])?$/;
+
+async function loadHistory() {
+  const commits = [];
+  try {
+    for (let page = 1; page <= 5; page++) {
+      const batch = await gh(`/commits?path=${encodeURIComponent(DATA_PATH)}&sha=${encodeURIComponent(state.cfg.branch)}&per_page=100&page=${page}`);
+      commits.push(...batch);
+      if (batch.length < 100) break;
+    }
+  } catch (err) {
+    console.warn('讀取編輯紀錄失敗', err);
+    return;
+  }
+  // 舊的提交訊息沒有紀錄 id，改用「日期＋標題」對應
+  const byDateTitle = new Map(state.moments.map((m) => [`${m.date} ${m.title || ''}`.trim(), m.id]));
+  const history = new Map();
+  for (const c of commits) {
+    const m = c.commit.message.split('\n')[0].match(HISTORY_RE);
+    if (!m) continue;
+    const id = m[4] || byDateTitle.get(`${m[2]} ${m[3]}`.trim());
+    if (!id) continue;
+    if (!history.has(id)) history.set(id, []);
+    history.get(id).push({ action: m[1], who: c.commit.author?.name || c.author?.login || '?', at: c.commit.author?.date || '' });
+  }
+  state.history = history;  // 每則由新到舊
+  renderList();
+  renderHistory();
+}
+
+const shortTime = (iso) => iso ? new Intl.DateTimeFormat('zh-TW', {
+  timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+}).format(new Date(iso)) : '';
+
+function renderHistory() {
+  const box = $('#editor-history');
+  if (!box) return;
+  const list = (state.originalId && state.history?.get(state.originalId)) || [];
+  box.hidden = !list.length;
+  if (!list.length) return;
+  const first = list[list.length - 1], last = list[0];
+  box.innerHTML = `<span>🖋 最後編輯：<b>${escapeHtml(last.who)}</b>（${shortTime(last.at)}）</span>` +
+    (list.length > 1 ? `<span>建立：${escapeHtml(first.who)}（${shortTime(first.at)}）</span>` : '') +
+    `<details><summary>全部 ${list.length} 次修改</summary><ol>${list.map((h) =>
+      `<li>${shortTime(h.at)}　${escapeHtml(h.who)}　${h.action}</li>`).join('')}</ol></details>`;
 }
 
 /* ---------- Google 雲端硬碟（照片與影片） ---------- */
@@ -403,6 +452,11 @@ async function onSettingsSubmit(e) {
 }
 
 /* ---------- 左側清單 ---------- */
+const editorOf = (id) => {
+  const who = state.history?.get(id)?.[0]?.who;
+  return who ? `<span class="by"> · ✎ ${escapeHtml(who)}</span>` : '';
+};
+
 function renderList() {
   const q = state.search.trim().toLowerCase();
   const list = sortMoments(state.moments, 'desc')
@@ -416,7 +470,7 @@ function renderList() {
     html.push(`
       <li><button type="button" data-id="${escapeHtml(m.id)}" aria-current="${state.originalId === m.id}">
         <span class="thumb">${cover.url ? `<img src="${escapeHtml(cover.url)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '✎'}</span>
-        <span class="meta"><small>${formatDate(m.date)}${isBirthday(m.date) ? ' 🎂' : ''}</small><div>${escapeHtml(m.title || '無標題')}</div></span>
+        <span class="meta"><small>${formatDate(m.date)}${isBirthday(m.date) ? ' 🎂' : ''}${editorOf(m.id)}</small><div>${escapeHtml(m.title || '無標題')}</div></span>
       </button></li>`);
   }
   $('#admin-list').innerHTML = html.join('') || '<li class="year">沒有紀錄</li>';
@@ -461,6 +515,7 @@ function openEditor(moment) {
   renderTagsUi();
   renderMedia();
   renderList();
+  renderHistory();
   form.scrollIntoView({ block: 'start' });
 }
 
@@ -716,13 +771,14 @@ async function onSave(e) {
       const idx = list.findIndex((m) => m.id === saved.id);
       if (idx >= 0) list[idx] = saved; else list.push(saved);
       return list;
-    }, `${before ? '更新' : '新增'}紀錄 ${saved.date} ${saved.title}`.trim());
+    }, `${before ? '更新' : '新增'}紀錄 ${saved.date} ${saved.title}`.trim() + ` [${saved.id}]`);
 
     // 3. 刪除被移除、存放在儲存庫內的舊檔案（雲端硬碟上的檔案一律保留）
     const keep = new Set(saved.media.map((m) => m.src));
     for (const m of before?.media || []) if (isRepoMedia(m.src) && !keep.has(m.src)) await deleteRepoFile(m.src);
 
     state.originalId = saved.id;
+    loadHistory();
     setBusy(false);
     toast('已儲存！前台約 1 分鐘後更新');
     openEditor(saved);
@@ -740,7 +796,7 @@ async function onDelete() {
   if (!target || !confirm(`確定要刪除「${target.title || formatDate(target.date)}」嗎？\n（Google 雲端硬碟裡的原始檔案會保留，不會被刪除）`)) return;
   try {
     setBusy(true, '刪除中…');
-    await commitChange((list) => list.filter((m) => m.id !== target.id), `刪除紀錄 ${target.date} ${target.title}`.trim());
+    await commitChange((list) => list.filter((m) => m.id !== target.id), `刪除紀錄 ${target.date} ${target.title}`.trim() + ` [${target.id}]`);
     for (const m of target.media || []) if (isRepoMedia(m.src)) await deleteRepoFile(m.src);
     setBusy(false);
     toast('已刪除');
