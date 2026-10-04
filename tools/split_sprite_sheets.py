@@ -66,14 +66,19 @@ def grid_main(path, w, h, cols, rows, out, prefix, start):
     """整齊排成 cols×rows 格的貼圖表：每個連通區塊依中心點歸到所在的格子，同格合併（狗鼠一起的圖不會被拆開）"""
     data = open(path, 'rb').read()
     cells = {}
-    for c in components(data, w, h):
+    def add(key, c):
+        b = cells.get(key)
+        cells[key] = c if b is None else [min(b[0], c[0]), min(b[1], c[1]), max(b[2], c[2]), max(b[3], c[3]), b[4] + c[4]]
+    comps = components(data, w, h)
+    big = [c for c in comps if c[2] - c[0] >= BIG or c[3] - c[1] >= BIG]
+    for c in big:  # 主體依中心點分格
         cx, cy = (c[0] + c[2]) / 2, (c[1] + c[3]) / 2
-        key = (int(cy * rows / h), int(cx * cols / w))
-        if key in cells:
-            b = cells[key]
-            cells[key] = [min(b[0], c[0]), min(b[1], c[1]), max(b[2], c[2]), max(b[3], c[3]), b[4] + c[4]]
-        else:
-            cells[key] = c
+        add((int(cy * rows / h), int(cx * cols / w)), c)
+    for c in comps:  # 雪花、愛心等小碎片歸給最近的主體（碎片可能落在格線另一側）
+        if c in big:
+            continue
+        d, key = min((gap(c, b), k) for k, b in cells.items())
+        add(key, c)
     out.mkdir(parents=True, exist_ok=True)
     names = []
     for n, key in enumerate(sorted(cells), start):
