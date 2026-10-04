@@ -74,9 +74,17 @@ def grid_main(path, w, h, cols, rows, out, prefix, start):
     for c in big:  # 主體依中心點分格
         cx, cy = (c[0] + c[2]) / 2, (c[1] + c[3]) / 2
         add((int(cy * rows / h), int(cx * cols / w)), c)
-    for c in comps:  # 雪花、愛心等小碎片歸給最近的主體（碎片可能落在格線另一側）
+    # 小碎片先彼此聚成一團（例如太陽＝圓心＋一圈光芒），再整團歸給最近的主體（碎片可能落在格線另一側）
+    groups = []
+    for c in comps:
         if c in big:
             continue
+        near = [g for g in groups if gap(g, c) <= 16]
+        for g in near:
+            groups.remove(g)
+            c = [min(g[0], c[0]), min(g[1], c[1]), max(g[2], c[2]), max(g[3], c[3]), g[4] + c[4]]
+        groups.append(c)
+    for c in groups:
         d, key = min((gap(c, b), k) for k, b in cells.items())
         add(key, c)
     out.mkdir(parents=True, exist_ok=True)
