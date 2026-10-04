@@ -115,21 +115,21 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     const p = await ctx.newPage(); const errs = []; p.on('pageerror', (e) => errs.push(e.message));
     await p.goto(SITE); await p.waitForTimeout(500);
     check('首頁有 關於／協作者名單 連結', await p.locator('.site-nav a[href="about.html"]').count() === 1 && await p.locator('.site-nav a[href="team.html"]').count() === 1);
-    const season = await p.evaluate(async () => {
+    const lib = await p.evaluate(async () => {
       const c = await import('./assets/common.js');
-      const names = ['2026-10-04', '2026-09-01', '2026-11-30', '2026-12-01', '2027-07-01'].map((d) => c.seasonOf(d)?.name || '-');
-      const srcs = Array.from({ length: 300 }, (_, i) => c.sticker('t' + i, 0, i % 2 ? 'dog' : null));
-      return { names, srcs };
+      const names = ['2026-10-04', '2026-09-01', '2026-11-30', '2026-12-01', '2027-02-28', '2027-04-01', '2027-07-01'].map((d) => c.seasonOf(d)?.name || '-');
+      const urls = Array.from({ length: 50 }, (_, i) => c.sticker('t' + i, 0, i % 2 ? '2025-09-01' : '2025-05-05'));
+      return { names, urls, pair: c.pairSticker(), imgs: document.querySelectorAll('img.sticker:not([hidden])').length };
     });
-    check('季節主題：9/1–11/30 秋季，冬季圖未放前不啟用', season.names.join() === 'autumn,autumn,autumn,-,-', season.names.join());
-    check('隨機貼圖都指向存在的檔案', season.srcs.every((s) => fs.existsSync(ROOT + s)), season.srcs.find((s) => !fs.existsSync(ROOT + s)));
+    check('季節：秋 9/1–11/30、冬 12/1–2/28、春、夏', lib.names.join() === 'autumn,autumn,autumn,winter,winter,spring,summer', lib.names.join());
+    check('圖庫清空後畫面上沒有任何貼圖', lib.urls.every((u) => u === '') && lib.pair === '' && lib.imgs === 0, JSON.stringify(lib));
     check('首頁頁尾有支持網站維運', (await p.getAttribute('.support-link', 'href')) === 'https://buymeacoffee.com/shiba48');
     await p.click('.site-nav a[href="about.html"]'); await p.waitForTimeout(400);
     check('關於頁面', (await p.textContent('main')).includes('安俞真') && (await p.textContent('main')).includes('金秋天'));
     await p.click('.site-nav a[href="team.html"]'); await p.waitForTimeout(400);
     const xs = await p.$$eval('.x-link', (as) => as.map((a) => a.href));
     check('協作者 X 連結', JSON.stringify(xs) === JSON.stringify(['https://x.com/idolobservation', 'https://x.com/yizhishuite', 'https://x.com/L07Chip']), xs.join(' '));
-    const broken = await p.$$eval('img', (is) => is.filter((i) => i.complete && i.naturalWidth === 0).map((i) => i.src));
+    const broken = await p.$$eval('img', (is) => is.filter((i) => i.getAttribute('src') && i.complete && i.naturalWidth === 0).map((i) => i.src));
     check('協作者頁圖片正常', broken.length === 0, broken.join(' '));
     check('內頁沒有 JS 錯誤', errs.length === 0, errs.join('; '));
     await ctx.close(); }
@@ -149,7 +149,7 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     check('公開手冊只到申請', (await p.locator('#setup, #browse, #leave').count()) === 0 && (await p.locator('#apply').count()) === 1);
     await p.waitForTimeout(200);
     await p.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 600) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 120)); } }); await p.waitForTimeout(500);
-    const imgs = await p.$$eval('img', (is) => is.filter((i) => !i.complete || i.naturalWidth === 0).map((i) => i.src));
+    const imgs = await p.$$eval('img', (is) => is.filter((i) => i.getAttribute('src') && (!i.complete || i.naturalWidth === 0)).map((i) => i.src));
     check('手冊圖片都能載入', imgs.length === 0, imgs.join(' '));
     const anchors = await p.$$eval('.toc a', (as) => as.every((a) => document.querySelector(a.getAttribute('href'))));
     check('目錄錨點都存在', anchors);

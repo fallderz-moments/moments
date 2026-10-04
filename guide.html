@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610040753">
-  <link rel="stylesheet" href="assets/guide.css?v=202610040753">
+  <link rel="stylesheet" href="assets/style.css?v=202610040823">
+  <link rel="stylesheet" href="assets/guide.css?v=202610040823">
 </head>
 <body>
   <main class="guide">
@@ -19,9 +19,9 @@
       <h1>Fallderz <em>Moments</em><br>共同編輯者申請手冊</h1>
       <p>想和 KONOKI 一起整理狗狗鼠鼠觀察日誌嗎？這份手冊說明館員的工作內容與申請方式。</p>
       <div class="pair" aria-hidden="true">
-        <img class="sticker" data-random-sticker="dog" src="assets/stickers/dog-22.webp" alt="" style="height:70px">
+        <img class="sprite" src="assets/pixel/dog.svg" alt="" style="height:64px">
         <img class="sprite" src="assets/pixel/books.svg" alt="" style="height:32px">
-        <img class="sticker" data-random-sticker="chipmunk" src="assets/stickers/chipmunk-10.webp" alt="" style="height:70px">
+        <img class="sprite" src="assets/pixel/chipmunk.svg" alt="" style="height:64px">
       </div>
     </header>
 
@@ -90,16 +90,15 @@
 
   <footer class="site-footer">
     <div class="footer-shelf" aria-hidden="true">
-      <img class="sticker" data-random-sticker="dog" src="assets/stickers/dog-06.webp" alt="">
-      <img class="sprite small" src="assets/pixel/heart.svg" alt="">
-      <img class="sticker" data-random-sticker="chipmunk" src="assets/stickers/chipmunk-17.webp" alt="">
+      <img class="sprite small" data-pair-fallback src="assets/pixel/heart.svg" alt="">
+      <img class="sticker pair-sticker" data-pair-sticker alt="" hidden>
     </div>
     <a class="support-link" href="https://buymeacoffee.com/shiba48" target="_blank" rel="noopener">☕ 支持網站維運</a>
     <p><a href="./">回到 Fallderz Moments</a> · <a href="about.html">關於</a> · <a href="team.html">協作者名單</a></p>
   </footer>
   <script type="module">
     // 貼圖每次造訪隨機換一組（季節主題、生日規則見 assets/common.js）
-    import { randomizeStickers } from "./assets/common.js?v=202610040753";
+    import { randomizeStickers } from "./assets/common.js?v=202610040823";
     randomizeStickers();
   </script>
 </body>

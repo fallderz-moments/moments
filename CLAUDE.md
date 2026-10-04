@@ -21,7 +21,7 @@
 | 後台「發布公告」→ `data/notices.json` | `{version, notices:[{id, date, content, createdAt}]}`；前台進站時以浮動視窗顯示沒看過的公告（最多 3 則） |
 | `.github/workflows/guard.yml` | 安全警示：非管理員改程式、一次刪 3 則以上、JSON 損壞、強制推送時自動開 issue 通知 |
 | `assets/style.css`、`admin.css`、`guide.css` | 樣式（圖書館風、Lazy Days 色票；中文用粉圓體 Huninn） |
-| `assets/pixel/`、`assets/stickers/` | 像素圖與狗狗鼠鼠貼圖：一般 `dog-NN.webp` 105 張、`chipmunk-NN.webp` 116 張；季節／節慶主題放 `stickers/<主題>/`（目前 `autumn/` 狗 46、鼠 48），期間與數量設在 `common.js` 的 `SEASONS`。每次重整隨機挑；9/1 生日紀錄只用狗、9/24 只用鼠。頁面上的 `data-random-sticker` 圖片由 `randomizeStickers()` 隨機換圖（網站頂部 banner 的兩張像素原圖不動） |
+| `assets/pixel/`、`assets/stickers/` | 像素圖（頂部 banner 的原始點陣狗鼠、書、愛心、蛋糕、派對帽）與季節貼圖庫。貼圖放 `stickers/<spring|summer|autumn|winter>/dog-N.webp`、`chipmunk-N.webp`、`pair-N.webp`（狗鼠一起，用在頁尾愛心的位置），生日主題放 `stickers/birthday/`；數量設在 `common.js` 的 `SEASONS`／`BIRTHDAY_STICKERS`，數量 0 時畫面不顯示貼圖。2026-10 擁有者要求清空舊貼圖，等待新圖庫 |
 | `tools/` | 產生器與版本號工具 |
 | `tests/` | Playwright 端對端測試 |
 

@@ -1,8 +1,8 @@
 import {
-  NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, birthdayKind,
+  NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, birthdayKind, randomizeStickers,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet, fetchNotices,
-} from './common.js?v=202610040753';
+} from './common.js?v=202610040823';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -115,7 +115,7 @@ function noteHtml(m, index) {
       ${m.series ? `<span class="series-chip">📚 ${escapeHtml(m.series)}</span>` : ''}
       ${tagsHtml(m.tags)}
       <span class="call-number">${callNo(m)}</span>
-      <img class="sticker note-sticker ${h % 3 === 0 ? 'left' : ''}" src="${sticker(m.id, 0, birthdayKind(m.date))}" alt="" loading="lazy">
+      ${stickerImg(`note-sticker ${h % 3 === 0 ? 'left' : ''}`, sticker(m.id, 0, m.date))}
     </button>`;
 }
 
@@ -129,7 +129,7 @@ function ledgerHtml(m, index) {
           ${bday ? '<span class="bday-mark"><img class="sprite" src="assets/pixel/cake.svg" alt="">BIRTHDAY</span>' : ''}</span>
         <span class="ledger-title"><b>${escapeHtml(m.title || '無標題')}</b>${m.series ? `<span class="series-chip">📚 ${escapeHtml(m.series)}</span>` : ''}<span>${escapeHtml(excerpt(m.content, 80))}</span></span>
         <span class="ledger-tags">${sortTags(m.tags || []).map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</span>
-        <span class="ledger-media">${mediaSummary(m.media)}<img class="sticker ledger-sticker" src="${sticker(m.id, 0, birthdayKind(m.date))}" alt="" loading="lazy"></span>
+        <span class="ledger-media">${mediaSummary(m.media)}${stickerImg('ledger-sticker', sticker(m.id, 0, m.date))}</span>
       </button>
     </li>`;
 }
@@ -143,7 +143,7 @@ function render() {
     const hint = searching
       ? '找不到符合的館藏'
       : state.all.length ? `${periodLabel()}還沒有紀錄` : '還沒有任何紀錄，到館員後台新增第一則吧！';
-    main.innerHTML = `<p class="status"><img class="sticker status-sticker" src="${sticker(periodLabel())}" alt="">
+    main.innerHTML = `<p class="status">${stickerImg('status-sticker', sticker(periodLabel()), false)}
       ${escapeHtml(hint)}
       ${!searching && latest ? `<button class="btn small" type="button" data-goto="${monthKey(latest.date)}">看最近一則紀錄（${formatDate(latest.date)}）</button>` : ''}</p>`;
   } else {
@@ -157,7 +157,7 @@ function render() {
         : `<div class="ledger"><div class="ledger-head" aria-hidden="true"><span>DATE</span><span>TITLE</span><span>CATEGORY</span><span style="text-align:right">MEDIA</span></div><ol>${inner}</ol></div>`;
       html.push(`
         <section class="month-section" id="sec-${key}">
-          <h2 class="month-heading"><span class="drawer-label"><b>${y}</b><span>${Number(mo)} 月</span></span><small>${items.length} 則</small><img class="sticker heading-sticker" src="${sticker(key, 'month')}" alt="" loading="lazy"></h2>
+          <h2 class="month-heading"><span class="drawer-label"><b>${y}</b><span>${Number(mo)} 月</span></span><small>${items.length} 則</small>${stickerImg('heading-sticker', sticker(key, 'month'))}</h2>
           ${body}
         </section>`);
     }
@@ -354,12 +354,15 @@ function openDetail(index) {
   $('#detail-date').textContent = `${formatDate(m.date)}（週${weekday}）`;
   $('#detail-callno').textContent = callNo(m);
   const ds = $('#detail-sticker');
-  ds.hidden = bday;
-  ds.src = sticker(m.id, 'detail', birthdayKind(m.date));
-  if (bday) {  // 生日橫幅只放壽星：派對帽像素圖＋一張壽星的隨機貼圖
+  const dsUrl = sticker(m.id, 'detail', m.date);
+  ds.hidden = bday || !dsUrl;
+  if (dsUrl) ds.src = dsUrl;
+  if (bday) {  // 生日橫幅只放壽星：派對帽像素圖＋（有生日貼圖時）一張壽星貼圖
     const [party, , pal] = $('#detail-birthday').querySelectorAll('img');
     party.src = `assets/pixel/${birthdayKind(m.date)}-party.svg`;
-    pal.src = sticker(m.id, 'banner', birthdayKind(m.date));
+    const palUrl = sticker(m.id, 'banner', m.date);
+    pal.hidden = !palUrl;
+    if (palUrl) pal.src = palUrl;
   }
   $('#detail-title').textContent = m.title || '無標題';
   $('#detail-tags').innerHTML = sortTags(m.tags || []).map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join('');
@@ -501,9 +504,7 @@ function openFromHash() {
 
 async function init() {
   bindEvents();
-  // 頁尾每次造訪隨機換一組狗狗鼠鼠
-  $('#footer-dog').src = sticker('footer', 0, 'dog');
-  $('#footer-chipmunk').src = sticker('footer', 0, 'chipmunk');
+  randomizeStickers();  // 頁尾「狗鼠一起」貼圖
   $('#today').textContent = formatDate(todayStr());
   onNewDay((today) => {
     // 沒有手動選過期間時，換月自動切到新的「本月」
@@ -522,6 +523,11 @@ async function init() {
   showNotices();
 }
 
+/** 貼圖 <img>；圖庫沒有圖（網址為空）時不輸出任何東西 */
+function stickerImg(cls, url, lazy = true) {
+  return url ? `<img class="sticker ${cls}" src="${url}" alt=""${lazy ? ' loading="lazy"' : ''}>` : '';
+}
+
 /* ---------- 進站公告：只顯示沒看過的（最多 3 則），按「知道了」後不再跳出 ---------- */
 const NOTICE_SEEN_KEY = 'fm.noticeSeen';
 
@@ -535,7 +541,7 @@ async function showNotices() {
   box.setAttribute('aria-label', '館藏更新公告');
   box.innerHTML = `
     <div class="notice-pop-head">
-      <img class="sticker" src="${sticker('notice')}" alt="">
+      ${stickerImg('', sticker('notice'), false)}
       <b>館藏更新</b>
       <button class="icon-btn" type="button" data-dismiss aria-label="關閉">✕</button>
     </div>

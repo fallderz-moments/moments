@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610040753">
+  <link rel="stylesheet" href="assets/style.css?v=202610040823">
 </head>
 <body>
   <header class="site-header">
@@ -72,9 +72,8 @@
 
   <footer class="site-footer">
     <div class="footer-shelf" aria-hidden="true">
-      <img class="sticker" id="footer-dog" src="assets/stickers/dog-01.webp" alt="">
-      <img class="sprite small" src="assets/pixel/heart.svg" alt="">
-      <img class="sticker" id="footer-chipmunk" src="assets/stickers/chipmunk-01.webp" alt="">
+      <img class="sprite small" data-pair-fallback src="assets/pixel/heart.svg" alt="">
+      <img class="sticker pair-sticker" data-pair-sticker alt="" hidden>
     </div>
     <a class="support-link" href="https://buymeacoffee.com/shiba48" target="_blank" rel="noopener">☕ 支持網站維運</a>
     <p>Fallderz Moments ‧ 狗狗鼠鼠觀察日誌 · <a href="about.html">關於</a> · <a href="team.html">協作者名單</a> · <a href="guide.html">申請手冊</a></p>
@@ -94,7 +93,7 @@
         <img class="sprite" src="assets/pixel/cake.svg" alt="">
         <img class="sprite" src="assets/pixel/chipmunk-party.svg" alt="">
       </p>
-      <img class="sticker detail-sticker" id="detail-sticker" alt="">
+      <img class="sticker detail-sticker" id="detail-sticker" alt="" hidden>
       <p class="call-no" id="detail-callno"></p>
       <h2 id="detail-title"></h2>
       <div class="note-tags" id="detail-tags"></div>
@@ -111,6 +110,6 @@
     <a id="lightbox-link" target="_blank" rel="noopener">在 Google 雲端硬碟開啟 ↗</a>
   </dialog>
 
-  <script type="module" src="assets/app.js?v=202610040753"></script>
+  <script type="module" src="assets/app.js?v=202610040823"></script>
 </body>
 </html>

@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610040753">
+  <link rel="stylesheet" href="assets/style.css?v=202610040823">
 </head>
 <body>
   <header class="site-header">
@@ -33,7 +33,6 @@
   </header>
   <main class="subpage">
     <section class="paper">
-      <img class="sticker corner-sticker" data-random-sticker src="assets/stickers/dog-22.webp" alt="">
       <h2><span class="chapter">ABOUT</span>歡迎光臨狗狗鼠鼠閱覽室</h2>
       <p>
         Fallderz Moments 是一間小小的圖書館，書架上收藏的不是書，而是一張張便利貼——上面記著 <b>IVE</b> 的 <b>安俞真</b> 和 <b>金秋天</b> 一起出現時，那些讓人忍不住嘴角上揚的瞬間。
@@ -59,7 +58,6 @@
     </section>
 
     <section class="paper">
-      <img class="sticker corner-sticker" data-random-sticker="chipmunk" src="assets/stickers/chipmunk-10.webp" alt="">
       <h2><span class="chapter">HOW TO READ</span>閱覽小指南</h2>
       <ul>
         <li><b>便利貼／列表</b>：用喜歡的方式翻閱館藏。</li>
@@ -78,7 +76,6 @@
       <p>想一起整理館藏嗎？請看<a href="guide.html">共同編輯者申請手冊</a>。</p>
     </section>
     <section class="paper mailbox">
-      <img class="sticker corner-sticker" data-random-sticker src="assets/stickers/chipmunk-05.webp" alt="">
       <h2><span class="chapter">MAILBOX</span>匿名留言箱</h2>
       <p>有想對館員說的話、想分享的糖點，或發現資料有誤，都歡迎匿名留言給我們 💌</p>
       <div class="form-embed">
@@ -90,16 +87,15 @@
   </main>
   <footer class="site-footer">
     <div class="footer-shelf" aria-hidden="true">
-      <img class="sticker" data-random-sticker="dog" src="assets/stickers/dog-01.webp" alt="">
-      <img class="sprite small" src="assets/pixel/heart.svg" alt="">
-      <img class="sticker" data-random-sticker="chipmunk" src="assets/stickers/chipmunk-01.webp" alt="">
+      <img class="sprite small" data-pair-fallback src="assets/pixel/heart.svg" alt="">
+      <img class="sticker pair-sticker" data-pair-sticker alt="" hidden>
     </div>
     <a class="support-link" href="https://buymeacoffee.com/shiba48" target="_blank" rel="noopener">☕ 支持網站維運</a>
     <p>Fallderz Moments ‧ 狗狗鼠鼠觀察日誌 · <a href="./">館藏首頁</a> · <a href="guide.html">申請手冊</a></p>
   </footer>
   <script type="module">
     // 貼圖每次造訪隨機換一組（季節主題、生日規則見 assets/common.js）
-    import { randomizeStickers } from "./assets/common.js?v=202610040753";
+    import { randomizeStickers } from "./assets/common.js?v=202610040823";
     randomizeStickers();
   </script>
 </body>
