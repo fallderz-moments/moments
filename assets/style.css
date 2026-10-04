@@ -416,7 +416,6 @@ li[aria-current="true"] .series-item { cursor: default; font-weight: 600; }
 .bday-ribbon::after {
   content: ''; position: absolute; left: 0; bottom: -6px; border: 3px solid transparent; border-top-color: #8f4e43; border-right-color: #8f4e43;
 }
-.bday-sprite { position: absolute; right: -10px; top: -30px; height: 50px; z-index: 3; animation: bob 1.6s ease-in-out infinite; }
 .note.birthday .note-date strong { color: var(--coral-deep); }
 @keyframes bob { 50% { transform: translateY(-4px); } }
 
@@ -551,7 +550,6 @@ dialog.lightbox .icon-btn { position: absolute; top: 14px; right: 14px; }
   .note { padding: 18px 10px 10px; }
   .note.birthday { padding-top: 36px; }
   .note-title { font-size: .92rem; }
-  .bday-sprite { height: 40px; top: -24px; right: -6px; }
   .note-sticker { height: 44px; right: -8px; bottom: -12px; }
   .note-sticker.left { left: -8px; }
   .detail-sticker { height: 56px; right: 10px; }
