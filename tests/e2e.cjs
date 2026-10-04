@@ -122,7 +122,9 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
       return { names, urls, pair: c.pairSticker(), imgs: document.querySelectorAll('img.sticker:not([hidden])').length };
     });
     check('季節：秋 9/1–11/30、冬 12/1–2/28、春、夏', lib.names.join() === 'autumn,autumn,autumn,winter,winter,spring,summer', lib.names.join());
-    check('圖庫清空後畫面上沒有任何貼圖', lib.urls.every((u) => u === '') && lib.pair === '' && lib.imgs === 0, JSON.stringify(lib));
+    check('秋季貼圖都指向存在的檔案', [...lib.urls, lib.pair].every((u) => u && fs.existsSync(ROOT + u)), JSON.stringify(lib.urls.find((u) => !u || !fs.existsSync(ROOT + u))));
+    check('9/1 生日紀錄只用狗狗貼圖', lib.urls.filter((_, i) => i % 2).every((u) => /\/dog-\d+\.webp$/.test(u)));
+    check('頁尾顯示狗鼠一起', /\/pair-\d+\.webp$/.test(lib.pair) && lib.imgs >= 1);
     check('首頁頁尾有支持網站維運', (await p.getAttribute('.support-link', 'href')) === 'https://buymeacoffee.com/shiba48');
     await p.click('.site-nav a[href="about.html"]'); await p.waitForTimeout(400);
     check('關於頁面', (await p.textContent('main')).includes('安俞真') && (await p.textContent('main')).includes('金秋天'));

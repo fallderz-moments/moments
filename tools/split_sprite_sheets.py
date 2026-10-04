@@ -3,6 +3,8 @@
   convert sheet.webp -depth 8 rgba:sheet.rgba
   python3 tools/split_sprite_sheets.py sheet.rgba 寬 高 輸出資料夾 檔名前綴 [分界y:前綴2]
 例如第三張表上半是狗、下半是花栗鼠：... out dog 500:chipmunk
+整齊排成格子的表（例如 4×4）：
+  python3 tools/split_sprite_sheets.py --grid 4x4 sheet.rgba 寬 高 輸出資料夾 dog 1
 """
 import json
 import struct
@@ -60,7 +62,38 @@ def write_png(path, w, h, rgba):
                            + chunk(b'IDAT', zlib.compress(raw, 9)) + chunk(b'IEND', b''))
 
 
+def grid_main(path, w, h, cols, rows, out, prefix, start):
+    """整齊排成 cols×rows 格的貼圖表：每個連通區塊依中心點歸到所在的格子，同格合併（狗鼠一起的圖不會被拆開）"""
+    data = open(path, 'rb').read()
+    cells = {}
+    for c in components(data, w, h):
+        cx, cy = (c[0] + c[2]) / 2, (c[1] + c[3]) / 2
+        key = (int(cy * rows / h), int(cx * cols / w))
+        if key in cells:
+            b = cells[key]
+            cells[key] = [min(b[0], c[0]), min(b[1], c[1]), max(b[2], c[2]), max(b[3], c[3]), b[4] + c[4]]
+        else:
+            cells[key] = c
+    out.mkdir(parents=True, exist_ok=True)
+    names = []
+    for n, key in enumerate(sorted(cells), start):
+        x0, y0, x1, y1, pixels = cells[key]
+        bw, bh = x1 - x0, y1 - y0
+        buf = bytearray(bw * bh * 4)
+        for i in pixels:
+            x, y = i % w - x0, i // w - y0
+            buf[(y * bw + x) * 4:(y * bw + x) * 4 + 4] = data[i * 4:i * 4 + 4]
+        fname = f'{prefix}-{n}.png'
+        write_png(out / fname, bw, bh, bytes(buf))
+        names.append(fname)
+    print(json.dumps(names))
+
+
 def main():
+    if sys.argv[1] == '--grid':  # --grid 4x4 sheet.rgba 寬 高 輸出資料夾 檔名前綴 起始編號
+        cols, rows = map(int, sys.argv[2].split('x'))
+        grid_main(sys.argv[3], int(sys.argv[4]), int(sys.argv[5]), cols, rows, Path(sys.argv[6]), sys.argv[7], int(sys.argv[8]))
+        return
     path, w, h, out, prefix = sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), Path(sys.argv[4]), sys.argv[5]
     split = sys.argv[6].split(':') if len(sys.argv) > 6 else None
     data = open(path, 'rb').read()
