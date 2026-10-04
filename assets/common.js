@@ -9,7 +9,7 @@ export const NOTE_TINTS = ['mint', 'blush', 'coral', 'sand', 'ivory', 'teal'];
 export const PRESET_TAGS = ['YouTube', 'Berriz', 'Universe', '花絮', '綜藝', 'Bubble', 'Instagram', 'X(twitter)', 'FanClub', 'LIVE', 'FanSign', '其他'];
 
 /**
- * 貼圖庫：依季節輪替，圖片放在 assets/stickers/<季節>/
+ * 貼圖庫：當季的圖＋全年通用的日常組（DAILY_STICKERS）一起隨機，圖片放在 assets/stickers/<季節>/
  *   dog-1.webp、dog-2.webp …（狗狗）、chipmunk-1.webp …（鼠鼠）、pair-1.webp …（狗鼠一起，用在頁尾）
  * 數量為 0 代表圖還沒放進來，畫面上對應的位置就不顯示貼圖。
  */
@@ -25,6 +25,9 @@ export const SEASONS = [
  * 生日當天全站貼圖也換成壽星的生日款，頁尾換成生日版「狗鼠一起」。
  */
 export const BIRTHDAY_STICKERS = { dog: 32, chipmunk: 32, pair: 16 };
+
+/** 日常組（assets/stickers/daily/）：全年不分季節，和當季的圖一起隨機抽（依張數比例） */
+export const DAILY_STICKERS = { dog: 32, chipmunk: 32, pair: 16 };
 
 /** 指定日期（預設今天）所屬的季節；跨年的期間（12-01 到 02-29）也能判斷 */
 export function seasonOf(date = todayStr()) {
@@ -54,18 +57,23 @@ export function birthdayKind(date = '') {
  */
 export function sticker(seed, salt = 0, date = '') {
   const h = mix(seed, salt);
-  const season = seasonOf();
   const kind = birthdayKind(date) || birthdayKind(todayStr());
-  if (kind) {
-    if (BIRTHDAY_STICKERS[kind]) return `assets/stickers/birthday/${kind}-${(h % BIRTHDAY_STICKERS[kind]) + 1}.webp`;
-    return season?.[kind] ? `assets/stickers/${season.name}/${kind}-${(h % season[kind]) + 1}.webp` : '';
+  if (kind && BIRTHDAY_STICKERS[kind]) return pickFrom([{ name: 'birthday', ...BIRTHDAY_STICKERS }], [kind], h);
+  return pickFrom(everyday(), kind ? [kind] : ['dog', 'chipmunk'], h);
+}
+
+/** 平常可用的圖組：當季＋日常 */
+const everyday = () => [seasonOf(), { name: 'daily', ...DAILY_STICKERS }].filter(Boolean);
+
+/** 把幾組圖的指定種類攤平成一個清單，依 h 挑一張；全部沒有圖時回傳空字串 */
+function pickFrom(sets, kinds, h) {
+  const pool = sets.flatMap((set) => kinds.map((k) => [set.name, k, set[k] || 0])).filter((x) => x[2]);
+  let n = h % (pool.reduce((sum, x) => sum + x[2], 0) || 1);
+  for (const [name, k, count] of pool) {
+    if (n < count) return `assets/stickers/${name}/${k}-${n + 1}.webp`;
+    n -= count;
   }
-  const total = (season?.dog || 0) + (season?.chipmunk || 0);
-  if (!total) return '';
-  const n = h % total;
-  return n < season.dog
-    ? `assets/stickers/${season.name}/dog-${n + 1}.webp`
-    : `assets/stickers/${season.name}/chipmunk-${n - season.dog + 1}.webp`;
+  return '';
 }
 
 /** 頁尾「狗鼠一起」貼圖（生日當天用生日版）；沒有圖時回傳空字串 */
@@ -73,8 +81,7 @@ export function pairSticker() {
   if (birthdayKind(todayStr()) && BIRTHDAY_STICKERS.pair) {
     return `assets/stickers/birthday/pair-${(mix('pair', 0) % BIRTHDAY_STICKERS.pair) + 1}.webp`;
   }
-  const season = seasonOf();
-  return season?.pair ? `assets/stickers/${season.name}/pair-${(mix('pair', 0) % season.pair) + 1}.webp` : '';
+  return pickFrom(everyday(), ['pair'], mix('pair', 0));
 }
 
 /** 頁尾：有「狗鼠一起」圖就顯示它，沒有就保留原本的小愛心 */
