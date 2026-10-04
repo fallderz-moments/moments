@@ -14,7 +14,7 @@ export const PRESET_TAGS = ['YouTube', 'Berriz', 'Universe', '花絮', '綜藝',
  * 數量為 0 代表圖還沒放進來，畫面上對應的位置就不顯示貼圖。
  */
 export const SEASONS = [
-  { name: 'spring', label: '春', from: '03-01', to: '05-31', dog: 0, chipmunk: 0, pair: 0 },
+  { name: 'spring', label: '春', from: '03-01', to: '05-31', dog: 32, chipmunk: 32, pair: 16 },
   { name: 'summer', label: '夏', from: '06-01', to: '08-31', dog: 0, chipmunk: 0, pair: 0 },
   { name: 'autumn', label: '秋', from: '09-01', to: '11-30', dog: 32, chipmunk: 32, pair: 16 },
   { name: 'winter', label: '冬', from: '12-01', to: '02-29', dog: 32, chipmunk: 32, pair: 16 },
