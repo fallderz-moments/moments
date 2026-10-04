@@ -15,7 +15,7 @@
 | `index.html` + `assets/app.js` | 前台（便利貼／列表、分類與系列篩選列、年份月份篩選、詳細內容、系列串接、貼圖） |
 | `admin.html` + `assets/admin.js` | 館員後台：透過 GitHub Contents API 寫 `data/moments.json`；照片影片以 Google Drive API 上傳到擁有者的資料夾 |
 | `assets/common.js` | 共用設定：`PRESET_TAGS`、`BIRTHDAYS`、`STICKERS`、日期（台北時間）與媒體工具 |
-| `about.html`、`team.html` | 關於、協作者名單 |
+| `about.html`、`team.html` | 關於、協作者名單（館員頭像放 `assets/avatars/`，192px 正方形 webp，前台裁成圓形） |
 | `guide.html` | 公開的「共同編輯者申請手冊」（只到申請為止） |
 | 後台「館員說明」對話框（`admin.html` 內） | 第一次設定、新增紀錄、編輯守則、常見問題、前台瀏覽、停止擔任館員（不放在公開手冊） |
 | 後台「發布公告」→ `data/notices.json` | `{version, notices:[{id, date, content, createdAt}]}`；前台進站時以浮動視窗顯示沒看過的公告（最多 3 則） |
