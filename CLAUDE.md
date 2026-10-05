@@ -70,7 +70,7 @@
 4. **字型統一用粉圓體（Huninn）**：環境沒有內建，從 Google Fonts 下載完整 TTF（`curl -A "Mozilla/5.0" "https://fonts.googleapis.com/css2?family=Huninn"` 取得 ttf 網址）後以 ASS 的 `fontsdir` 指定。
 5. **專有名詞固定譯法**：유진이＝俞真尼、거북이＝海龜（之後擁有者再給的譯名一律補在這裡）。
 6. **標題句**：擁有者若給一句標題（例如「OO 看到就會想到 OO」），翻譯後全程放在畫面左上方，大小以不遮到人物為準；其餘對話依影片聲音與節奏自行切分。
-7. **全片都要有字幕**：擁有者給的原文只是參考；原文沒涵蓋、但有人在說話的片段，也要自己聽取後翻譯補上，只要前後文合理通順即可。
+7. **全片都要有字幕**：擁有者給的原文只是參考；原文沒涵蓋、但有人在說話的片段，也要自己聽取後翻譯補上，只要前後文合理通順即可。擁有者若另外提供參考譯文（例如 Gemini 的翻譯），以參考譯文的內容為準，再依聲音節奏切句、配上時間。
 - 做法（第一支影片已驗證）：
   - 對時間：雲端環境擋 Hugging Face，擁有者已同意用 npm 套件 `sts-whisper-base`（whisper-base ONNX）＋ `@huggingface/transformers` 做韓語辨識、取逐字時間，再對照擁有者給的原文切句。
   - 字幕圖層：用 Playwright（Chromium）把每句渲染成 720×720 透明 PNG（粉圓體＋`Noto Color Emoji`，`𓆉` 等古埃及象形字用 Google Fonts 的 Noto Sans Egyptian Hieroglyphs）；頁面要寫成檔案再 `goto file://`，字型才載得到。再用 ffmpeg `overlay=enable='between(t,a,b)'` 疊上。
