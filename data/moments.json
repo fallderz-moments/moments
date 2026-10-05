@@ -84,6 +84,33 @@
       "updatedAt": "2026-10-04T12:03:39.726Z"
     },
     {
+      "id": "m-20240920-cc3xkw",
+      "date": "2024-09-20",
+      "title": "睹龜思犬",
+      "content": "（背景時空：秋天和家人在沖繩旅遊、俞真當時則在夏威夷）\n因為喜歡妳，所以看到妳愛的事物就會想起妳。\n說起來我記得喜歡海龜的好像不是妳吧...？",
+      "source": "https://www.youtube.com/watch?v=bptTgrjMAfc",
+      "tags": [
+        "YouTube"
+      ],
+      "media": [
+        {
+          "type": "drive",
+          "caption": "",
+          "id": "11zktIB3SED1o8OMx1h-v3QFmIpgGOm3q",
+          "kind": "video",
+          "name": "20240920_睹龜思犬_01.mp4",
+          "src": "https://drive.google.com/file/d/11zktIB3SED1o8OMx1h-v3QFmIpgGOm3q/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1zhPC10hdYYzAkFYxsRqzmvF0r-yorNpC&sz=w800",
+          "thumbId": "1zhPC10hdYYzAkFYxsRqzmvF0r-yorNpC",
+          "w": 720,
+          "h": 720
+        }
+      ],
+      "cover": 0,
+      "createdAt": "2026-10-05T16:32:23.249Z",
+      "updatedAt": "2026-10-05T16:32:23.249Z"
+    },
+    {
       "source": "https://m.weibo.cn/detail/5150227942608733",
       "id": "m-20250330-z0ww5o",
       "date": "2025-03-30",
