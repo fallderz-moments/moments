@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:wght@400;700&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610041441">
-  <link rel="stylesheet" href="assets/admin.css?v=202610041441">
-  <link rel="stylesheet" href="assets/guide.css?v=202610041441">
+  <link rel="stylesheet" href="assets/style.css?v=202610051640">
+  <link rel="stylesheet" href="assets/admin.css?v=202610051640">
+  <link rel="stylesheet" href="assets/guide.css?v=202610051640">
 </head>
 <body class="admin locked">
   <header class="admin-bar">
@@ -38,7 +38,22 @@
   <div class="admin-layout">
     <aside class="admin-side">
       <button class="btn primary new-btn" type="button" id="btn-new">＋ 新增紀錄</button>
-      <input class="field" id="admin-search" type="search" placeholder="搜尋…">
+      <div class="list-filters" id="list-filters">
+        <input class="field" id="admin-search" type="search" placeholder="搜尋標題、內容、標籤、系列…">
+        <div class="filter-grid">
+          <select class="field" id="filter-year" aria-label="年份"></select>
+          <select class="field" id="filter-month" aria-label="月份"></select>
+          <select class="field" id="filter-tag" aria-label="分類"></select>
+          <select class="field" id="filter-editor" aria-label="編輯者"></select>
+        </div>
+        <div class="list-summary">
+          <span id="list-count"></span>
+          <button class="linklike" type="button" id="filter-clear" hidden>清除條件</button>
+          <span class="toolbar-spacer"></span>
+          <button class="linklike" type="button" id="list-expand">全部展開</button>
+          <button class="linklike" type="button" id="list-collapse">全部收合</button>
+        </div>
+      </div>
       <ol class="admin-list" id="admin-list"></ol>
     </aside>
 
@@ -361,6 +376,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="assets/admin.js?v=202610041441"></script>
+  <script type="module" src="assets/admin.js?v=202610051640"></script>
 </body>
 </html>

@@ -58,6 +58,7 @@ const check = (n, c, x = '') => { c ? ok++ : fail++; console.log((c ? 'PASS ' : 
   check('上傳影片時自動擷取封面', !!cover && cover.size > 1000, cover && `${cover.name} ${cover.size} bytes`);
   check('封面設為影片縮圖', saved.media[0].thumbId === 'D2' && saved.media[0].thumb.includes('id=D2'), JSON.stringify(saved.media[0]));
   // 已存在的雲端影片
+  await p.click('#list-expand');  // 清單預設只展開最新月份
   await p.click('[data-id="m-old-video"]'); await p.waitForTimeout(300);
   check('舊影片有「擷取封面」按鈕', await p.locator('[data-frame="0"]').count() === 1);
   await p.click('[data-frame="0"]');

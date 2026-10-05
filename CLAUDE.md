@@ -30,7 +30,7 @@
 `id`、`date`（YYYY-MM-DD）、`title`、`content`、`tags`、`source`（選填）、`series`（選填，同系列會串接）、
 `media`（`{type:'drive', id, kind:'image'|'video', name, src, thumb?, thumbId?, w?, h?}`）、`cover`（封面索引）、`createdAt`、`updatedAt`。
 
-後台存檔的提交訊息結尾會附上 `[紀錄 id]`，後台據此從 GitHub 提交紀錄顯示「誰在何時編輯」（只在後台顯示，不寫進 `moments.json`）。
+後台存檔的提交訊息結尾會附上 `[紀錄 id]`，後台據此從 GitHub 提交紀錄顯示「誰在何時編輯」（只在後台顯示，不寫進 `moments.json`）。編輯者名稱可在 `admin.js` 的 `AUTHOR_ALIASES` 對應成暱稱（以 `hashString(帳號小寫)` 為鍵，不把帳號明文寫進程式）。後台左側清單：搜尋＋年份／月份／分類／編輯者篩選，依年→月分組可收合（預設只展開最新月份）。
 
 **館員會隨時透過後台直接改 `main` 上的 `data/moments.json`。** 推送前一定要先 `git fetch` 並合併 `origin/main`，絕不覆蓋他們的資料。
 

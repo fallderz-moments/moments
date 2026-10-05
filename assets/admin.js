@@ -1,8 +1,8 @@
 import {
   START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
   mediaThumb, driveId, driveImage, isVideoPath, isBirthday, storageGet, storageSet, MEDIA_LABELS,
-  NOTICES_PATH, sortNotices, richText,
-} from './common.js?v=202610041441';
+  NOTICES_PATH, sortNotices, richText, hashString,
+} from './common.js?v=202610051640';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';
@@ -308,7 +308,7 @@ async function loadHistory() {
     const id = m[4] || byDateTitle.get(`${m[2]} ${m[3]}`.trim());
     if (!id) continue;
     if (!history.has(id)) history.set(id, []);
-    history.get(id).push({ action: m[1], who: c.commit.author?.name || c.author?.login || '?', at: c.commit.author?.date || '' });
+    history.get(id).push({ action: m[1], who: authorOf(c), at: c.commit.author?.date || '' });
   }
   state.history = history;  // 每則由新到舊
   renderList();
@@ -541,29 +541,106 @@ async function onSettingsSubmit(e) {
   }
 }
 
-/* ---------- 左側清單 ---------- */
-const editorOf = (id) => {
-  const who = state.history?.get(id)?.[0]?.who;
-  return who ? `<span class="by"> · ✎ ${escapeHtml(who)}</span>` : '';
+/* ---------- 左側清單：篩選列＋年／月可收合的分組 ---------- */
+// 編輯者顯示名稱：GitHub 帳號 → 暱稱（以雜湊比對，避免把帳號名稱寫進公開的程式碼）
+const AUTHOR_ALIASES = { 1494949777: 'KONOKI' };
+const displayName = (name = '') => AUTHOR_ALIASES[hashString(name.trim().toLowerCase())] || name;
+/** 提交的編輯者：GitHub 帳號或提交者名稱有對應暱稱就用暱稱，否則用提交者名稱 */
+const authorOf = (c) => {
+  const login = c.author?.login || '', name = c.commit.author?.name || '';
+  return [login, name].map(displayName).find((n, i) => n !== [login, name][i]) || name || login || '?';
 };
 
-function renderList() {
+const filters = { year: '', month: '', tag: '', editor: '' };
+const listOpen = new Set();  // 展開中的年份（2026）與月份（2026-10）
+let listOpenInit = false;
+
+const editorName = (id) => state.history?.get(id)?.[0]?.who || '';
+const editorOf = (id) => {
+  const who = editorName(id);
+  return who ? `<span class="by">✎ ${escapeHtml(who)}</span>` : '';
+};
+
+function fillSelect(sel, label, options, value) {
+  sel.innerHTML = `<option value="">${label}</option>` +
+    options.map(([v, text]) => `<option value="${escapeHtml(v)}"${v === value ? ' selected' : ''}>${escapeHtml(text)}</option>`).join('');
+  if (!options.some(([v]) => v === value)) sel.value = '';
+}
+
+function renderFilters() {
+  const all = state.moments;
+  const years = [...new Set(all.map((m) => m.date.slice(0, 4)))].sort().reverse();
+  const inYear = filters.year ? all.filter((m) => m.date.startsWith(filters.year)) : all;
+  const months = [...new Set(inYear.map((m) => m.date.slice(5, 7)))].sort();
+  const tags = sortTags([...new Set(all.flatMap((m) => m.tags || []))]);
+  const editors = [...new Set(all.map((m) => editorName(m.id)).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'zh-Hant'));
+  fillSelect($('#filter-year'), '全部年份', years.map((y) => [y, `${y} 年`]), filters.year);
+  fillSelect($('#filter-month'), '全部月份', months.map((m) => [m, `${Number(m)} 月`]), filters.month);
+  fillSelect($('#filter-tag'), '全部分類', tags.map((t) => [t, t]), filters.tag);
+  fillSelect($('#filter-editor'), '全部編輯者', editors.map((e) => [e, e]), filters.editor);
+  for (const k of Object.keys(filters)) filters[k] = $(`#filter-${k}`).value;
+}
+
+function filteredList() {
   const q = state.search.trim().toLowerCase();
-  const list = sortMoments(state.moments, 'desc')
-    .filter((m) => !q || [m.title, m.content, m.date, m.series, ...(m.tags || [])].join(' ').toLowerCase().includes(q));
-  let year = '';
-  const html = [];
-  for (const m of list) {
-    const y = m.date.slice(0, 4);
-    if (y !== year) { year = y; html.push(`<li class="year">${y}</li>`); }
-    const cover = momentCover(m);
-    html.push(`
-      <li><button type="button" data-id="${escapeHtml(m.id)}" aria-current="${state.originalId === m.id}">
-        <span class="thumb">${cover.url ? `<img src="${escapeHtml(cover.url)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '✎'}</span>
-        <span class="meta"><small>${formatDate(m.date)}${isBirthday(m.date) ? ' 🎂' : ''}${editorOf(m.id)}</small><div>${escapeHtml(m.title || '無標題')}</div></span>
-      </button></li>`);
+  return sortMoments(state.moments, 'desc').filter((m) =>
+    (!filters.year || m.date.startsWith(filters.year)) &&
+    (!filters.month || m.date.slice(5, 7) === filters.month) &&
+    (!filters.tag || (m.tags || []).includes(filters.tag)) &&
+    (!filters.editor || editorName(m.id) === filters.editor) &&
+    (!q || [m.title, m.content, m.date, m.series, ...(m.tags || [])].join(' ').toLowerCase().includes(q)));
+}
+
+function itemHtml(m) {
+  const cover = momentCover(m);
+  return `<li><button type="button" class="item" data-id="${escapeHtml(m.id)}" aria-current="${state.originalId === m.id}">
+    <span class="thumb">${cover.url ? `<img src="${escapeHtml(cover.url)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '✎'}</span>
+    <span class="meta"><span class="title">${escapeHtml(m.title || '無標題')}</span>
+      <small><span>${m.date.slice(5).replace('-', '.')}${isBirthday(m.date) ? ' 🎂' : ''}</span>${editorOf(m.id)}</small></span>
+  </button></li>`;
+}
+
+function renderList() {
+  renderFilters();
+  const list = filteredList();
+  const filtering = !!(state.search.trim() || Object.values(filters).some(Boolean));
+  if (!listOpenInit && list.length) {  // 第一次只展開最新的年份與月份
+    listOpen.add(list[0].date.slice(0, 4)).add(list[0].date.slice(0, 7));
+    listOpenInit = true;
   }
-  $('#admin-list').innerHTML = html.join('') || '<li class="year">沒有紀錄</li>';
+
+  const years = new Map();
+  for (const m of list) {
+    const y = m.date.slice(0, 4), ym = m.date.slice(0, 7);
+    if (!years.has(y)) years.set(y, new Map());
+    const ms = years.get(y);
+    if (!ms.has(ym)) ms.set(ym, []);
+    ms.get(ym).push(m);
+  }
+  const html = [];
+  for (const [y, ms] of years) {
+    const yOpen = filtering || listOpen.has(y);
+    const count = [...ms.values()].reduce((n, a) => n + a.length, 0);
+    html.push(`<li class="group"><button type="button" class="group-head year-head" data-toggle="${y}" aria-expanded="${yOpen}">
+      <span class="caret"></span><b>${y}</b><span class="count">${count} 則</span></button>`);
+    if (yOpen) {
+      html.push('<ol class="list-months">');
+      for (const [ym, items] of ms) {
+        const mOpen = filtering || listOpen.has(ym);
+        html.push(`<li class="group"><button type="button" class="group-head month-head" data-toggle="${ym}" aria-expanded="${mOpen}">
+          <span class="caret"></span>${Number(ym.slice(5))} 月<span class="count">${items.length}</span></button>`);
+        if (mOpen) html.push(`<ol class="list-items">${items.map(itemHtml).join('')}</ol>`);
+        html.push('</li>');
+      }
+      html.push('</ol>');
+    }
+    html.push('</li>');
+  }
+  $('#admin-list').innerHTML = html.join('') || '<li class="empty">沒有符合條件的紀錄</li>';
+  $('#list-count').textContent = filtering ? `符合 ${list.length} / ${state.moments.length} 則` : `共 ${state.moments.length} 則`;
+  $('#filter-clear').hidden = !filtering;
+  $('#list-expand').hidden = $('#list-collapse').hidden = filtering;
+
   // 既有系列（附則數），方便選到完全相同的名稱
   const seriesCount = new Map();
   for (const m of state.moments) if (m.series) seriesCount.set(m.series, (seriesCount.get(m.series) || 0) + 1);
@@ -588,6 +665,7 @@ function openEditor(moment) {
   releasePreviews();
   const isNew = !moment;
   state.originalId = moment?.id || null;
+  if (moment) listOpen.add(moment.date.slice(0, 4)).add(moment.date.slice(0, 7));  // 打開的紀錄所在分組展開
   state.draft = moment
     ? { source: '', ...structuredClone(moment) }
     : { id: null, date: todayStr(), title: '', content: '', source: '', tags: [], media: [], cover: 0 };
@@ -982,7 +1060,27 @@ function bindEvents() {
   onNewDay(() => { if (state.draft) refreshDateLimit(); });
 
   $('#admin-search').addEventListener('input', (e) => { state.search = e.target.value; renderList(); });
+  for (const k of Object.keys(filters)) {
+    $(`#filter-${k}`).addEventListener('change', (e) => { filters[k] = e.target.value; renderList(); });
+  }
+  $('#filter-clear').addEventListener('click', () => {
+    for (const k of Object.keys(filters)) filters[k] = '';
+    state.search = $('#admin-search').value = '';
+    renderList();
+  });
+  $('#list-expand').addEventListener('click', () => {
+    for (const m of state.moments) listOpen.add(m.date.slice(0, 4)).add(m.date.slice(0, 7));
+    renderList();
+  });
+  $('#list-collapse').addEventListener('click', () => { listOpen.clear(); renderList(); });
   $('#admin-list').addEventListener('click', (e) => {
+    const head = e.target.closest('[data-toggle]');
+    if (head) {
+      const k = head.dataset.toggle;
+      if (listOpen.has(k)) listOpen.delete(k); else listOpen.add(k);
+      renderList();
+      return;
+    }
     const btn = e.target.closest('[data-id]');
     if (btn) openEditor(state.moments.find((m) => m.id === btn.dataset.id));
   });

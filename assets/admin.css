@@ -15,19 +15,42 @@ body.admin { background-image: none; background: var(--ivory); }
 .admin-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; max-width: 1280px; margin: 0 auto; padding: 20px 16px 60px; }
 .admin-side { display: flex; flex-direction: column; gap: 10px; position: sticky; top: 74px; align-self: start; max-height: calc(100vh - 94px); }
 .new-btn { width: 100%; padding: .7em; }
-.admin-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
-.admin-list .year { font-size: .85rem; color: var(--ink-soft); padding: 6px 4px 0; }
-.admin-list button {
-  width: 100%; display: grid; grid-template-columns: 48px 1fr; gap: 10px; align-items: center; text-align: left;
-  border: 1.5px solid transparent; background: var(--white); border-radius: 12px; padding: 6px; cursor: pointer;
+.list-filters { display: flex; flex-direction: column; gap: 6px; }
+.filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.filter-grid .field { padding: .35em .6em; font-size: .88rem; }
+.list-summary { display: flex; align-items: center; gap: 10px; font-size: .82rem; color: var(--ink-soft); padding: 0 2px; }
+.list-summary .linklike { font-size: .82rem; }
+.admin-list, .admin-list ol { list-style: none; margin: 0; padding: 0; }
+.admin-list { overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 2px; }
+.admin-list .empty { font-size: .88rem; color: var(--ink-soft); padding: 10px 4px; }
+.group-head {
+  width: 100%; display: flex; align-items: center; gap: 8px; border: 0; cursor: pointer; text-align: left;
+  font: inherit; color: var(--ink); border-radius: 8px;
 }
-.admin-list button:hover { border-color: var(--teal); }
-.admin-list button[aria-current="true"] { border-color: var(--teal-deep); background: #F5FAF6; }
-.admin-list .thumb { width: 48px; height: 48px; border-radius: 8px; overflow: hidden; background: var(--mint); display: grid; place-items: center; color: var(--teal-deep); }
+.group-head .count { margin-left: auto; font-size: .78rem; color: var(--ink-soft); }
+.group-head .caret { width: 0; height: 0; border-left: 5px solid currentColor; border-top: 4px solid transparent; border-bottom: 4px solid transparent; transition: transform .15s; opacity: .55; }
+.group-head[aria-expanded="true"] .caret { transform: rotate(90deg); }
+.year-head { background: var(--mint); padding: .45em .7em; color: var(--teal-ink); }
+.year-head b { font-family: var(--font-title); }
+.year-head .count { color: var(--teal-ink); }
+.list-months { display: flex; flex-direction: column; gap: 2px; padding: 4px 0 6px 8px !important; }
+.month-head { background: transparent; padding: .3em .6em; font-size: .9rem; }
+.year-head:hover { background: #C6D8C8; }
+.month-head:hover { background: var(--white); }
+.month-head .count { background: var(--white); border-radius: 999px; padding: 0 .55em; }
+.list-items { display: flex; flex-direction: column; gap: 4px; padding: 2px 0 6px 10px !important; border-left: 2px solid var(--line); margin-left: 10px !important; }
+.admin-list .item {
+  width: 100%; display: grid; grid-template-columns: 40px 1fr; gap: 9px; align-items: center; text-align: left;
+  border: 1.5px solid transparent; background: var(--white); border-radius: 10px; padding: 5px; cursor: pointer; font: inherit; color: var(--ink);
+}
+.admin-list .item:hover { border-color: var(--teal); }
+.admin-list .item[aria-current="true"] { border-color: var(--teal-deep); background: #F5FAF6; }
+.admin-list .thumb { width: 40px; height: 40px; border-radius: 7px; overflow: hidden; background: var(--mint); display: grid; place-items: center; color: var(--teal-deep); }
 .admin-list .thumb img { width: 100%; height: 100%; object-fit: cover; }
-.admin-list .meta { min-width: 0; line-height: 1.35; }
-.admin-list .meta small { color: var(--ink-soft); }
-.admin-list .meta div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.admin-list .meta { min-width: 0; line-height: 1.35; display: flex; flex-direction: column; }
+.admin-list .meta .title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: .93rem; }
+.admin-list .meta small { display: flex; gap: 8px; color: var(--ink-soft); font-size: .76rem; }
+.admin-list .meta .by { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .admin-main { min-width: 0; }
 .empty-editor { background: var(--white); border-radius: var(--radius); padding: 60px 20px; text-align: center; color: var(--ink-soft); display: flex; flex-direction: column; align-items: center; }
@@ -140,7 +163,6 @@ dialog.help-dialog::backdrop { background: rgba(62, 74, 72, .45); }
 .linklike { border: 0; background: none; padding: 0; color: var(--teal-deep); text-decoration: underline; cursor: pointer; font: inherit; }
 
 /* 編輯紀錄（誰在什麼時候改過） */
-.admin-list .meta .by { opacity: .8; }
 .editor-history { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: -4px 0 14px; padding: 8px 12px;
   font-size: .85rem; color: var(--ink-soft); background: rgba(210, 224, 211, .35); border-radius: 8px; }
 .editor-history details { flex-basis: 100%; }
