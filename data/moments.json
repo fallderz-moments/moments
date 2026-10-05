@@ -29,6 +29,33 @@
       "updatedAt": "2026-10-04T14:50:24.266Z"
     },
     {
+      "id": "m-20230801-v7qmdx",
+      "date": "2023-08-01",
+      "title": "能夠分享的存在",
+      "content": "狗狗鼠鼠圖書館的由來之一（？）\n湊在一起能動能靜的兩人簡直世界最可愛...\n作為飛機鄰座總有聊不完的話題\n通常是美食，偶爾是好書\n沒有變化的是總是想跟妳一起",
+      "source": "https://www.youtube.com/watch?v=ox_ALj_Ah5s",
+      "tags": [
+        "YouTube"
+      ],
+      "media": [
+        {
+          "type": "drive",
+          "caption": "",
+          "id": "1Ne441ly1EmN00b77eCEa7kQkslVGdIKP",
+          "kind": "video",
+          "name": "20230801_能夠分享的存在_01.mp4",
+          "src": "https://drive.google.com/file/d/1Ne441ly1EmN00b77eCEa7kQkslVGdIKP/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1_YASccAAeZPvd0MWBG-dHXqP56oPd4Gv&sz=w800",
+          "thumbId": "1_YASccAAeZPvd0MWBG-dHXqP56oPd4Gv",
+          "w": 720,
+          "h": 720
+        }
+      ],
+      "cover": 0,
+      "createdAt": "2026-10-05T16:46:55.366Z",
+      "updatedAt": "2026-10-05T16:46:55.366Z"
+    },
+    {
       "source": "https://youtu.be/CsjL7BEdBvg?si=rflj1yrZa88sNoiM&t=56",
       "id": "m-20231218-mi6b3v",
       "date": "2023-12-18",
