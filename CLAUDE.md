@@ -70,5 +70,9 @@
 4. **字型統一用粉圓體（Huninn）**：環境沒有內建，從 Google Fonts 下載完整 TTF（`curl -A "Mozilla/5.0" "https://fonts.googleapis.com/css2?family=Huninn"` 取得 ttf 網址）後以 ASS 的 `fontsdir` 指定。
 5. **專有名詞固定譯法**：유진이＝俞真尼、거북이＝海龜（之後擁有者再給的譯名一律補在這裡）。
 6. **標題句**：擁有者若給一句標題（例如「OO 看到就會想到 OO」），翻譯後全程放在畫面左上方，大小以不遮到人物為準；其餘對話依影片聲音與節奏自行切分。
-- 環境已有 `ffmpeg` 與中文字型（文泉驛正黑 `wqy-zenhei`），可用 ASS 字幕 + `BorderStyle=3`（不透明黑底框）燒進畫面。
+- 做法（第一支影片已驗證）：
+  - 對時間：雲端環境擋 Hugging Face，擁有者已同意用 npm 套件 `sts-whisper-base`（whisper-base ONNX）＋ `@huggingface/transformers` 做韓語辨識、取逐字時間，再對照擁有者給的原文切句。
+  - 字幕圖層：用 Playwright（Chromium）把每句渲染成 720×720 透明 PNG（粉圓體＋`Noto Color Emoji`，`𓆉` 等古埃及象形字用 Google Fonts 的 Noto Sans Egyptian Hieroglyphs）；頁面要寫成檔案再 `goto file://`，字型才載得到。再用 ffmpeg `overlay=enable='between(t,a,b)'` 疊上。
+  - 編碼：libx264 two-pass、位元率設成原檔影像位元率，`-c:a copy`，解析度與影格率不變。
+  - 字級參考（720px 寬）：左上標題 22px、底部字幕 30px，黑底框距底 34px。
 - 成品影片與字幕檔交給擁有者，不放進儲存庫。
