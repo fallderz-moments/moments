@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, randomizeStickers,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet, fetchNotices,
-} from './common.js?v=202610051640';
+} from './common.js?v=202610060507';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -540,7 +540,7 @@ async function showNotices() {
   box.innerHTML = `
     <div class="notice-pop-head">
       ${stickerImg('', sticker('notice'), false)}
-      <b>館藏更新</b>
+      <b>UPDATE · 館藏更新</b>
       <button class="icon-btn" type="button" data-dismiss aria-label="關閉">✕</button>
     </div>
     <ul>${fresh.map((n) => `<li><small>${formatDate(n.date)}</small><span>${richText(n.content)}</span></li>`).join('')}</ul>

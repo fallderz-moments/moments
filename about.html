@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610051640">
+  <link rel="stylesheet" href="assets/style.css?v=202610060507">
 </head>
 <body>
   <header class="site-header">
@@ -35,13 +35,28 @@
     <section class="paper">
       <h2><span class="chapter">ABOUT</span>歡迎光臨狗狗鼠鼠閱覽室</h2>
       <p>
-        Fallderz Moments 是一間小小的圖書館，書架上收藏的不是書，而是一張張便利貼——上面記著 <b>IVE</b> 的 <b>安俞真</b> 和 <b>金秋天</b> 一起出現時，那些讓人忍不住嘴角上揚的瞬間。
+        本站寫作 Fallderz Moments，但實際上的內容應該多到可以變成 Fallderz Forever。<br>
+        主要收錄的是 <b>IVE</b> 的 <b>安俞真</b> 和 <b>金秋天</b> 從以前到現在，各種被紀錄下來的可愛瞬間。
+      </p>
+      <div class="duo" aria-label="安俞真與金秋天">
+        <figure class="duo-face">
+          <span class="swap" tabindex="0"><img src="assets/pixel/dog.svg" data-avatar="a1" alt="安俞真"><img src="assets/pixel/dog.svg" data-avatar="a2" alt=""></span>
+          <figcaption>🐶 安俞真</figcaption>
+        </figure>
+        <span class="duo-slash" aria-hidden="true">／</span>
+        <figure class="duo-face">
+          <span class="swap" tabindex="0"><img src="assets/pixel/chipmunk.svg" data-avatar="g1" alt="金秋天"><img src="assets/pixel/chipmunk.svg" data-avatar="g2" alt=""></span>
+          <figcaption>金秋天 🐿️</figcaption>
+        </figure>
+      </div>
+      <p>
+        就許多方面來說她倆是相輔相成的冤家路窄，因此這邊與其說是圖書館館藏，不如說更像是熟年婦妻特輯👀<br>
+        至於使用圖書館的概念...其實只是因為視覺上似乎會比韓食館好一點（？）<br>
+        或許哪天會大改版成狗鼠美食館也說不定，期待未來。
       </p>
       <p>
-        安俞真和金秋天就許多方面來說是相輔相成的冤家路窄，因此這邊與其說是圖書館館藏，不如說更像是捨我其誰的熟年婦妻特輯👀
-      </p>
-      <p>
-        館裡的 🐶 狗狗是 9 月 1 日出生的安俞真，🐿️ 鼠鼠是 9 月 24 日出生的金秋天。在反芻年糕的同時，也讓我們以友善溫和包容的眼光，期待未來的 🐶🐿️ 繼續堆砌愛的年糕塔☀️
+        雖然現在還是小小的地方藏書室，但衷心希望在大家努力維護以後，這邊能夠成為國家圖書館。<br>
+        在反芻年糕的同時，也讓我們以友善溫和包容的眼光，期待未來的她們繼續堆砌愛的年糕塔☀️
       </p>
       <div class="name-card" aria-label="站名由來">
         <span class="name-card-label">站名小百科</span>
@@ -64,7 +79,7 @@
         <li><b>年份與月份</b>：預設先看「本月」，也可以選年份、月份，或按「全部」從頭看起。</li>
         <li><b>分類</b>：YouTube、Bubble、LIVE、綜藝……想看哪一類就點哪一類。</li>
         <li><b>搜尋</b>：輸入關鍵字，從全部館藏裡找。</li>
-        <li><b>生日特別館藏</b>：9/1 和 9/24 的紀錄會換上彩帶、蛋糕，狗狗鼠鼠也會戴上派對帽 🎂</li>
+        <li><b>生日特別館藏</b>：9/1 和 9/24 的紀錄會換上生日外框、蛋糕和壽星的生日貼圖 🎂</li>
       </ul>
     </section>
 
@@ -95,7 +110,13 @@
   </footer>
   <script type="module">
     // 貼圖每次造訪隨機換一組（季節主題、生日規則見 assets/common.js）
-    import { randomizeStickers } from "./assets/common.js?v=202610051640";
+    // 安俞真／金秋天頭像：assets/avatars/a1、a2、g1、g2.webp 放進來後自動換上（還沒有時顯示點陣狗鼠）
+    document.querySelectorAll('[data-avatar]').forEach((img) => {
+      const probe = new Image();
+      probe.onload = () => { img.src = probe.src; img.closest('.duo-face').classList.add('photo'); };
+      probe.src = `assets/avatars/${img.dataset.avatar}.webp`;
+    });
+    import { randomizeStickers } from "./assets/common.js?v=202610060507";
     randomizeStickers();
   </script>
 </body>
