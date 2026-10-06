@@ -3,3 +3,4 @@ output/*
 work/*
 fonts/*
 !*/.gitkeep
+__pycache__/
