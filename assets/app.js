@@ -1,8 +1,8 @@
 import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, randomizeStickers,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
-  fetchMoments, storageGet, storageSet, fetchNotices,
-} from './common.js?v=202610060527';
+  fetchMoments, storageGet, storageSet, fetchNotices, DRIVE_API_KEY,
+} from './common.js?v=202610060532';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -308,9 +308,14 @@ function driveVideoHtml(item) {
   const size = w > 0 && h > 0 ? ` width="${w}" height="${h}"` : '';
   const poster = item.thumb ? ` poster="${escapeHtml(item.thumb)}"` : '';
   return `<div class="vbox" data-drive-video="${id}"><video controls playsinline preload="metadata"${size}${poster}
-      src="https://drive.usercontent.google.com/download?id=${id}&amp;export=download#t=0.1"></video>
+      src="${escapeHtml(driveVideoSrc(item.id || ''))}#t=0.1"></video>
     <a class="video-open" href="https://drive.google.com/file/d/${id}/view" target="_blank" rel="noopener">在雲端硬碟開啟 ↗</a></div>`;
 }
+
+/** 影片原檔網址：有 API 金鑰時走 Google Drive API（穩定、支援拖曳進度），否則用公開下載網址 */
+const driveVideoSrc = (id) => DRIVE_API_KEY
+  ? `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(id)}?alt=media&key=${DRIVE_API_KEY}`
+  : `https://drive.usercontent.google.com/download?id=${encodeURIComponent(id)}&export=download`;
 
 /** 原生播放失敗時換成雲端硬碟內嵌播放器 */
 function driveVideoFallback(e) {
@@ -318,6 +323,7 @@ function driveVideoFallback(e) {
   const box = video.tagName === 'VIDEO' && video.closest('[data-drive-video]');
   if (!box || box.dataset.fallback) return;
   box.dataset.fallback = '1';
+  console.warn('影片原檔無法直接播放，改用雲端硬碟播放器', box.dataset.driveVideo, video.error?.code, video.error?.message);
   const item = { id: box.dataset.driveVideo, w: video.getAttribute('width'), h: video.getAttribute('height'), thumb: video.getAttribute('poster') };
   box.outerHTML = `<div class="embed${videoShape(item)} data-shape-src="${escapeHtml(item.thumb || driveImage(item.id, 400))}"><iframe src="https://drive.google.com/file/d/${escapeHtml(item.id)}/preview" allow="autoplay; fullscreen" allowfullscreen title="Google 雲端硬碟影片"></iframe></div>`;
   fitVideoShapes($('#detail-media'));

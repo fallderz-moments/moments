@@ -30,7 +30,7 @@
 `id`、`date`（YYYY-MM-DD）、`title`、`content`、`tags`、`source`（選填）、`series`（選填，同系列會串接）、
 `media`（`{type:'drive', id, kind:'image'|'video', name, src, thumb?, thumbId?, w?, h?}`）、`cover`（封面索引）、`createdAt`、`updatedAt`。
 
-前台雲端影片用原生 `<video>` 直接播放原檔（`drive.usercontent.google.com/download?id=…`，依影片比例完整顯示）；播放失敗（>100MB 病毒掃描頁、額度用完）時自動改回 `drive.google.com/file/d/…/preview` 內嵌播放器。注意 Playwright 的 Chromium 不支援 H.264，測試要用 WebM。
+前台雲端影片用原生 `<video>` 直接播放原檔（`common.js` 的 `DRIVE_API_KEY` 有值時走 `googleapis.com/drive/v3/files/…?alt=media&key=`，否則 `drive.usercontent.google.com/download?id=…`；擁有者回報公開下載網址在手機上會失敗，需要 API 金鑰，依影片比例完整顯示）；播放失敗（>100MB 病毒掃描頁、額度用完）時自動改回 `drive.google.com/file/d/…/preview` 內嵌播放器。注意 Playwright 的 Chromium 不支援 H.264，測試要用 WebM。
 
 後台存檔的提交訊息結尾會附上 `[紀錄 id]`，後台據此從 GitHub 提交紀錄顯示「誰在何時編輯」（只在後台顯示，不寫進 `moments.json`）。編輯者名稱可在 `admin.js` 的 `AUTHOR_ALIASES` 對應成暱稱（以 `hashString(帳號小寫)` 為鍵，不把帳號明文寫進程式）。後台左側清單：搜尋＋年份／月份／分類／編輯者篩選，依年→月分組可收合（預設只展開最新月份）。
 
