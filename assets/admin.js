@@ -2,7 +2,7 @@ import {
   START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
   mediaThumb, driveId, driveImage, isVideoPath, isBirthday, storageGet, storageSet, MEDIA_LABELS,
   NOTICES_PATH, sortNotices, richText, hashString,
-} from './common.js?v=202610060516';
+} from './common.js?v=202610060527';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';

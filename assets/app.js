@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, randomizeStickers,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet, fetchNotices,
-} from './common.js?v=202610060516';
+} from './common.js?v=202610060527';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -285,7 +285,7 @@ function mediaHtml(item, single) {
         return photoHtml(driveImage(item.id, single ? 2000 : 1000), driveImageFallback(item.id, 1000),
           driveImage(item.id, 2400), `https://drive.google.com/file/d/${id}/view`, item.caption || '', photoCls);
       }
-      return `<figure class="wide"><div class="embed${videoShape(item)} data-shape-src="${escapeHtml(item.thumb || driveImage(item.id, 400))}"><iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen loading="lazy" title="Google 雲端硬碟影片"></iframe></div>${cap}</figure>`;
+      return `<figure class="wide">${driveVideoHtml(item)}${cap}</figure>`;
     case 'youtube':
       return `<figure class="wide"><div class="embed"><iframe src="https://www.youtube-nocookie.com/embed/${id}" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen loading="lazy" title="YouTube"></iframe></div>${cap}</figure>`;
     case 'instagram':
@@ -298,6 +298,31 @@ function mediaHtml(item, single) {
 }
 
 /** 依影片長寬標記直式影片（只在手機版樣式中使用，電腦版不受影響） */
+/**
+ * 雲端硬碟影片：用瀏覽器原生播放器直接播放原檔（依影片本身比例完整顯示，直式影片不會被裁切）。
+ * 原檔無法直接播放時（例如超過 100MB 需病毒掃描確認、下載額度用完），自動改回雲端硬碟內嵌播放器。
+ */
+function driveVideoHtml(item) {
+  const id = escapeHtml(item.id || '');
+  const w = Number(item.w), h = Number(item.h);
+  const size = w > 0 && h > 0 ? ` width="${w}" height="${h}"` : '';
+  const poster = item.thumb ? ` poster="${escapeHtml(item.thumb)}"` : '';
+  return `<div class="vbox" data-drive-video="${id}"><video controls playsinline preload="metadata"${size}${poster}
+      src="https://drive.usercontent.google.com/download?id=${id}&amp;export=download#t=0.1"></video>
+    <a class="video-open" href="https://drive.google.com/file/d/${id}/view" target="_blank" rel="noopener">在雲端硬碟開啟 ↗</a></div>`;
+}
+
+/** 原生播放失敗時換成雲端硬碟內嵌播放器 */
+function driveVideoFallback(e) {
+  const video = e.target;
+  const box = video.tagName === 'VIDEO' && video.closest('[data-drive-video]');
+  if (!box || box.dataset.fallback) return;
+  box.dataset.fallback = '1';
+  const item = { id: box.dataset.driveVideo, w: video.getAttribute('width'), h: video.getAttribute('height'), thumb: video.getAttribute('poster') };
+  box.outerHTML = `<div class="embed${videoShape(item)} data-shape-src="${escapeHtml(item.thumb || driveImage(item.id, 400))}"><iframe src="https://drive.google.com/file/d/${escapeHtml(item.id)}/preview" allow="autoplay; fullscreen" allowfullscreen title="Google 雲端硬碟影片"></iframe></div>`;
+  fitVideoShapes($('#detail-media'));
+}
+
 function videoShape(item) {
   const w = Number(item.w), h = Number(item.h);
   if (!(w > 0 && h > 0)) return '"';
@@ -440,6 +465,11 @@ function openLightbox(full, link) {
 
 /* ---------- 事件 ---------- */
 function bindEvents() {
+  $('#detail-media').addEventListener('error', driveVideoFallback, true);  // 影片原檔播放失敗 → 改用內嵌播放器
+  $('#detail-media').addEventListener('loadedmetadata', (e) => {  // 讀到影片尺寸後依原比例顯示（不受封面圖大小影響）
+    const v = e.target;
+    if (v.tagName === 'VIDEO' && v.videoWidth) { v.width = v.videoWidth; v.height = v.videoHeight; }
+  }, true);
   document.addEventListener('click', (e) => {
     const t = e.target.closest('button');
     if (!t) return;

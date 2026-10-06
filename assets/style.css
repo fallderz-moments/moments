@@ -389,6 +389,7 @@ li[aria-current="true"] .series-item { cursor: default; font-weight: 600; }
   dialog.detail { overflow-x: hidden; }
   .media-grid, .media-grid figure { min-width: 0; max-width: 100%; }
   .embed { max-width: 100%; }
+  .media-grid .vbox video { max-height: 70vh; }
   .embed iframe { width: 1px; min-width: 100%; max-width: 100%; }
   .embed[style] { aspect-ratio: var(--ar); }
   .embed.portrait { width: min(100%, calc(72vh * var(--arw))); margin: 0 auto; }
@@ -517,6 +518,10 @@ dialog.detail.birthday .detail-head { background: var(--blush); }
 .media-grid .photo img { width: 100%; aspect-ratio: 1; object-fit: cover; }
 .media-grid figure.single .photo img { aspect-ratio: auto; max-height: 70vh; object-fit: contain; margin: 0 auto; }
 .media-grid video { width: 100%; border-radius: 10px; background: #000; }
+/* 雲端硬碟影片：原生播放器，依影片比例完整顯示（直式影片以高度為限、置中） */
+.vbox { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.media-grid .vbox video { display: block; width: auto; height: auto; max-width: 100%; max-height: 78vh; min-width: 160px; border-radius: 10px; background: #000; }
+.video-open { align-self: flex-end; font-size: .78rem; color: var(--ink-soft); }
 .media-grid figcaption { font-size: .82rem; color: var(--ink-soft); text-align: center; margin-top: 4px; }
 .embed { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: var(--ivory); }
 .embed.tall { aspect-ratio: 4 / 5; max-width: 480px; margin: 0 auto; }
