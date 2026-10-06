@@ -188,6 +188,33 @@
       "updatedAt": "2026-10-06T12:53:12.433Z"
     },
     {
+      "id": "m-20251201-im39xy",
+      "date": "2025-12-01",
+      "title": "我知道你的泡泡名稱！",
+      "content": "IVE DEBUT 4TH ANNIVERSARY直播\n秋天歐膩可是什麼都知道的～\n是熟悉的主人「指」責小狗啊🫵🏻",
+      "source": "https://link.berriz.in/zh-Hans/web/main/ive/live/replay/019ad95b-4138-91ec-ec99-78bcf8cfcfb6",
+      "tags": [
+        "Berriz"
+      ],
+      "media": [
+        {
+          "type": "drive",
+          "caption": "原影片約11:21",
+          "id": "1bH2Xc7be47dmSntoPSed38m8JM76YAHR",
+          "kind": "video",
+          "name": "20251201_我知道你的泡泡名稱！_01.mp4",
+          "src": "https://drive.google.com/file/d/1bH2Xc7be47dmSntoPSed38m8JM76YAHR/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1MP_y1EzvDl6Zfys9URbk_epqRRSPNjf8&sz=w800",
+          "thumbId": "1MP_y1EzvDl6Zfys9URbk_epqRRSPNjf8",
+          "w": 1440,
+          "h": 1080
+        }
+      ],
+      "cover": 0,
+      "createdAt": "2026-10-06T13:01:30.172Z",
+      "updatedAt": "2026-10-06T13:01:30.172Z"
+    },
+    {
       "id": "m-20260603-4o9n4x",
       "date": "2026-06-03",
       "title": "榮譽讀書會會員安小狗",
