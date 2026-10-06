@@ -7,7 +7,7 @@ export const DATA_PATH = 'data/moments.json';
  * 必須設定「應用程式限制：網站 fallderz-moments.github.io/*」與「API 限制：只允許 Google Drive API」。
  * 留空時改用公開下載網址，播放失敗會自動換回雲端硬碟播放器。
  */
-export const DRIVE_API_KEY = '';
+export const DRIVE_API_KEY = 'AIzaSyBTJZYuqjoqPaKcT1KpgZEo769h0RcrwS8';
 export const TIME_ZONE = 'Asia/Taipei';
 export const NOTE_TINTS = ['mint', 'blush', 'coral', 'sand', 'ivory', 'teal'];
 
