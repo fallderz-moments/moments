@@ -161,10 +161,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .paper p, .paper li { line-height: 2; }
 .paper .corner-sticker { position: absolute; right: 14px; top: -26px; height: 70px; }
 /* 關於頁：安俞真（左）／金秋天（右）圓形頭像，滑過換第二張 */
-.duo { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 18px 0 10px; }
+.duo { display: flex; align-items: center; justify-content: center; gap: 28px; margin: 18px 0 10px; }
 .duo-face { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .duo-face figcaption { font-size: .9rem; color: var(--ink-soft); }
-.duo-slash { font-family: var(--font-title); font-size: 2.2rem; color: var(--sand); }
+.duo-heart { height: 30px; width: auto; margin-bottom: 26px; animation: bob 1.6s ease-in-out infinite; }
 .swap { position: relative; display: block; width: 132px; height: 132px; border-radius: 50%; overflow: hidden; outline: none;
   background: var(--mint); border: 4px solid var(--card); box-shadow: 0 0 0 2px var(--sand), var(--shadow); }
 .swap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 14px; image-rendering: pixelated; transition: opacity .35s; }
@@ -174,7 +174,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .swap:hover img:first-child, .swap:focus-visible img:first-child { opacity: 0; }
 @media (max-width: 640px) {
   .swap { width: 96px; height: 96px; }
-  .duo-slash { font-size: 1.6rem; }
+  .duo { gap: 16px; }
+  .duo-heart { height: 22px; }
 }
 .name-card {
   position: relative; margin: 18px 0 4px; padding: 16px 18px 12px; background: var(--paper);

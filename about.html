@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610060507">
+  <link rel="stylesheet" href="assets/style.css?v=202610060516">
 </head>
 <body>
   <header class="site-header">
@@ -43,7 +43,7 @@
           <span class="swap" tabindex="0"><img src="assets/pixel/dog.svg" data-avatar="a1" alt="安俞真"><img src="assets/pixel/dog.svg" data-avatar="a2" alt=""></span>
           <figcaption>🐶 安俞真</figcaption>
         </figure>
-        <span class="duo-slash" aria-hidden="true">／</span>
+        <img class="sprite duo-heart" src="assets/pixel/heart.svg" alt="" aria-hidden="true">
         <figure class="duo-face">
           <span class="swap" tabindex="0"><img src="assets/pixel/chipmunk.svg" data-avatar="g1" alt="金秋天"><img src="assets/pixel/chipmunk.svg" data-avatar="g2" alt=""></span>
           <figcaption>金秋天 🐿️</figcaption>
@@ -116,7 +116,7 @@
       probe.onload = () => { img.src = probe.src; img.closest('.duo-face').classList.add('photo'); };
       probe.src = `assets/avatars/${img.dataset.avatar}.webp`;
     });
-    import { randomizeStickers } from "./assets/common.js?v=202610060507";
+    import { randomizeStickers } from "./assets/common.js?v=202610060516";
     randomizeStickers();
   </script>
 </body>
