@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610071549">
+  <link rel="stylesheet" href="assets/style.css?v=202610071622">
 </head>
 <body>
   <header class="site-header">
@@ -78,6 +78,7 @@
         <li><b>便利貼／列表</b>：用喜歡的方式翻閱館藏。</li>
         <li><b>年份與月份</b>：預設先看「本月」，也可以選年份、月份，或按「全部」從頭看起。</li>
         <li><b>分類</b>：YouTube、Bubble、LIVE、綜藝……想看哪一類就點哪一類。</li>
+        <li><b>📺 完整直播</b>：工具列上的按鈕，一次看完歷來所有完整的雙人直播。</li>
         <li><b>搜尋</b>：輸入關鍵字，從全部館藏裡找。</li>
         <li><b>生日特別館藏</b>：9/1 和 9/24 的紀錄會換上生日外框、蛋糕和壽星的生日貼圖 🎂</li>
       </ul>
@@ -116,7 +117,7 @@
       probe.onload = () => { img.src = probe.src; img.closest('.duo-face').classList.add('photo'); };
       probe.src = `assets/avatars/${img.dataset.avatar}.webp`;
     });
-    import { randomizeStickers } from "./assets/common.js?v=202610071549";
+    import { randomizeStickers } from "./assets/common.js?v=202610071622";
     randomizeStickers();
   </script>
 </body>

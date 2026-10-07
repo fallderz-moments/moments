@@ -1,8 +1,8 @@
 import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, randomizeStickers,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
-  fetchMoments, storageGet, storageSet, fetchNotices, DRIVE_API_KEY,
-} from './common.js?v=202610071549';
+  fetchMoments, storageGet, storageSet, fetchNotices, DRIVE_API_KEY, LIVE_TAG,
+} from './common.js?v=202610071622';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -12,6 +12,7 @@ const state = {
   sort: storageGet('fm.sort', 'desc'),
   tag: null,
   series: null,  // 選擇的系列：顯示該系列全部紀錄（不受年份／月份限制）
+  live: false,   // 完整直播專區：顯示歷來所有完整直播
   q: '',
   // 目前瀏覽的期間：預設為「本月」；year 為 'all' 時顯示全部
   year: todayStr().slice(0, 4),
@@ -34,8 +35,12 @@ function inPeriod(m) {
 
 function filtered() {
   const q = state.q.trim().toLowerCase();
-  const list = byTag(state.all).filter((m) => {
-    if (state.series) {
+  const list = (state.live ? state.all : byTag(state.all)).filter((m) => {
+    if (state.live) {
+      // 完整直播專區：歷來全部（不受年份月份與分類限制）
+      if (!(m.tags || []).includes(LIVE_TAG)) return false;
+      if (!q) return true;
+    } else if (state.series) {
       // 選了系列：顯示整個系列（跨年份月份）
       if (m.series !== state.series) return false;
     } else if (!q) {
@@ -48,6 +53,7 @@ function filtered() {
 }
 
 function periodLabel() {
+  if (state.live) return '📺 完整直播（歷來全部）';
   if (state.series) return `系列「${state.series}」`;
   if (state.year === 'all') return '全部時間';
   if (state.month) return `${state.month.slice(0, 4)} 年 ${Number(state.month.slice(5))} 月`;
@@ -175,6 +181,8 @@ function renderTags() {
   const counts = new Map(PRESET_TAGS.map((t) => [t, 0]));
   for (const m of state.all) for (const t of m.tags || []) counts.set(t, (counts.get(t) || 0) + 1);
   const tags = sortTags([...counts.keys()]);
+  $('#live-count').textContent = counts.get(LIVE_TAG) || 0;
+  $('#live-shelf').setAttribute('aria-pressed', !!state.live);
   $('#tag-filter').innerHTML = [`<button type="button" data-tag="" aria-pressed="${!state.tag}">全部<span class="count">${state.all.length}</span></button>`]
     .concat(tags.map((t) => {
       const c = counts.get(t);
@@ -255,13 +263,14 @@ function renderTimeline() {
     return `<button type="button" data-month="${k}" class="${cls}" aria-pressed="${state.month === k}">${bdays.has(k) ? '🎂' : ''}${Number(k.slice(5))}月<small>${n ? `${n} 則` : '—'}</small></button>`;
   }).join('');
   // 系列檢視時，年份／月份不顯示為選取中
-  if (state.series) document.querySelectorAll('#years [aria-pressed="true"], #months [aria-pressed="true"]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+  if (state.series || state.live) document.querySelectorAll('#years [aria-pressed="true"], #months [aria-pressed="true"]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
   $('#today').textContent = formatDate(todayStr());
 }
 
 function setPeriod(year, month = null) {
-  state.series = null; // 選年份／月份時離開系列檢視
-  renderSeriesFilter();
+  state.series = null; // 選年份／月份時離開系列檢視與完整直播專區
+  state.live = false;
+  renderTags();
   state.year = year;
   state.month = month;
   state.periodPicked = true;
@@ -498,10 +507,18 @@ function bindEvents() {
     if (!t) return;
     if (t.dataset.view) { state.view = t.dataset.view; storageSet('fm.view', state.view); render(); }
     else if (t.dataset.sort) { state.sort = t.dataset.sort; storageSet('fm.sort', state.sort); render(); }
-    else if ('tag' in t.dataset) { state.tag = t.dataset.tag || null; renderTags(); render(); }
+    else if (t.id === 'live-shelf') {
+      state.live = !state.live;
+      if (state.live) { state.series = null; seriesOpen = false; }
+      renderTags();
+      render();
+      document.querySelector('.toolbar')?.scrollIntoView({ block: 'start' });
+    }
+    else if ('tag' in t.dataset) { state.tag = t.dataset.tag || null; state.live = false; renderTags(); render(); }
     else if (t.id === 'series-toggle') { seriesOpen = !seriesOpen; renderSeriesFilter(); if (seriesOpen) $('#series-search').focus({ preventScroll: true }); }
     else if ('series' in t.dataset) {
       state.series = t.dataset.series || null;
+      state.live = false;
       seriesOpen = false;  // 選好系列就收合
       renderSeriesFilter();
       render();
@@ -510,7 +527,7 @@ function bindEvents() {
     else if (t.dataset.year) { setPeriod(t.dataset.year); }
     else if (t.dataset.month) {
       // 再按一次已選的月份 → 回到整年
-      setPeriod(state.year, !state.series && state.month === t.dataset.month ? null : t.dataset.month);
+      setPeriod(state.year, !state.series && !state.live && state.month === t.dataset.month ? null : t.dataset.month);
     }
     else if (t.dataset.goto) { setPeriod(t.dataset.goto.slice(0, 4), t.dataset.goto); }
     else if (t.dataset.gotoId) { openById(t.dataset.gotoId); }

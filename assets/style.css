@@ -73,6 +73,16 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .btn.small { padding: .25em .8em; font-size: .9rem; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 
+.live-shelf {
+  border: 1.5px solid #E3A99C; background: #FFF4F0; color: #8a4f45; border-radius: 999px; padding: .32em 1em; cursor: pointer;
+  font: inherit; font-size: .92rem; white-space: nowrap; display: inline-flex; align-items: center; gap: .35em;
+}
+.live-shelf .count { font-size: .72rem; opacity: .7; }
+.live-shelf:hover { background: var(--blush); }
+.live-shelf[aria-pressed="true"] { background: var(--coral-deep); border-color: var(--coral-deep); color: var(--white); }
+@media (min-width: 641px) {  /* 電腦版：分類標籤自動換行，全部一眼看完（手機維持左右滑動） */
+  #tag-filter { flex-wrap: wrap; overflow: visible; -webkit-mask-image: none; mask-image: none; }
+}
 .segmented { display: inline-flex; background: var(--ivory); border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
 .segmented button {
   border: 0; background: transparent; padding: .3em 1em; border-radius: 999px; cursor: pointer; color: var(--ink-soft);

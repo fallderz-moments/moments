@@ -63,7 +63,7 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     check('狀態列不顯示帳號名稱', !(await p.textContent('.admin-bar')).includes('fallderz-moments'));
     await p.waitForTimeout(900);
     await p.click('#btn-new');
-    check('後台有 14 個預設分類（含直播、短影片）', (await p.locator('[data-preset]').count()) === 14 && (await p.locator('[data-preset="短影片"]').count()) === 1 && (await p.locator('[data-preset="直播"]').count()) === 1);
+    check('後台有 14 個預設分類（含完整直播、短影片）', (await p.locator('[data-preset]').count()) === 14 && (await p.locator('[data-preset="短影片"]').count()) === 1 && (await p.locator('[data-preset="完整直播"]').count()) === 1);
     await p.fill('[name=title]', '測試紀錄'); await p.fill('[name=series]', '  測試   系列 '); await p.click('[data-preset="LIVE"]'); await p.click('[data-preset="X(twitter)"]'); await p.click('[data-preset="其他"]');
     await p.setInputFiles('#file-media', [{ name: 'a.png', mimeType: 'image/png', buffer: Buffer.alloc(100) }, { name: 'b.png', mimeType: 'image/png', buffer: Buffer.alloc(100) }]);
     await p.click('#btn-save');
@@ -189,6 +189,11 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     await p.goto(SITE + 'guide.html'); await p.waitForTimeout(300);
     check('公開手冊已移除新增/守則章節', !(await p.content()).includes('id="create"') && !(await p.content()).includes('id="faq"'));
     await p.goto(SITE);  await p.waitForTimeout(800);
+    await p.click('#live-shelf'); await p.waitForTimeout(300);
+    const liveN = JSON.parse(fs.readFileSync(ROOT + 'data/moments.json', 'utf8')).moments.filter((m) => (m.tags || []).includes('完整直播')).length;
+    check('完整直播專區列出歷來全部完整直播', (await p.textContent('.period-caption')).includes('完整直播') && (await p.locator('.note').count()) === liveN, liveN);
+    await p.click('[data-year="2026"]'); await p.waitForTimeout(300);
+    check('選年份會離開完整直播專區', (await p.getAttribute('#live-shelf', 'aria-pressed')) === 'false');
     check('前台分類列有 X(twitter) 與 其他', await p.locator('[data-tag="X(twitter)"]').count() === 1 && await p.locator('[data-tag="其他"]').count() === 1);
     await p.click('[data-year="2026"]');
     check('選年份只顯示該年', (await p.textContent('.period-caption')).startsWith('2026 年 ·'));
