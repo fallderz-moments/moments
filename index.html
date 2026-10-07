@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610071527">
+  <link rel="stylesheet" href="assets/style.css?v=202610071546">
 </head>
 <body>
   <header class="site-header">
@@ -55,7 +55,17 @@
     </div>
     <div class="catalog-row" id="series-row" hidden>
       <span class="row-label">系列</span>
-      <div class="tag-filter scroll-row series-filter" id="series-filter" aria-label="系列篩選"></div>
+      <div class="series-picker">
+        <div class="series-bar">
+          <button type="button" class="series-toggle" id="series-toggle" aria-expanded="false" aria-controls="series-panel"></button>
+          <button type="button" class="series-current" data-series="" id="series-current" hidden></button>
+        </div>
+        <div class="series-panel" id="series-panel" hidden>
+          <input class="field series-search" id="series-search" type="search" placeholder="搜尋系列名稱…" hidden>
+          <div class="tag-filter series-filter" id="series-filter" aria-label="系列篩選"></div>
+          <p class="series-empty" id="series-empty" hidden>找不到符合的系列</p>
+        </div>
+      </div>
     </div>
     <nav class="catalog-row timeline-nav" aria-label="時間軸">
       <span class="row-label">年份</span>
@@ -109,6 +119,6 @@
     <a id="lightbox-link" target="_blank" rel="noopener">在 Google 雲端硬碟開啟 ↗</a>
   </dialog>
 
-  <script type="module" src="assets/app.js?v=202610071527"></script>
+  <script type="module" src="assets/app.js?v=202610071546"></script>
 </body>
 </html>

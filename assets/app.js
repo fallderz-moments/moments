@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, randomizeStickers,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet, fetchNotices, DRIVE_API_KEY,
-} from './common.js?v=202610071527';
+} from './common.js?v=202610071546';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -184,6 +184,10 @@ function renderTags() {
 }
 
 /* ---------- 系列篩選（最近更新的系列排前面，可左右滑動） ---------- */
+/** 系列：平常收合成一顆按鈕，點開後是可搜尋、會自動換行的清單（依最新日期排序），系列再多也不會拉長版面 */
+const SERIES_SEARCH_MIN = 8;  // 系列數量達到這個數字才顯示搜尋框
+let seriesOpen = false;
+
 function renderSeriesFilter() {
   const info = new Map();
   for (const m of state.all) {
@@ -196,10 +200,20 @@ function renderSeriesFilter() {
   $('#series-row').hidden = info.size === 0;
   if (state.series && !info.has(state.series)) state.series = null;
   const names = [...info.keys()].sort((a, b) => info.get(b).latest.localeCompare(info.get(a).latest) || a.localeCompare(b, 'zh-Hant'));
+  const q = $('#series-search').value.trim().toLowerCase();
+  const shown = q ? names.filter((n) => n.toLowerCase().includes(q)) : names;
   $('#series-filter').innerHTML = [`<button type="button" data-series="" aria-pressed="${!state.series}">全部系列</button>`]
-    .concat(names.map((n) => `<button type="button" data-series="${escapeHtml(n)}" aria-pressed="${state.series === n}">📚 ${escapeHtml(n)}<span class="count">${info.get(n).count}</span></button>`))
+    .concat(shown.map((n) => `<button type="button" data-series="${escapeHtml(n)}" aria-pressed="${state.series === n}">📚 ${escapeHtml(n)}<span class="count">${info.get(n).count}</span></button>`))
     .join('');
-  updateScrollHints();
+  $('#series-empty').hidden = !q || shown.length > 0;
+  $('#series-search').hidden = names.length < SERIES_SEARCH_MIN;
+  const toggle = $('#series-toggle');
+  toggle.innerHTML = `📚 ${state.series ? '換一個系列' : '瀏覽系列'}<span class="count">${names.length}</span><span class="caret" aria-hidden="true"></span>`;
+  toggle.setAttribute('aria-expanded', seriesOpen);
+  $('#series-panel').hidden = !seriesOpen;
+  const cur = $('#series-current');
+  cur.hidden = !state.series;
+  cur.innerHTML = state.series ? `📚 ${escapeHtml(state.series)}<span class="x" aria-label="取消系列篩選">✕</span>` : '';
 }
 
 /** 可橫向捲動的列：依捲動位置顯示左右漸層提示 */
@@ -473,6 +487,7 @@ function openLightbox(full, link) {
 
 /* ---------- 事件 ---------- */
 function bindEvents() {
+  $('#series-search').addEventListener('input', renderSeriesFilter);
   $('#detail-media').addEventListener('error', driveVideoFallback, true);  // 影片原檔播放失敗 → 改用內嵌播放器
   $('#detail-media').addEventListener('loadedmetadata', (e) => {  // 讀到影片尺寸後依原比例顯示（不受封面圖大小影響）
     const v = e.target;
@@ -484,8 +499,10 @@ function bindEvents() {
     if (t.dataset.view) { state.view = t.dataset.view; storageSet('fm.view', state.view); render(); }
     else if (t.dataset.sort) { state.sort = t.dataset.sort; storageSet('fm.sort', state.sort); render(); }
     else if ('tag' in t.dataset) { state.tag = t.dataset.tag || null; renderTags(); render(); }
+    else if (t.id === 'series-toggle') { seriesOpen = !seriesOpen; renderSeriesFilter(); if (seriesOpen) $('#series-search').focus({ preventScroll: true }); }
     else if ('series' in t.dataset) {
       state.series = t.dataset.series || null;
+      seriesOpen = false;  // 選好系列就收合
       renderSeriesFilter();
       render();
       if (state.series) document.querySelector('.toolbar')?.scrollIntoView({ block: 'start' });

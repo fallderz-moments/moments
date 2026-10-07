@@ -43,13 +43,14 @@ const data = { version: 1, moments: [
   // 系列篩選列
   await p.fill('#search', ''); await p.waitForTimeout(300);
   await p.goto('http://localhost:8765/?' + Date.now()); await p.waitForTimeout(800);
-  check('分類下方有系列列', await p.isVisible('#series-row') && (await p.locator('#series-filter [data-series]').count()) === 15);
-  const row = p.locator('#series-filter');
-  const sw = await row.evaluate((r) => [r.scrollWidth, r.clientWidth]);
-  check('系列多時可橫向捲動並顯示提示', sw[0] > sw[1] && await row.evaluate((r) => r.classList.contains('more-right')), sw.join('/'));
-  await row.hover(); await p.mouse.wheel(0, 400); await p.waitForTimeout(600);
-  check('滑鼠滾輪可左右捲動', (await row.evaluate((r) => r.scrollLeft)) > 0);
+  check('系列列預設收合', await p.isVisible('#series-toggle') && !(await p.isVisible('#series-panel')) && (await p.textContent('#series-toggle')).includes('14'));
+  await p.click('#series-toggle'); await p.waitForTimeout(200);
+  check('點開後列出全部系列', await p.isVisible('#series-panel') && (await p.locator('#series-filter [data-series]').count()) === 15);
+  check('系列多時有搜尋框', await p.isVisible('#series-search'));
+  await p.fill('#series-search', '燒鳥'); await p.waitForTimeout(200);
+  check('搜尋系列名稱', (await p.locator('#series-filter [data-series]').count()) === 2);
   await p.click('#series-filter [data-series="東京燒鳥約會"]'); await p.waitForTimeout(400);
+  check('選好系列後收合並顯示目前系列', !(await p.isVisible('#series-panel')) && (await p.textContent('#series-current')).includes('東京燒鳥約會'));
   check('選系列顯示整個系列（跨月份）', (await p.locator('.note').count()) === 3 && (await p.textContent('.period-caption')).includes('系列「東京燒鳥約會」'), await p.textContent('.period-caption'));
   check('系列檢視時年月不顯示選取', (await p.locator('#years [aria-pressed="true"], #months [aria-pressed="true"]').count()) === 0);
   await p.click('#months [data-month="2026-10"]'); await p.waitForTimeout(300);
@@ -57,10 +58,9 @@ const data = { version: 1, moments: [
   const m = await b.newPage({ viewport: { width: 375, height: 740 }, isMobile: true, hasTouch: true });
   await m.route('**/data/moments.json*', (r) => r.fulfill({ contentType: 'application/json', body: saved }));
   await m.goto('http://localhost:8765/?' + Date.now()); await m.waitForTimeout(800);
-  await m.locator('#series-filter').evaluate((r) => { r.scrollLeft = 9999; });
-  await m.waitForTimeout(800);
-  const msw = await m.locator('#series-filter').evaluate((r) => [r.scrollLeft, document.documentElement.scrollWidth]);
-  check('手機可滑到系列列最右邊且頁面不橫向捲動', msw[0] > 0 && msw[1] === 375, msw.join('/'));
+  await m.click('#series-toggle'); await m.waitForTimeout(300);
+  const mh = await m.evaluate(() => [document.getElementById('series-panel').getBoundingClientRect().height, document.documentElement.scrollWidth]);
+  check('手機展開系列不超出畫面寬度、高度有上限', mh[1] === 375 && mh[0] <= 260, mh.join('/'));
   check('前台沒有 JS 錯誤', errs.length === 0, errs.join('; '));
   console.log(`\n${ok} passed, ${fail} failed`);
   await b.close();

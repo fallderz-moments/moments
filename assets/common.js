@@ -12,7 +12,7 @@ export const TIME_ZONE = 'Asia/Taipei';
 export const NOTE_TINTS = ['mint', 'blush', 'coral', 'sand', 'ivory', 'teal'];
 
 /** 預設分類標籤（依顯示順序） */
-export const PRESET_TAGS = ['YouTube', 'Berriz', 'Universe', '花絮', '綜藝', 'Bubble', 'Instagram', 'X(twitter)', 'FanClub', 'LIVE', 'FanSign', '其他'];
+export const PRESET_TAGS = ['YouTube', 'Berriz', 'Universe', '花絮', '綜藝', 'Bubble', 'Instagram', 'X(twitter)', 'FanClub', '直播', 'LIVE', 'FanSign', '其他'];
 
 /**
  * 貼圖庫：當季的圖＋全年通用的日常組（DAILY_STICKERS）一起隨機，圖片放在 assets/stickers/<季節>/

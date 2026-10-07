@@ -247,6 +247,22 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .scroll-row.more-right { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
 .scroll-row.more-left { -webkit-mask-image: linear-gradient(90deg, transparent, #000 15%); mask-image: linear-gradient(90deg, transparent, #000 15%); }
 .scroll-row.more-left.more-right { -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+.series-picker { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.series-bar { display: flex; flex-wrap: wrap; gap: 6px; }
+.series-toggle, .series-current {
+  border: 1.5px dashed #D9B97A; background: #FFFDF6; color: #6b4f24; border-radius: 4px; padding: .05em .75em;
+  cursor: pointer; font-size: .9rem; white-space: nowrap; display: inline-flex; align-items: center; gap: .35em;
+}
+.series-toggle .count { font-size: .72rem; opacity: .7; }
+.series-toggle .caret { width: 0; height: 0; border-top: 5px solid currentColor; border-left: 4px solid transparent; border-right: 4px solid transparent; opacity: .6; transition: transform .15s; }
+.series-toggle[aria-expanded="true"] { border-style: solid; background: #FBF1D6; }
+.series-toggle[aria-expanded="true"] .caret { transform: rotate(180deg); }
+.series-current { background: #F5D77E; border: 1.5px solid #D9B44F; color: #4a3517; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.series-current .x { font-size: .75rem; opacity: .7; }
+.series-panel { background: #FFFBF0; border: 1.5px solid #EBDDB8; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; }
+.series-search { max-width: 280px; padding: .35em .7em; font-size: .9rem; }
+.series-panel .series-filter { flex-wrap: wrap; overflow: visible; }
+.series-empty { margin: 0; font-size: .85rem; color: var(--ink-soft); }
 .series-filter button { border-style: dashed; border-color: #D9B97A; background: #FFFDF6; color: #6b4f24; }
 .series-filter button[aria-pressed="true"] { background: #F5D77E; border-color: #D9B44F; border-style: solid; color: #4a3517; }
 .tag-filter .count { font-size: .72rem; opacity: .7; margin-left: .35em; }
