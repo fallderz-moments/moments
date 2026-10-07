@@ -1,8 +1,8 @@
 import {
   START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
   mediaThumb, driveId, driveImage, isVideoPath, isBirthday, storageGet, storageSet, MEDIA_LABELS,
-  NOTICES_PATH, sortNotices, richText, hashString,
-} from './common.js?v=202610071622';
+  NOTICES_PATH, sortNotices, richText, hashString, LIVE_TAG,
+} from './common.js?v=202610071651';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';
@@ -704,9 +704,11 @@ function renderTagsUi() {
   const tags = state.draft.tags;
   $('#preset-tags').innerHTML = PRESET_TAGS
     .map((t) => `<button type="button" data-preset="${escapeHtml(t)}" aria-pressed="${tags.includes(t)}">${escapeHtml(t)}</button>`)
-    .join('');
+    .join('') +
+    // 完整直播不是分類，而是收進前台「📺 完整直播」書籤頁的標記
+    `<button type="button" class="live-mark" data-preset="${LIVE_TAG}" aria-pressed="${tags.includes(LIVE_TAG)}">📺 ${LIVE_TAG}</button>`;
   $('#tag-chips').innerHTML = tags
-    .map((t, i) => (PRESET_TAGS.includes(t) ? '' :
+    .map((t, i) => (PRESET_TAGS.includes(t) || t === LIVE_TAG ? '' :
       `<span class="chip">${escapeHtml(t)}<button type="button" data-remove-tag="${i}" aria-label="移除 ${escapeHtml(t)}">✕</button></span>`))
     .join('');
 }

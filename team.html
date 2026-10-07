@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610071622">
+  <link rel="stylesheet" href="assets/style.css?v=202610071651">
 </head>
 <body>
   <header class="site-header">
@@ -29,6 +29,9 @@
       <a href="./">館藏首頁</a>
       <a href="about.html">關於</a>
       <a href="team.html" aria-current="page">協作者名單</a>
+      <span class="nav-break" aria-hidden="true"></span>
+      <a class="bookmark live" href="./?shelf=live" data-shelf="live">📺 完整直播</a>
+      <a class="bookmark series" href="./?shelf=series" data-shelf="series">📚 系列</a>
     </nav>
   </header>
   <main class="subpage">
@@ -85,7 +88,7 @@
   </footer>
   <script type="module">
     // 貼圖每次造訪隨機換一組（季節主題、生日規則見 assets/common.js）
-    import { randomizeStickers } from "./assets/common.js?v=202610071622";
+    import { randomizeStickers } from "./assets/common.js?v=202610071651";
     randomizeStickers();
   </script>
 </body>

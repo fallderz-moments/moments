@@ -183,3 +183,6 @@ dialog.notice-dialog { width: min(640px, calc(100vw - 24px)); }
 .notice-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; background: var(--card); border-radius: 10px; }
 .notice-list .notice-text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .notice-list small { display: block; color: var(--ink-soft); }
+
+.preset-tags .live-mark { margin-left: 8px; border: 1.5px dashed #E3A99C; background: #FFF4F0; color: #84463B; border-radius: 3px 3px 0 0; }
+.preset-tags .live-mark[aria-pressed="true"] { background: var(--coral-deep); border: 1.5px solid var(--coral-deep); color: var(--white); }

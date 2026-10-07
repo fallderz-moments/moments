@@ -12,7 +12,7 @@
 
 | 檔案 | 用途 |
 | --- | --- |
-| `index.html` + `assets/app.js` | 前台（便利貼／列表、分類篩選列（電腦版自動換行、手機左右滑）、工具列「📺 完整直播」專區（`LIVE_TAG`，歷來全部、不受年月限制）、系列（預設收合成「瀏覽系列」按鈕，點開為可搜尋的換行清單，8 個以上才顯示搜尋框）、年份月份篩選、詳細內容、系列串接、貼圖） |
+| `index.html` + `assets/app.js` | 前台（便利貼／列表、分類篩選列（電腦版自動換行、手機左右滑）；導覽列兩張書籤頁：`./?shelf=live`「📺 完整直播」（`LIVE_TAG` 不是分類、不在分類列，後台用獨立的粉色標記按鈕）、`./?shelf=series`「📚 系列」目錄書卡（`&s=名稱` 顯示該系列）；書籤頁隱藏分類與年月列；詳細內容有 🔗 複製連結；年份月份篩選、詳細內容、系列串接、貼圖） |
 | `admin.html` + `assets/admin.js` | 館員後台：透過 GitHub Contents API 寫 `data/moments.json`；照片影片以 Google Drive API 上傳到擁有者的資料夾 |
 | `assets/common.js` | 共用設定：`PRESET_TAGS`、`BIRTHDAYS`、`STICKERS`、日期（台北時間）與媒體工具 |
 | `about.html`、`team.html` | 關於、協作者名單（館員頭像放 `assets/avatars/`，192px 正方形 webp，前台裁成圓形） |

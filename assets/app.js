@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, randomizeStickers,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet, fetchNotices, DRIVE_API_KEY, LIVE_TAG,
-} from './common.js?v=202610071622';
+} from './common.js?v=202610071651';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -12,7 +12,7 @@ const state = {
   sort: storageGet('fm.sort', 'desc'),
   tag: null,
   series: null,  // 選擇的系列：顯示該系列全部紀錄（不受年份／月份限制）
-  live: false,   // 完整直播專區：顯示歷來所有完整直播
+  live: false,   // 完整直播頁（?shelf=live）：顯示歷來所有完整直播
   q: '',
   // 目前瀏覽的期間：預設為「本月」；year 為 'all' 時顯示全部
   year: todayStr().slice(0, 4),
@@ -23,6 +23,11 @@ const state = {
 };
 
 /* ---------- 篩選 ---------- */
+/** 書籤頁：?shelf=live（完整直播）、?shelf=series（系列目錄；&s=系列名稱 顯示該系列） */
+const params = new URLSearchParams(location.search);
+const SHELF = ['live', 'series'].includes(params.get('shelf')) ? params.get('shelf') : null;
+const shelfUrl = (shelf, name) => `./?shelf=${shelf}${name ? `&s=${encodeURIComponent(name)}` : ''}`;
+
 function byTag(list) {
   return state.tag ? list.filter((m) => (m.tags || []).includes(state.tag)) : list;
 }
@@ -142,6 +147,7 @@ function ledgerHtml(m, index) {
 function render() {
   state.visible = filtered();
   const main = $('#content');
+  if (SHELF === 'series' && !state.series && !state.q.trim()) { renderSeriesIndex(main); syncButtons(); return; }
   const searching = state.q.trim();
   if (!state.visible.length) {
     const latest = sortMoments(byTag(state.all), 'desc')[0];
@@ -168,7 +174,7 @@ function render() {
     }
     const caption = searching
       ? `<p class="period-caption">「${escapeHtml(searching)}」的搜尋結果（全部時間）· ${state.visible.length} 則</p>`
-      : `<p class="period-caption">${periodLabel()} · ${state.visible.length} 則</p>`;
+      : `<p class="period-caption">${SHELF === 'series' ? `<a class="back-link" href="${shelfUrl('series')}">‹ 所有系列</a>　` : ''}${periodLabel()} · ${state.visible.length} 則</p>`;
     main.innerHTML = caption + html.join('');
   }
   renderTimeline();
@@ -177,12 +183,10 @@ function render() {
 
 /* ---------- 分類篩選（預設分類永遠顯示） ---------- */
 function renderTags() {
-  renderSeriesFilter();
   const counts = new Map(PRESET_TAGS.map((t) => [t, 0]));
   for (const m of state.all) for (const t of m.tags || []) counts.set(t, (counts.get(t) || 0) + 1);
+  counts.delete(LIVE_TAG);  // 完整直播有自己的書籤頁，不放在分類列
   const tags = sortTags([...counts.keys()]);
-  $('#live-count').textContent = counts.get(LIVE_TAG) || 0;
-  $('#live-shelf').setAttribute('aria-pressed', !!state.live);
   $('#tag-filter').innerHTML = [`<button type="button" data-tag="" aria-pressed="${!state.tag}">全部<span class="count">${state.all.length}</span></button>`]
     .concat(tags.map((t) => {
       const c = counts.get(t);
@@ -191,37 +195,34 @@ function renderTags() {
     .join('');
 }
 
-/* ---------- 系列篩選（最近更新的系列排前面，可左右滑動） ---------- */
-/** 系列：平常收合成一顆按鈕，點開後是可搜尋、會自動換行的清單（依最新日期排序），系列再多也不會拉長版面 */
-const SERIES_SEARCH_MIN = 8;  // 系列數量達到這個數字才顯示搜尋框
-let seriesOpen = false;
-
-function renderSeriesFilter() {
+/* ---------- 系列目錄頁（?shelf=series）：每個系列一張書卡，依最近更新排序 ---------- */
+function seriesInfo() {
   const info = new Map();
-  for (const m of state.all) {
+  for (const m of sortMoments(state.all, 'asc')) {
     if (!m.series) continue;
-    const s = info.get(m.series) || { count: 0, latest: '' };
+    const s = info.get(m.series) || { count: 0, first: m.date, latest: m.date, items: [] };
     s.count++;
-    if (m.date > s.latest) s.latest = m.date;
+    s.latest = m.date;
+    s.items.push(m);
     info.set(m.series, s);
   }
-  $('#series-row').hidden = info.size === 0;
-  if (state.series && !info.has(state.series)) state.series = null;
+  return info;
+}
+
+function renderSeriesIndex(main) {
+  const info = seriesInfo();
   const names = [...info.keys()].sort((a, b) => info.get(b).latest.localeCompare(info.get(a).latest) || a.localeCompare(b, 'zh-Hant'));
-  const q = $('#series-search').value.trim().toLowerCase();
-  const shown = q ? names.filter((n) => n.toLowerCase().includes(q)) : names;
-  $('#series-filter').innerHTML = [`<button type="button" data-series="" aria-pressed="${!state.series}">全部系列</button>`]
-    .concat(shown.map((n) => `<button type="button" data-series="${escapeHtml(n)}" aria-pressed="${state.series === n}">📚 ${escapeHtml(n)}<span class="count">${info.get(n).count}</span></button>`))
-    .join('');
-  $('#series-empty').hidden = !q || shown.length > 0;
-  $('#series-search').hidden = names.length < SERIES_SEARCH_MIN;
-  const toggle = $('#series-toggle');
-  toggle.innerHTML = `📚 ${state.series ? '換一個系列' : '瀏覽系列'}<span class="count">${names.length}</span><span class="caret" aria-hidden="true"></span>`;
-  toggle.setAttribute('aria-expanded', seriesOpen);
-  $('#series-panel').hidden = !seriesOpen;
-  const cur = $('#series-current');
-  cur.hidden = !state.series;
-  cur.innerHTML = state.series ? `📚 ${escapeHtml(state.series)}<span class="x" aria-label="取消系列篩選">✕</span>` : '';
+  main.innerHTML = `<p class="period-caption">📚 系列目錄 · ${names.length} 個系列</p>` + (names.length
+    ? `<div class="series-cards">${names.map((n) => {
+      const s = info.get(n);
+      const cover = s.items.map(momentCover).find((c) => c.url);
+      const range = s.first === s.latest ? formatDate(s.first) : `${formatDate(s.first)} — ${formatDate(s.latest)}`;
+      return `<a class="series-card" href="${shelfUrl('series', n)}">
+        <span class="series-cover">${cover ? `<img src="${escapeHtml(cover.url)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '📚'}</span>
+        <span class="series-meta"><b>${escapeHtml(n)}</b><small>${range}</small><small>共 ${s.count} 則</small></span>
+      </a>`;
+    }).join('')}</div>`
+    : '<p class="status">還沒有系列</p>');
 }
 
 /** 可橫向捲動的列：依捲動位置顯示左右漸層提示 */
@@ -268,9 +269,8 @@ function renderTimeline() {
 }
 
 function setPeriod(year, month = null) {
-  state.series = null; // 選年份／月份時離開系列檢視與完整直播專區
+  state.series = null;
   state.live = false;
-  renderTags();
   state.year = year;
   state.month = month;
   state.periodPicked = true;
@@ -461,11 +461,23 @@ function renderSeries(m) {
     </ol>`;
 }
 
+/** 複製目前這則紀錄的網址 */
+async function copyLink(btn) {
+  const m = state.visible[state.current];
+  if (!m) return;
+  const url = `${location.origin}${location.pathname}#m=${encodeURIComponent(m.id)}`;
+  try { await navigator.clipboard.writeText(url); } catch { window.prompt('複製這則的連結：', url); return; }
+  btn.textContent = '✓';
+  btn.classList.add('done');
+  setTimeout(() => { btn.textContent = '🔗'; btn.classList.remove('done'); }, 1500);
+}
+
 /** 依 id 打開紀錄；不在目前期間時切換到該紀錄所在的月份 */
 function openById(id) {
   const target = state.all.find((m) => m.id === id);
   if (!target) return;
   if (!state.visible.includes(target)) {
+    if (SHELF) { location.href = `./#m=${encodeURIComponent(id)}`; return; }  // 書籤頁沒有這則 → 回館藏首頁打開
     state.tag = null;
     state.series = null;
     state.q = '';
@@ -496,7 +508,6 @@ function openLightbox(full, link) {
 
 /* ---------- 事件 ---------- */
 function bindEvents() {
-  $('#series-search').addEventListener('input', renderSeriesFilter);
   $('#detail-media').addEventListener('error', driveVideoFallback, true);  // 影片原檔播放失敗 → 改用內嵌播放器
   $('#detail-media').addEventListener('loadedmetadata', (e) => {  // 讀到影片尺寸後依原比例顯示（不受封面圖大小影響）
     const v = e.target;
@@ -507,23 +518,8 @@ function bindEvents() {
     if (!t) return;
     if (t.dataset.view) { state.view = t.dataset.view; storageSet('fm.view', state.view); render(); }
     else if (t.dataset.sort) { state.sort = t.dataset.sort; storageSet('fm.sort', state.sort); render(); }
-    else if (t.id === 'live-shelf') {
-      state.live = !state.live;
-      if (state.live) { state.series = null; seriesOpen = false; }
-      renderTags();
-      render();
-      document.querySelector('.toolbar')?.scrollIntoView({ block: 'start' });
-    }
-    else if ('tag' in t.dataset) { state.tag = t.dataset.tag || null; state.live = false; renderTags(); render(); }
-    else if (t.id === 'series-toggle') { seriesOpen = !seriesOpen; renderSeriesFilter(); if (seriesOpen) $('#series-search').focus({ preventScroll: true }); }
-    else if ('series' in t.dataset) {
-      state.series = t.dataset.series || null;
-      state.live = false;
-      seriesOpen = false;  // 選好系列就收合
-      renderSeriesFilter();
-      render();
-      if (state.series) document.querySelector('.toolbar')?.scrollIntoView({ block: 'start' });
-    }
+    else if ('tag' in t.dataset) { state.tag = t.dataset.tag || null; renderTags(); render(); }
+    else if ('copyLink' in t.dataset) { copyLink(t); }
     else if (t.dataset.year) { setPeriod(t.dataset.year); }
     else if (t.dataset.month) {
       // 再按一次已選的月份 → 回到整年
@@ -573,6 +569,14 @@ function openFromHash() {
 }
 
 async function init() {
+  if (SHELF) {  // 書籤頁：導覽標示目前頁，隱藏分類與年月篩選
+    document.body.classList.add(`shelf-${SHELF}`);
+    document.querySelector('.site-nav [aria-current]')?.removeAttribute('aria-current');
+    document.querySelector(`.site-nav [data-shelf="${SHELF}"]`)?.setAttribute('aria-current', 'page');
+    state.live = SHELF === 'live';
+    state.series = SHELF === 'series' ? params.get('s') || null : null;
+    document.title = `${SHELF === 'live' ? '完整直播' : state.series ? `系列「${state.series}」` : '系列目錄'} · Fallderz Moments`;
+  }
   bindEvents();
   randomizeStickers();  // 頁尾「狗鼠一起」貼圖
   $('#today').textContent = formatDate(todayStr());

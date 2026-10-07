@@ -3,7 +3,7 @@
 export const START_DATE = '2021-12-01';
 export const DATA_PATH = 'data/moments.json';
 
-/** 「完整直播」專區：工具列上的按鈕，一次列出歷來所有帶這個標籤的紀錄（不受年份月份限制） */
+/** 「完整直播」：不放在分類列，前台導覽的「📺 完整直播」書籤頁列出歷來所有帶這個標籤的紀錄；後台以獨立按鈕標記 */
 export const LIVE_TAG = '完整直播';
 /**
  * 前台播放雲端影片用的 Google API 金鑰（瀏覽器金鑰本來就會公開給每位訪客，安全性靠 Google Cloud 端的限制）：
@@ -15,7 +15,7 @@ export const TIME_ZONE = 'Asia/Taipei';
 export const NOTE_TINTS = ['mint', 'blush', 'coral', 'sand', 'ivory', 'teal'];
 
 /** 預設分類標籤（依顯示順序） */
-export const PRESET_TAGS = ['YouTube', 'Berriz', 'Universe', '花絮', '綜藝', '短影片', 'Bubble', 'Instagram', 'X(twitter)', 'FanClub', '完整直播', 'LIVE', 'FanSign', '其他'];
+export const PRESET_TAGS = ['YouTube', 'Berriz', 'Universe', '花絮', '綜藝', '短影片', 'Bubble', 'Instagram', 'X(twitter)', 'FanClub', 'LIVE', 'FanSign', '其他'];
 
 /**
  * 貼圖庫：當季的圖＋全年通用的日常組（DAILY_STICKERS）一起隨機，圖片放在 assets/stickers/<季節>/

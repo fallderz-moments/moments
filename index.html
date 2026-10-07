@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610071622">
+  <link rel="stylesheet" href="assets/style.css?v=202610071651">
 </head>
 <body>
   <header class="site-header">
@@ -30,6 +30,9 @@
       <a href="./" aria-current="page">館藏首頁</a>
       <a href="about.html">關於</a>
       <a href="team.html">協作者名單</a>
+      <span class="nav-break" aria-hidden="true"></span>
+      <a class="bookmark live" href="./?shelf=live" data-shelf="live">📺 完整直播</a>
+      <a class="bookmark series" href="./?shelf=series" data-shelf="series">📚 系列</a>
     </nav>
   </header>
 
@@ -43,7 +46,6 @@
         <button type="button" data-sort="desc" aria-pressed="true">新 → 舊</button>
         <button type="button" data-sort="asc" aria-pressed="false">舊 → 新</button>
       </div>
-      <button type="button" class="live-shelf" id="live-shelf" aria-pressed="false" title="歷來所有完整直播">📺 完整直播<span class="count" id="live-count"></span></button>
       <span class="toolbar-spacer"></span>
       <label class="search">
         <span class="visually-hidden">搜尋</span>
@@ -53,20 +55,6 @@
     <div class="catalog-row">
       <span class="row-label">分類</span>
       <div class="tag-filter scroll-row" id="tag-filter" aria-label="分類篩選"></div>
-    </div>
-    <div class="catalog-row" id="series-row" hidden>
-      <span class="row-label">系列</span>
-      <div class="series-picker">
-        <div class="series-bar">
-          <button type="button" class="series-toggle" id="series-toggle" aria-expanded="false" aria-controls="series-panel"></button>
-          <button type="button" class="series-current" data-series="" id="series-current" hidden></button>
-        </div>
-        <div class="series-panel" id="series-panel" hidden>
-          <input class="field series-search" id="series-search" type="search" placeholder="搜尋系列名稱…" hidden>
-          <div class="tag-filter series-filter" id="series-filter" aria-label="系列篩選"></div>
-          <p class="series-empty" id="series-empty" hidden>找不到符合的系列</p>
-        </div>
-      </div>
     </div>
     <nav class="catalog-row timeline-nav" aria-label="時間軸">
       <span class="row-label">年份</span>
@@ -95,6 +83,7 @@
       <button class="icon-btn" type="button" data-nav="prev" aria-label="上一則">‹</button>
       <span class="date" id="detail-date"></span>
       <button class="icon-btn" type="button" data-nav="next" aria-label="下一則">›</button>
+      <button class="icon-btn copy-link" type="button" data-copy-link aria-label="複製這則的連結" title="複製連結">🔗</button>
       <button class="icon-btn" type="button" data-close aria-label="關閉">✕</button>
     </div>
     <div class="detail-body">
@@ -120,6 +109,6 @@
     <a id="lightbox-link" target="_blank" rel="noopener">在 Google 雲端硬碟開啟 ↗</a>
   </dialog>
 
-  <script type="module" src="assets/app.js?v=202610071622"></script>
+  <script type="module" src="assets/app.js?v=202610071651"></script>
 </body>
 </html>
