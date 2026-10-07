@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, randomizeStickers,
   sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet, fetchNotices, DRIVE_API_KEY,
-} from './common.js?v=202610060532';
+} from './common.js?v=202610071527';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -397,7 +397,9 @@ function openDetail(index) {
   $('#detail-tags').innerHTML = sortTags(m.tags || []).map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join('');
   const media = m.media || [];
   const mediaBox = $('#detail-media');
-  mediaBox.innerHTML = media.map((item) => mediaHtml(item, media.length === 1)).join('');
+  // 只有一張照片時（不論是否另有影片），照片以原比例完整顯示，不裁成正方形
+  const photos = media.filter((item) => item.type === 'image' || (item.type === 'drive' && item.kind !== 'video')).length;
+  mediaBox.innerHTML = media.map((item) => mediaHtml(item, media.length === 1 || photos === 1)).join('');
   mediaBox.hidden = !media.length;
   loadTweets(mediaBox);
   fitVideoShapes(mediaBox);
