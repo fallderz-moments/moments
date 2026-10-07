@@ -63,7 +63,7 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     check('狀態列不顯示帳號名稱', !(await p.textContent('.admin-bar')).includes('fallderz-moments'));
     await p.waitForTimeout(900);
     await p.click('#btn-new');
-    check('後台有 13 個預設分類（含直播）', (await p.locator('[data-preset]').count()) === 13 && (await p.locator('[data-preset="直播"]').count()) === 1);
+    check('後台有 14 個預設分類（含直播、短影片）', (await p.locator('[data-preset]').count()) === 14 && (await p.locator('[data-preset="短影片"]').count()) === 1 && (await p.locator('[data-preset="直播"]').count()) === 1);
     await p.fill('[name=title]', '測試紀錄'); await p.fill('[name=series]', '  測試   系列 '); await p.click('[data-preset="LIVE"]'); await p.click('[data-preset="X(twitter)"]'); await p.click('[data-preset="其他"]');
     await p.setInputFiles('#file-media', [{ name: 'a.png', mimeType: 'image/png', buffer: Buffer.alloc(100) }, { name: 'b.png', mimeType: 'image/png', buffer: Buffer.alloc(100) }]);
     await p.click('#btn-save');
