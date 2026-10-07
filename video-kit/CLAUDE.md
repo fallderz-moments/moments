@@ -84,6 +84,10 @@
 
 ## 五、環境準備（第一次使用時）
 
+最快的方式：Windows 執行 `powershell -ExecutionPolicy Bypass -File .\setup-windows.ps1`；Mac 執行 `bash setup-mac.sh`。
+KONOKI 若請 Claude 代為設定，Claude 直接執行對應的腳本（會跳出權限確認，請 KONOKI 允許），再用 `ffmpeg -version`、`python -c "import faster_whisper"` 確認。
+手動安裝步驟如下：
+
 1. 安裝 Python 3.10 以上與 ffmpeg（Windows：`winget install Gyan.FFmpeg`；Mac：`brew install ffmpeg`）。
 2. `pip install -r tools/requirements.txt`
 3. 下載粉圓體：`python tools/get_font.py`（從 Google Fonts 下載到 `fonts/`）。
