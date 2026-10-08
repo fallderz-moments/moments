@@ -44,12 +44,16 @@
           "id": "18vegmBdGdHPkuhphPhGUfZyiUPRAtApw",
           "kind": "video",
           "name": "20221026_第一次的V_LIVE雙人直播_01.mp4",
-          "src": "https://drive.google.com/file/d/18vegmBdGdHPkuhphPhGUfZyiUPRAtApw/view"
+          "src": "https://drive.google.com/file/d/18vegmBdGdHPkuhphPhGUfZyiUPRAtApw/view",
+          "thumb": "https://drive.google.com/thumbnail?id=14ktTmx0Qa6Y9i21H9-HkZ2ncLNT31PO2&sz=w800",
+          "thumbId": "14ktTmx0Qa6Y9i21H9-HkZ2ncLNT31PO2",
+          "w": 1920,
+          "h": 1080
         }
       ],
       "cover": 0,
       "createdAt": "2026-10-08T12:02:44.249Z",
-      "updatedAt": "2026-10-08T12:02:44.249Z"
+      "updatedAt": "2026-10-08T12:18:17.495Z"
     },
     {
       "id": "m-20221121-m48kod",
