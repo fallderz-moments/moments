@@ -138,6 +138,33 @@
       "updatedAt": "2026-10-04T12:03:39.726Z"
     },
     {
+      "id": "m-20240503-y84xuw",
+      "date": "2024-05-03",
+      "title": "惠's CLUB之嘿呀Cha",
+      "content": "HEYA回歸期，兩人參與節目《惠's CLUB》\n與惠利前輩一同共舞宣傳~",
+      "source": "https://www.instagram.com/reel/C6gTgspSV9h/?stkn=MTFpYXVwb3dra282Mg==",
+      "tags": [
+        "短影片"
+      ],
+      "media": [
+        {
+          "type": "drive",
+          "caption": "",
+          "id": "11MtxzcbySzX8EtzdBbeGCumq9t3thjgO",
+          "kind": "video",
+          "name": "20240503_惠's_CLUB之嘿呀Cha_01.mp4",
+          "src": "https://drive.google.com/file/d/11MtxzcbySzX8EtzdBbeGCumq9t3thjgO/view",
+          "thumb": "https://drive.google.com/thumbnail?id=12BwNCEMFBrrxi7LyoErLhbm03Fe9EqYv&sz=w800",
+          "thumbId": "12BwNCEMFBrrxi7LyoErLhbm03Fe9EqYv",
+          "w": 720,
+          "h": 1280
+        }
+      ],
+      "cover": 0,
+      "createdAt": "2026-10-08T07:25:55.104Z",
+      "updatedAt": "2026-10-08T07:25:55.104Z"
+    },
+    {
       "id": "m-20240504-5rh7pz",
       "date": "2024-05-04",
       "title": "把妳給吃掉",
