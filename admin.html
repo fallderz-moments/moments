@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Libre+Baskerville:wght@400;700&family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@400;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=202610080309">
-  <link rel="stylesheet" href="assets/admin.css?v=202610080309">
-  <link rel="stylesheet" href="assets/guide.css?v=202610080309">
+  <link rel="stylesheet" href="assets/style.css?v=202610081248">
+  <link rel="stylesheet" href="assets/admin.css?v=202610081248">
+  <link rel="stylesheet" href="assets/guide.css?v=202610081248">
 </head>
 <body class="admin locked">
   <header class="admin-bar">
@@ -100,6 +100,16 @@
             <input type="text" id="tag-entry" list="tag-suggest" placeholder="其他標籤：輸入後按 Enter 或逗號">
           </div>
           <datalist id="tag-suggest"></datalist>
+        </div>
+
+        <div class="live-poster" id="live-poster" hidden>
+          <span class="label">📺 完整直播代表截圖（釘在前台「完整直播」軟木板上）</span>
+          <div class="poster-row">
+            <span class="poster-preview" id="poster-preview">尚未選擇</span>
+            <label class="btn small">選擇截圖<input type="file" id="file-poster" accept="image/*" hidden></label>
+            <button class="btn small danger" type="button" id="poster-remove" hidden>移除</button>
+          </div>
+          <small class="hint">建議用橫式截圖；沒有上傳時，會用這則的第一張照片或影片封面。按「儲存並發佈」時才會上傳。</small>
         </div>
 
         <div>
@@ -281,7 +291,7 @@
         <tr><td>YouTube</td><td><b>不是</b>團體綜藝、<b>不是</b>官方花絮，但發布在 YouTube 上的<b>他台綜藝與剪輯</b>（例如 1theK、SBS 等三大電視台的剪輯花絮）。《秋天的溫度》目前歸在這裡。</td></tr>
         <tr><td>綜藝</td><td>團體綜藝。</td></tr>
         <tr><td>花絮</td><td>官方花絮。</td></tr>
-        <tr><td>📺 完整直播</td><td><b>不是分類</b>，是分類按鈕最後面那顆粉色的獨立標記。完整的雙人直播，<b>一場直播發布一則</b>，在「資訊來源網址」附上直播連結，並照常選一個分類（例如 Berriz、Universe）。按下標記後，這則會收進前台導覽列的「📺 完整直播」書籤頁。</td></tr>
+        <tr><td>📺 完整直播</td><td><b>不是分類</b>，是分類按鈕最後面那顆粉色的獨立標記。完整的雙人直播，<b>一場直播發布一則</b>，在「資訊來源網址」附上直播連結，並照常選一個分類（例如 Berriz、Universe）。按下標記後，這則會收進前台導覽列的「📺 完整直播」書籤頁。標記後下方會出現「代表截圖」欄位，上傳一張截圖，會釘在完整直播頁的軟木板上（標題顯示在截圖中央）。</td></tr>
         <tr><td>直播精華</td><td><b>暫不建立標籤</b>。直播中的精華片段先另外處理，實際遇到時再和 KONOKI 討論做法。</td></tr>
       </table></div>
       <h3>生日紀錄</h3>
@@ -385,6 +395,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="assets/admin.js?v=202610080309"></script>
+  <script type="module" src="assets/admin.js?v=202610081248"></script>
 </body>
 </html>

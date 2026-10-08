@@ -1,8 +1,8 @@
 import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, randomizeStickers,
-  sortMoments, sortTags, momentCover, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
-  fetchMoments, storageGet, storageSet, fetchNotices, DRIVE_API_KEY, LIVE_TAG,
-} from './common.js?v=202610080309';
+  sortMoments, sortTags, momentCover, mediaThumb, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
+  fetchMoments, storageGet, storageSet, fetchNotices, DRIVE_API_KEY, LIVE_TAG, setLiveCount,
+} from './common.js?v=202610081248';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -148,6 +148,7 @@ function render() {
   state.visible = filtered();
   const main = $('#content');
   if (SHELF === 'series' && !state.series && !state.q.trim()) { renderSeriesIndex(main); syncButtons(); return; }
+  if (SHELF === 'live' && state.visible.length) { renderLiveBoard(main); syncButtons(); return; }
   const searching = state.q.trim();
   if (!state.visible.length) {
     const latest = sortMoments(byTag(state.all), 'desc')[0];
@@ -193,6 +194,27 @@ function renderTags() {
       return `<button type="button" data-tag="${escapeHtml(t)}" class="${c ? '' : 'empty'}" aria-pressed="${state.tag === t}">${escapeHtml(t)}<span class="count">${c}</span></button>`;
     }))
     .join('');
+}
+
+/* ---------- 完整直播頁（?shelf=live）：軟木塞留言板，兩欄釘上代表截圖，不分年月 ---------- */
+function liveCover(m) {
+  if (m.poster) return mediaThumb(m.poster) || '';
+  return momentCover(m).url || '';
+}
+
+function renderLiveBoard(main) {
+  const q = state.q.trim();
+  const cards = state.visible.map((m, i) => {
+    const url = liveCover(m);
+    const tilt = ((hashString(m.id) % 5) - 2) * 0.8;
+    return `<button class="pin-card" type="button" data-index="${i}" style="--tilt:${tilt}deg">
+      <span class="pin" aria-hidden="true"></span>
+      <span class="pin-photo">${url ? `<img src="${escapeHtml(url)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<span class="pin-empty">📺</span>'}
+        <span class="pin-title"><small>${formatDate(m.date)}</small>${escapeHtml(m.title || '無標題')}</span></span>
+    </button>`;
+  }).join('');
+  main.innerHTML = `<p class="period-caption">${q ? `「${escapeHtml(q)}」的搜尋結果 · ` : ''}📺 完整直播 · 共 ${state.visible.length} 場</p>
+    <div class="corkboard"><div class="cork-grid">${cards}</div></div>`;
 }
 
 /* ---------- 系列目錄頁（?shelf=series）：每個系列一張書卡，依最近更新排序 ---------- */
@@ -587,6 +609,7 @@ async function init() {
   });
   try {
     state.all = await fetchMoments();
+    setLiveCount(state.all);
   } catch (err) {
     $('#content').innerHTML = `<p class="status">${escapeHtml(err.message)}</p>`;
     return;

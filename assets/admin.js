@@ -2,7 +2,7 @@ import {
   START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
   mediaThumb, driveId, driveImage, isVideoPath, isBirthday, storageGet, storageSet, MEDIA_LABELS,
   NOTICES_PATH, sortNotices, richText, hashString, LIVE_TAG,
-} from './common.js?v=202610080309';
+} from './common.js?v=202610081248';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';
@@ -162,7 +162,8 @@ async function commitChange(apply, message) {
 /* ---------- 未成功儲存的紀錄：備份在這台瀏覽器，下次開後台可還原 ---------- */
 const UNSAVED_KEY = 'fm.unsaved';
 function backupUnsaved(draft) {
-  const copy = structuredClone({ ...draft, media: draft.media.filter((m) => !m._file) });
+  const { _posterFile, _posterPreview, ...rest } = draft;
+  const copy = structuredClone({ ...rest, media: draft.media.filter((m) => !m._file) });
   storageSet(UNSAVED_KEY, { draft: copy, at: new Date().toISOString() });
 }
 function offerUnsaved() {
@@ -715,6 +716,7 @@ function closeEditor() {
 
 function releasePreviews() {
   for (const item of state.draft?.media || []) if (item._preview) URL.revokeObjectURL(item._preview);
+  if (state.draft?._posterPreview) URL.revokeObjectURL(state.draft._posterPreview);
 }
 
 function renderTagsUi() {
@@ -724,10 +726,20 @@ function renderTagsUi() {
     .join('') +
     // 完整直播不是分類，而是收進前台「📺 完整直播」書籤頁的標記
     `<button type="button" class="live-mark" data-preset="${LIVE_TAG}" aria-pressed="${tags.includes(LIVE_TAG)}">📺 ${LIVE_TAG}</button>`;
+  renderPoster();
   $('#tag-chips').innerHTML = tags
     .map((t, i) => (PRESET_TAGS.includes(t) || t === LIVE_TAG ? '' :
       `<span class="chip">${escapeHtml(t)}<button type="button" data-remove-tag="${i}" aria-label="移除 ${escapeHtml(t)}">✕</button></span>`))
     .join('');
+}
+
+/** 完整直播代表截圖：只有標記為完整直播時顯示 */
+function renderPoster() {
+  const d = state.draft;
+  $('#live-poster').hidden = !d.tags.includes(LIVE_TAG);
+  const url = d._posterPreview || (d.poster && mediaThumb(d.poster));
+  $('#poster-preview').innerHTML = url ? `<img src="${escapeHtml(url)}" alt="" referrerpolicy="no-referrer">` : '尚未選擇';
+  $('#poster-remove').hidden = !url;
 }
 
 function addTags(text) {
@@ -897,8 +909,9 @@ async function onSave(e) {
 
   const draft = state.draft;
   const pending = draft.media.filter((m) => m._file);
+  if (!draft.tags.includes(LIVE_TAG)) { delete draft.poster; delete draft._posterFile; }  // 取消完整直播標記就不需要代表截圖
   // 必須在點擊的當下要求授權，瀏覽器才不會擋下 Google 授權視窗
-  const tokenReady = pending.length ? ensureDriveToken() : Promise.resolve();
+  const tokenReady = pending.length || draft._posterFile ? ensureDriveToken() : Promise.resolve();
   tokenReady.catch(() => {}); // 錯誤會在下方 await 時處理
 
   addTags($('#tag-entry').value);
@@ -946,6 +959,21 @@ async function onSave(e) {
         }
         renderMedia();
       }
+    }
+
+    // 1b. 完整直播代表截圖
+    if (draft._posterFile) {
+      setBusy(true, '上傳代表截圖…');
+      await tokenReady;
+      if (!drive.folderName) await checkFolder();
+      const file = draft._posterFile;
+      const ext = (file.name.match(/\.\w+$/) || ['.jpg'])[0];
+      const result = await driveUpload(file, `${date.replace(/-/g, '')}_${(draft.title || 'live').replace(/[\\/:*?"<>|]/g, '')}_代表截圖${ext}`, () => {});
+      draft.poster = { type: 'drive', id: result.id, kind: 'image', name: result.name, src: `https://drive.google.com/file/d/${result.id}/view` };
+      URL.revokeObjectURL(draft._posterPreview);
+      delete draft._posterFile;
+      delete draft._posterPreview;
+      renderPoster();
     }
 
     // 2. 寫入資料
@@ -1105,6 +1133,22 @@ function bindEvents() {
     }
     const btn = e.target.closest('[data-id]');
     if (btn) openEditor(state.moments.find((m) => m.id === btn.dataset.id));
+  });
+
+  $('#file-poster').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (!file || !state.draft) return;
+    if (state.draft._posterPreview) URL.revokeObjectURL(state.draft._posterPreview);
+    state.draft._posterFile = file;
+    state.draft._posterPreview = URL.createObjectURL(file);
+    renderPoster();
+  });
+  $('#poster-remove').addEventListener('click', () => {
+    const d = state.draft;
+    if (d._posterPreview) URL.revokeObjectURL(d._posterPreview);
+    delete d._posterFile; delete d._posterPreview; delete d.poster;
+    renderPoster();
   });
 
   $('#preset-tags').addEventListener('click', (e) => {

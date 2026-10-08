@@ -66,6 +66,10 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     await p.click('#btn-new');
     check('後台有 13 個預設分類＋完整直播標記', (await p.locator('#preset-tags [data-preset]:not(.live-mark)').count()) === 13 && (await p.locator('.live-mark').count()) === 1 && (await p.locator('[data-preset="短影片"]').count()) === 1 && (await p.locator('[data-preset="完整直播"]').count()) === 1);
     await p.fill('[name=title]', '測試紀錄'); await p.fill('[name=series]', '  測試   系列 '); await p.click('[data-preset="LIVE"]'); await p.click('[data-preset="X(twitter)"]'); await p.click('[data-preset="其他"]');
+    check('未標記完整直播時不顯示代表截圖欄位', !(await p.isVisible('#live-poster')));
+    await p.click('.live-mark');
+    check('標記完整直播後出現代表截圖欄位', await p.isVisible('#live-poster'));
+    await p.setInputFiles('#file-poster', { name: 'poster.png', mimeType: 'image/png', buffer: Buffer.alloc(100) });
     await p.setInputFiles('#file-media', [{ name: 'a.png', mimeType: 'image/png', buffer: Buffer.alloc(100) }, { name: 'b.png', mimeType: 'image/png', buffer: Buffer.alloc(100) }]);
     await p.click('#btn-save');
     await p.waitForFunction(() => document.getElementById('toast').textContent.includes('已儲存'), null, { timeout: 8000 });
@@ -88,7 +92,8 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     check('依分類篩選', (await p.textContent('#list-count')).startsWith('符合') && (await p.textContent('#admin-list')).includes('測試紀錄'));
     await p.click('#filter-clear');
     check('系列欄位已儲存（去除多餘空白）', saved && saved.series === '測試 系列', saved && saved.series);
-    check('多張照片上傳到雲端資料夾', uploads.length === 2 && uploads.every((u) => u.parents[0] === '1TESTFOLDERxxxxxxxxxxxxxxxx'));
+    check('代表截圖上傳並存成 poster', saved && saved.poster && saved.poster.type === 'drive' && saved.tags.includes('完整直播') && uploads.some((u) => u.name.includes('代表截圖')), JSON.stringify(saved && saved.poster));
+    check('多張照片上傳到雲端資料夾', uploads.filter((u) => !u.name.includes('代表截圖')).length === 2 && uploads.every((u) => u.parents[0] === '1TESTFOLDERxxxxxxxxxxxxxxxx'));
     check('紀錄已寫入（分類、媒體）', saved && saved.tags.includes('LIVE') && saved.tags.includes('X(twitter)') && saved.tags.includes('其他') && saved.media.length === 2 && saved.media.every((m) => m.type === 'drive'));
     await p.click('#btn-notices'); await p.waitForTimeout(400);
     await p.fill('#notice-form [name=content]', '更新 IVE ON 花絮相關'); await p.click('#btn-notice-save');
@@ -210,7 +215,14 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     check('導覽列有完整直播與系列書籤', (await p.locator('.site-nav .bookmark').count()) === 2);
     await p.click('.site-nav .bookmark.live'); await p.waitForTimeout(800);
     const liveN = JSON.parse(fs.readFileSync(ROOT + 'data/moments.json', 'utf8')).moments.filter((m) => (m.tags || []).includes('完整直播')).length;
-    check('完整直播頁列出歷來全部完整直播', (await p.textContent('.period-caption')).includes('完整直播') && (await p.locator('.note').count()) === liveN && !(await p.isVisible('#tag-filter')), liveN);
+    check('完整直播頁以軟木板列出歷來全部完整直播', (await p.textContent('.period-caption')).includes(`共 ${liveN} 場`) && (await p.locator('.corkboard .pin-card').count()) === liveN && (await p.locator('.month-section').count()) === 0 && !(await p.isVisible('#tag-filter')), liveN);
+    check('完整直播書籤標示總數', (await p.textContent('.site-nav .bookmark.live .count')) === String(liveN));
+    const firstTitle = await p.textContent('.pin-card >> nth=0 >> .pin-title');
+    await p.click('[data-sort="asc"]'); await p.waitForTimeout(300);
+    check('完整直播頁可切換新舊排序', liveN < 2 || (await p.textContent('.pin-card >> nth=0 >> .pin-title')) !== firstTitle);
+    await p.click('.pin-card >> nth=0'); await p.waitForTimeout(400);
+    check('點軟木板卡片打開詳細內容', await p.isVisible('#detail'));
+    await p.keyboard.press('Escape'); await p.click('[data-sort="desc"]');
     check('完整直播書籤標示為目前頁', (await p.getAttribute('.site-nav .bookmark.live', 'aria-current')) === 'page');
     await p.goto(SITE); await p.waitForTimeout(600);
     check('前台分類列有 X(twitter) 與 其他', await p.locator('[data-tag="X(twitter)"]').count() === 1 && await p.locator('[data-tag="其他"]').count() === 1);

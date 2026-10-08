@@ -186,3 +186,8 @@ dialog.notice-dialog { width: min(640px, calc(100vw - 24px)); }
 
 .preset-tags .live-mark { margin-left: 8px; border: 1.5px dashed #E3A99C; background: #FFF4F0; color: #84463B; border-radius: 3px 3px 0 0; }
 .preset-tags .live-mark[aria-pressed="true"] { background: var(--coral-deep); border: 1.5px solid var(--coral-deep); color: var(--white); }
+
+.live-poster { border: 1.5px dashed #E3A99C; background: #FFF8F5; border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.poster-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.poster-preview { width: 160px; aspect-ratio: 16 / 10; border-radius: 6px; background: var(--ivory); display: grid; place-items: center; font-size: .82rem; color: var(--ink-soft); overflow: hidden; }
+.poster-preview img { width: 100%; height: 100%; object-fit: cover; }

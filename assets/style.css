@@ -155,8 +155,41 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .site-nav a.bookmark.live[aria-current="page"] { background: var(--coral-deep); border-color: var(--coral-deep); color: var(--white); }
 .site-nav a.bookmark.series[aria-current="page"] { background: #D9B44F; border-color: #C49E3A; color: #3d2c11; }
 /* 書籤頁不顯示分類列與年月時間軸 */
+.site-nav a.bookmark .count { font-size: .72rem; margin-left: .35em; background: rgba(255, 255, 255, .6); border-radius: 999px; padding: 0 .45em; }
+.site-nav a.bookmark[aria-current="page"] .count { background: rgba(255, 255, 255, .25); }
+/* 完整直播頁：軟木塞留言板，兩欄釘上代表截圖 */
+.corkboard {
+  margin: 8px 0 32px; padding: 26px 24px 30px; border: 12px solid #D9C4A0; border-radius: 6px;
+  box-shadow: var(--shadow-lift), inset 0 0 16px rgba(80, 50, 20, .3);
+  background-color: #C79A6B;
+  background-image:
+    radial-gradient(rgba(110, 70, 35, .45) 1px, transparent 1.6px),
+    radial-gradient(rgba(255, 235, 200, .35) 1px, transparent 1.6px),
+    radial-gradient(rgba(90, 55, 25, .3) 1.5px, transparent 2px);
+  background-size: 9px 9px, 13px 13px, 23px 23px; background-position: 0 0, 5px 7px, 11px 3px;
+}
+.cork-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px 30px; }
+.pin-card {
+  position: relative; border: 0; padding: 10px 10px 12px; background: var(--card); cursor: pointer; font: inherit; color: var(--ink);
+  transform: rotate(var(--tilt, 0deg)); box-shadow: 0 6px 14px rgba(55, 35, 15, .35); transition: transform .2s, box-shadow .2s;
+}
+.pin-card:hover, .pin-card:focus-visible { transform: rotate(0deg) translateY(-4px) scale(1.02); box-shadow: 0 12px 24px rgba(55, 35, 15, .4); }
+.pin {
+  position: absolute; top: -9px; left: 50%; width: 18px; height: 18px; margin-left: -9px; border-radius: 50%; z-index: 2;
+  background: radial-gradient(circle at 35% 35%, #F6B7A8, var(--coral-deep) 60%, #8E4A3F); box-shadow: 0 3px 3px rgba(0, 0, 0, .35);
+}
+.pin-photo { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; background: #3d3a37; }
+.pin-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pin-empty { display: grid; place-items: center; height: 100%; font-size: 2.4rem; }
+.pin-title {  /* 標題放在照片中央的便條 */
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-2deg); max-width: 82%;
+  background: rgba(255, 251, 240, .94); padding: .45em .9em .5em; border-radius: 2px; box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
+  font-weight: 700; font-size: 1.02rem; line-height: 1.4; text-align: center; color: var(--ink);
+}
+.pin-title small { display: block; font-family: var(--font-pixel); font-weight: 400; font-size: .72rem; color: var(--coral-deep); letter-spacing: .06em; }
 .nav-break { display: none; }
 body.shelf-live .catalog-row, body.shelf-series .catalog-row { display: none; }
+body.shelf-live .segmented[aria-label="瀏覽方式"] { display: none; }  /* 完整直播頁固定為軟木板 */
 .back-link { color: var(--teal-deep); text-decoration: none; font-weight: 600; }
 /* 系列目錄：書卡 */
 .series-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin: 6px 0 24px; }
@@ -610,6 +643,12 @@ dialog.lightbox .icon-btn { position: absolute; top: 14px; right: 14px; }
   .site-nav a.bookmark { padding-bottom: .55em; }
   .nav-break { display: block; flex-basis: 100%; height: 0; }  /* 手機：書籤換到第二行並排 */
   .series-cards { grid-template-columns: 1fr; }
+  .corkboard { padding: 18px 12px 22px; border-width: 8px; }
+  .cork-grid { gap: 26px 12px; }
+  .pin-card { padding: 6px 6px 8px; }
+  .pin-photo { aspect-ratio: 4 / 5; }
+  .pin-title { font-size: .82rem; padding: .35em .55em .4em; max-width: 90%; }
+  .site-nav a.bookmark .count { font-size: .68rem; }
   .shelf .sprite.books.flip { display: none; }
   .notes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; }
   .note { padding: 18px 10px 10px; }

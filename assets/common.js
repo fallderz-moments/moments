@@ -308,6 +308,16 @@ export async function fetchNotices() {
   }
 }
 
+/** 導覽列「📺 完整直播」書籤上標示目前總數（每個頁面共用） */
+export function setLiveCount(moments) {
+  const n = moments.filter((m) => (m.tags || []).includes(LIVE_TAG)).length;
+  document.querySelectorAll('.site-nav [data-shelf="live"]').forEach((a) => {
+    let c = a.querySelector('.count');
+    if (!c) { c = document.createElement('span'); c.className = 'count'; a.append(c); }
+    c.textContent = n;
+  });
+}
+
 export function storageGet(key, fallback = null, store = 'localStorage') {
   try {
     const v = window[store].getItem(key);
