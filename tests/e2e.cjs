@@ -9,7 +9,7 @@ let ok = 0, fail = 0;
 const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((cond ? 'PASS ' : 'FAIL ') + name + (extra ? '  → ' + extra : '')); };
 (async () => {
   const b = await chromium.launch();
-  async function setup({ push = true, scopeOk = true } = {}) {
+  async function setup({ push = true, scopeOk = true, failPuts = 0 } = {}) {
     const ctx = await b.newContext({ viewport: { width: 1200, height: 900 } });
     const log = []; const commits = []; const files = { 'data/moments.json': { sha: 's0', content: fs.readFileSync(ROOT + 'data/moments.json', 'utf8') } };
     const json = (r, s, body, h = {}) => r.fulfill({ status: s, contentType: 'application/json', headers: { 'access-control-allow-origin': '*', 'access-control-expose-headers': 'Location', ...h }, body: JSON.stringify(body) });
@@ -28,6 +28,7 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
       if (path.startsWith('/branches/')) return json(r, 200, {});
       if (path === '/commits') return json(r, 200, commits);
       if (req.method() === 'GET') { const f = files[path]; return f ? json(r, 200, { sha: f.sha, encoding: 'base64', content: Buffer.from(f.content).toString('base64') }) : json(r, 404, {}); }
+      if (failPuts-- > 0) return json(r, 500, { message: 'Server Error' });
       const body = JSON.parse(req.postData()); commits.unshift({ commit: { message: body.message, author: { name: '一支水特', date: new Date().toISOString() } } }); files[path] = { sha: 's' + log.length, content: Buffer.from(body.content, 'base64').toString() }; return json(r, 201, { content: { sha: files[path].sha } });
     });
     await ctx.route('https://accounts.google.com/gsi/client', (r) => r.fulfill({ contentType: 'text/javascript', body: `window.google={accounts:{oauth2:{initTokenClient:(c)=>({requestAccessToken:()=>setTimeout(()=>c.callback({access_token:'t',expires_in:3599}),30)}),revoke:()=>{}}}};` }));
@@ -106,6 +107,22 @@ const check = (name, cond, extra = '') => { cond ? ok++ : fail++; console.log((c
     check('重新整理後仍保持連線', await (async () => { await p.reload(); await p.waitForTimeout(1200); return p.isVisible('#conn.ok'); })());
     check('後台沒有 JS 錯誤', errs.length === 0, errs.join('; '));
     await ctx.close(); }
+
+  // G. GitHub 暫時故障：存檔會自動重試；一直失敗時保留內容並備份
+  for (const [fails, ok] of [[2, true], [9, false]]) {
+    const { ctx, files } = await setup({ failPuts: fails });
+    const p = await ctx.newPage(); await p.goto(SITE + 'admin.html'); await p.waitForTimeout(600);
+    await p.fill('[name=token]', 'ghp_x'); await p.click('#btn-connect'); await p.waitForSelector('#conn.ok'); await p.waitForTimeout(900);
+    await p.click('#btn-new'); await p.fill('[name=title]', '故障測試'); await p.click('#btn-save');
+    await p.waitForFunction(() => /已儲存|儲存失敗/.test(document.getElementById('toast').textContent), null, { timeout: 20000 });
+    const savedOk = JSON.parse(files['data/moments.json'].content).moments.some((m) => m.title === '故障測試');
+    if (ok) check('GitHub 暫時故障時自動重試成功', savedOk && (await p.textContent('#toast')).includes('已儲存'));
+    else {
+      const backup = await p.evaluate(() => JSON.parse(localStorage.getItem('fm.unsaved') || 'null'));
+      check('一直失敗時保留內容並備份、提示重試', !savedOk && backup?.draft?.title === '故障測試' && (await p.inputValue('[name=title]')) === '故障測試' && (await p.textContent('#toast')).includes('再按一次'));
+    }
+    await ctx.close();
+  }
 
   // B. 沒有寫入權限的權杖
   { const { ctx } = await setup({ push: false });

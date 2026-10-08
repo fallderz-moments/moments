@@ -2,7 +2,7 @@ import {
   START_DATE, DATA_PATH, PRESET_TAGS, todayStr, onNewDay, formatDate, escapeHtml, sortMoments, sortTags, momentCover,
   mediaThumb, driveId, driveImage, isVideoPath, isBirthday, storageGet, storageSet, MEDIA_LABELS,
   NOTICES_PATH, sortNotices, richText, hashString, LIVE_TAG,
-} from './common.js?v=202610071651';
+} from './common.js?v=202610080309';
 
 const $ = (sel) => document.querySelector(sel);
 const CFG_KEY = 'fm.github';
@@ -140,22 +140,38 @@ async function writeData(moments, message) {
 
 /** 以最新資料套用變更後寫回；遇到版本衝突時重新讀取再試一次 */
 async function commitChange(apply, message) {
-  for (let attempt = 0; attempt < 2; attempt++) {
+  // 最多試 4 次：版本衝突（別的館員剛好也存檔）就重新讀取最新資料再套用；
+  // GitHub 暫時故障（5xx）或網路中斷就稍等再試。每次都以最新資料為基礎，不會覆蓋別人的紀錄。
+  const retryable = (err) => [409, 422].includes(err.status) || !err.status || err.status >= 500;
+  for (let attempt = 0; ; attempt++) {
     try {
       const next = apply(state.moments.slice());
       await writeData(next, message);
       state.moments = next;
       return;
     } catch (err) {
-      if (attempt === 0 && (err.status === 409 || err.status === 422)) {
-        const latest = await readData();
-        state.moments = latest.moments;
-        state.sha = latest.sha;
-        continue;
-      }
-      throw err;
+      if (attempt >= 3 || !retryable(err)) throw err;
+      await new Promise((r) => setTimeout(r, 1200 * (attempt + 1)));
+      const latest = await readData();
+      state.moments = latest.moments;
+      state.sha = latest.sha;
     }
   }
+}
+
+/* ---------- 未成功儲存的紀錄：備份在這台瀏覽器，下次開後台可還原 ---------- */
+const UNSAVED_KEY = 'fm.unsaved';
+function backupUnsaved(draft) {
+  const copy = structuredClone({ ...draft, media: draft.media.filter((m) => !m._file) });
+  storageSet(UNSAVED_KEY, { draft: copy, at: new Date().toISOString() });
+}
+function offerUnsaved() {
+  const saved = storageGet(UNSAVED_KEY);
+  if (!saved?.draft) return;
+  const d = saved.draft;
+  if (state.moments.some((m) => m.id === d.id && m.updatedAt === d.updatedAt)) { storageSet(UNSAVED_KEY, null); return; }
+  if (confirm(`有一則上次沒有成功儲存的紀錄：\n${d.date} ${d.title || '無標題'}\n\n要還原到編輯畫面再存一次嗎？（按「取消」會捨棄）`)) openEditor(d);
+  else storageSet(UNSAVED_KEY, null);
 }
 
 async function deleteRepoFile(path) {
@@ -194,6 +210,7 @@ async function connect() {
   updateConn();
   renderList();
   loadHistory();
+  offerUnsaved();
 }
 
 /* ---------- 公告 ---------- */
@@ -950,12 +967,14 @@ async function onSave(e) {
     state.originalId = saved.id;
     loadHistory();
     setBusy(false);
-    toast('已儲存！前台約 1 分鐘後更新');
+    storageSet(UNSAVED_KEY, null);
+    toast('已儲存！前台約 1～2 分鐘後更新');
     openEditor(saved);
   } catch (err) {
     setBusy(false);
     renderMedia();
-    toast(`儲存失敗：${err.message}`, true, 8000);
+    backupUnsaved(draft);
+    toast(`儲存失敗：${err.status >= 500 ? 'GitHub 暫時故障' : err.message}。內容還在編輯畫面（也已備份在這台裝置），請稍後再按一次「儲存並發佈」。`, true, 0);
   }
 }
 
@@ -1041,6 +1060,7 @@ function bindEvents() {
   });
 
   $('#btn-unlock').addEventListener('click', () => openSettings());
+  $('#toast').addEventListener('click', () => $('#toast').classList.remove('show'));  // 錯誤訊息會一直顯示，點一下關閉
   // 館員說明裡的儲存庫連結依網站網址產生（網址改變時不用修改說明）
   const { owner, repo } = siteRepo();
   document.querySelectorAll('[data-repo]').forEach((a) => {
