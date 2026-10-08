@@ -107,7 +107,14 @@
       ],
       "cover": 0,
       "createdAt": "2026-10-08T12:37:12.324Z",
-      "updatedAt": "2026-10-08T12:38:53.183Z"
+      "updatedAt": "2026-10-08T12:55:21.132Z",
+      "poster": {
+        "type": "drive",
+        "id": "1BwQGIcb1pfrOXFgcq0SxiY1pjr2wGZAi",
+        "kind": "image",
+        "name": "20230201_獨自發起YT直播挑戰的小前輩_代表截圖.jpg",
+        "src": "https://drive.google.com/file/d/1BwQGIcb1pfrOXFgcq0SxiY1pjr2wGZAi/view"
+      }
     },
     {
       "source": "https://www.youtube.com/live/ox_ALj_Ah5s?si=rmESJ6KFFssymAQ2&t=913",
