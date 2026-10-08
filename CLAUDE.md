@@ -12,7 +12,7 @@
 
 | 檔案 | 用途 |
 | --- | --- |
-| `index.html` + `assets/app.js` | 前台（便利貼／列表、分類篩選列（電腦版自動換行、手機左右滑）；導覽列兩張書籤頁：`./?shelf=live`「📺 完整直播」軟木板頁（兩欄釘上代表截圖、標題在截圖中央，不分年月、可切新舊排序；代表截圖存在紀錄的 `poster` 欄位，後台標記完整直播後才出現上傳欄位，沒有時用 `momentCover`；書籤顯示總數 `setLiveCount`；`LIVE_TAG` 不是分類、不在分類列，後台用獨立的粉色標記按鈕）、`./?shelf=series`「📚 系列」目錄書卡（`&s=名稱` 顯示該系列）；書籤頁隱藏分類與年月列；詳細內容有 🔗 複製連結；年份月份篩選、詳細內容、系列串接、貼圖） |
+| `index.html` + `assets/app.js` | 前台（便利貼／列表、分類篩選列（電腦版自動換行、手機左右滑）；導覽列兩張書籤頁：`./?shelf=live`「📺 完整直播」軟木板頁（兩欄釘上代表截圖、標題便條釘在截圖右上角，不分年月；超過 `LIVE_YEAR_NOTES_MIN`（12）場時上方出現年份便利貼可跳轉、可切新舊排序；代表截圖存在紀錄的 `poster` 欄位，後台標記完整直播後才出現上傳欄位，沒有時用 `momentCover`；書籤顯示總數 `setLiveCount`；`LIVE_TAG` 不是分類、不在分類列，後台用獨立的粉色標記按鈕）、`./?shelf=series`「📚 系列」目錄書卡（`&s=名稱` 顯示該系列）；書籤頁隱藏分類與年月列；詳細內容有 🔗 複製連結；年份月份篩選、詳細內容、系列串接、貼圖） |
 | `admin.html` + `assets/admin.js` | 館員後台：透過 GitHub Contents API 寫 `data/moments.json`；照片影片以 Google Drive API 上傳到擁有者的資料夾 |
 | `assets/common.js` | 共用設定：`PRESET_TAGS`、`BIRTHDAYS`、`STICKERS`、日期（台北時間）與媒體工具 |
 | `about.html`、`team.html` | 關於、協作者名單（館員頭像放 `assets/avatars/`，192px 正方形 webp，前台裁成圓形） |

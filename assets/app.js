@@ -2,7 +2,7 @@ import {
   NOTE_TINTS, PRESET_TAGS, escapeHtml, richText, formatDate, parseDate, monthKey, monthRange, hashString, hostOf, sticker, randomizeStickers,
   sortMoments, sortTags, momentCover, mediaThumb, mediaCounts, isBirthday, driveImage, driveImageFallback, todayStr, onNewDay,
   fetchMoments, storageGet, storageSet, fetchNotices, DRIVE_API_KEY, LIVE_TAG, setLiveCount,
-} from './common.js?v=202610081248';
+} from './common.js?v=202610081258';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -202,19 +202,30 @@ function liveCover(m) {
   return momentCover(m).url || '';
 }
 
+/** 完整直播超過 LIVE_YEAR_NOTES_MIN 場時，軟木板上方釘一排年份便利貼，點了捲到那一年 */
+const LIVE_YEAR_NOTES_MIN = 12;
+function yearNotes(years) {
+  if (state.visible.length < LIVE_YEAR_NOTES_MIN || years.size < 2) return '';
+  return `<nav class="year-notes" aria-label="依年份跳轉">${[...years].map((y) =>
+    `<a class="year-note" href="#live-${y}" data-jump="live-${y}">${y}</a>`).join('')}</nav>`;
+}
+
 function renderLiveBoard(main) {
   const q = state.q.trim();
+  const seenYears = new Set();
   const cards = state.visible.map((m, i) => {
     const url = liveCover(m);
     const tilt = ((hashString(m.id) % 5) - 2) * 0.8;
-    return `<button class="pin-card" type="button" data-index="${i}" style="--tilt:${tilt}deg">
+    const year = m.date.slice(0, 4);
+    const first = !seenYears.has(year) && seenYears.add(year);
+    return `<button class="pin-card" type="button" data-index="${i}"${first ? ` id="live-${year}"` : ''} style="--tilt:${tilt}deg">
       <span class="pin" aria-hidden="true"></span>
       <span class="pin-photo">${url ? `<img src="${escapeHtml(url)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<span class="pin-empty">📺</span>'}
         <span class="pin-title"><small>${formatDate(m.date)}</small>${escapeHtml(m.title || '無標題')}</span></span>
     </button>`;
   }).join('');
   main.innerHTML = `<p class="period-caption">${q ? `「${escapeHtml(q)}」的搜尋結果 · ` : ''}📺 完整直播 · 共 ${state.visible.length} 場</p>
-    <div class="corkboard"><div class="cork-grid">${cards}</div></div>`;
+    <div class="corkboard">${yearNotes(seenYears)}<div class="cork-grid">${cards}</div></div>`;
 }
 
 /* ---------- 系列目錄頁（?shelf=series）：每個系列一張書卡，依最近更新排序 ---------- */
@@ -536,6 +547,8 @@ function bindEvents() {
     if (v.tagName === 'VIDEO' && v.videoWidth) { v.width = v.videoWidth; v.height = v.videoHeight; }
   }, true);
   document.addEventListener('click', (e) => {
+    const jump = e.target.closest('[data-jump]');
+    if (jump) { e.preventDefault(); document.getElementById(jump.dataset.jump)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
     const t = e.target.closest('button');
     if (!t) return;
     if (t.dataset.view) { state.view = t.dataset.view; storageSet('fm.view', state.view); render(); }

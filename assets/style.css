@@ -178,14 +178,21 @@ button, input, select, textarea { font: inherit; color: inherit; }
   position: absolute; top: -9px; left: 50%; width: 18px; height: 18px; margin-left: -9px; border-radius: 50%; z-index: 2;
   background: radial-gradient(circle at 35% 35%, #F6B7A8, var(--coral-deep) 60%, #8E4A3F); box-shadow: 0 3px 3px rgba(0, 0, 0, .35);
 }
-.pin-photo { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; background: #3d3a37; }
+.pin-photo { position: relative; display: block; aspect-ratio: 16 / 10; background: #3d3a37; }
 .pin-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pin-empty { display: grid; place-items: center; height: 100%; font-size: 2.4rem; }
-.pin-title {  /* 標題放在照片中央的便條 */
-  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-2deg); max-width: 82%;
+.pin-title {  /* 標題便條釘在照片右上角，不擋住人物 */
+  position: absolute; right: -6px; top: -6px; transform: rotate(3deg); max-width: 72%;
   background: rgba(255, 251, 240, .94); padding: .45em .9em .5em; border-radius: 2px; box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
   font-weight: 700; font-size: 1.02rem; line-height: 1.4; text-align: center; color: var(--ink);
 }
+.year-notes { display: flex; flex-wrap: wrap; gap: 10px; margin: -6px 0 22px; }
+.year-note {
+  font-family: var(--font-title); font-weight: 700; text-decoration: none; color: var(--ink); background: #FBEFA8;
+  padding: .3em .8em .35em; box-shadow: 0 3px 6px rgba(55, 35, 15, .3); transform: rotate(-2deg); transition: transform .15s;
+}
+.year-note:nth-child(even) { background: #F6D3CA; transform: rotate(2deg); }
+.year-note:hover { transform: rotate(0) translateY(-2px); }
 .pin-title small { display: block; font-family: var(--font-pixel); font-weight: 400; font-size: .72rem; color: var(--coral-deep); letter-spacing: .06em; }
 .nav-break { display: none; }
 body.shelf-live .catalog-row, body.shelf-series .catalog-row { display: none; }
@@ -647,7 +654,7 @@ dialog.lightbox .icon-btn { position: absolute; top: 14px; right: 14px; }
   .cork-grid { gap: 26px 12px; }
   .pin-card { padding: 6px 6px 8px; }
   .pin-photo { aspect-ratio: 4 / 5; }
-  .pin-title { font-size: .82rem; padding: .35em .55em .4em; max-width: 90%; }
+  .pin-title { font-size: .76rem; padding: .3em .5em .35em; max-width: 86%; right: -4px; top: 14px; }  /* 避開中央圖釘 */
   .site-nav a.bookmark .count { font-size: .68rem; }
   .shelf .sprite.books.flip { display: none; }
   .notes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; }
