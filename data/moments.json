@@ -1451,15 +1451,11 @@
         },
         {
           "type": "drive",
-          "caption": "旁若無人的互摸",
-          "id": "12gYQIzVmQdYMvAsn3tJUi-hlHxdGzf37",
+          "caption": "濃情蜜意的雙人結界bicycle",
+          "id": "1ZIDkMomUHczGHSX1noOq_PYbJryaMkwT",
           "kind": "video",
-          "name": "20261009_濃情蜜意香港場_03.MOV",
-          "src": "https://drive.google.com/file/d/12gYQIzVmQdYMvAsn3tJUi-hlHxdGzf37/view",
-          "thumb": "https://drive.google.com/thumbnail?id=1rySX_t-FST6w0x440QkiKChGCjfXoUry&sz=w800",
-          "thumbId": "1rySX_t-FST6w0x440QkiKChGCjfXoUry",
-          "w": 1920,
-          "h": 1080
+          "name": "20261009_濃情蜜意香港場_03.mp4",
+          "src": "https://drive.google.com/file/d/1ZIDkMomUHczGHSX1noOq_PYbJryaMkwT/view"
         },
         {
           "type": "drive",
@@ -1467,12 +1463,16 @@
           "id": "1P2m9haXbKW9d9xRtYIOhpnZqYPYauJMk",
           "kind": "video",
           "name": "20261009_濃情蜜意香港場_04.mov",
-          "src": "https://drive.google.com/file/d/1P2m9haXbKW9d9xRtYIOhpnZqYPYauJMk/view"
+          "src": "https://drive.google.com/file/d/1P2m9haXbKW9d9xRtYIOhpnZqYPYauJMk/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1dEWEcKLif87C5m5i47jHi35yiZpFv9XN&sz=w800",
+          "thumbId": "1dEWEcKLif87C5m5i47jHi35yiZpFv9XN",
+          "w": 1920,
+          "h": 1080
         }
       ],
       "cover": 1,
       "createdAt": "2026-10-09T16:31:12.321Z",
-      "updatedAt": "2026-10-09T16:33:18.450Z"
+      "updatedAt": "2026-10-09T16:45:25.306Z"
     }
   ]
 }
