@@ -1455,7 +1455,11 @@
           "id": "1ZIDkMomUHczGHSX1noOq_PYbJryaMkwT",
           "kind": "video",
           "name": "20261009_濃情蜜意香港場_03.mp4",
-          "src": "https://drive.google.com/file/d/1ZIDkMomUHczGHSX1noOq_PYbJryaMkwT/view"
+          "src": "https://drive.google.com/file/d/1ZIDkMomUHczGHSX1noOq_PYbJryaMkwT/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1wkIo-TNbSD2U85FmcOZ7W1kmFqbURljA&sz=w800",
+          "thumbId": "1wkIo-TNbSD2U85FmcOZ7W1kmFqbURljA",
+          "w": 3840,
+          "h": 2160
         },
         {
           "type": "drive",
@@ -1472,7 +1476,7 @@
       ],
       "cover": 1,
       "createdAt": "2026-10-09T16:31:12.321Z",
-      "updatedAt": "2026-10-09T16:45:25.306Z"
+      "updatedAt": "2026-10-09T16:47:35.350Z"
     }
   ]
 }
