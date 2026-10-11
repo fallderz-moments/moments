@@ -1564,7 +1564,9 @@
       "date": "2026-10-10",
       "title": "兩年前的回憶就這樣攻擊我",
       "content": "261010 WOWOW\nIVE THE 1ST WORLD TOUR\n 'SHOW WHAT I HAVE' IN JAPAN\n\n時隔兩年的地上波來啦！",
-      "tags": [],
+      "tags": [
+        "其他"
+      ],
       "media": [
         {
           "type": "drive",
@@ -1592,12 +1594,16 @@
           "id": "1c-zArIVSn69_j98ZWsqI5acioo-bwsYD",
           "kind": "video",
           "name": "20261010_兩年前的回憶就這樣攻擊我_03.mp4",
-          "src": "https://drive.google.com/file/d/1c-zArIVSn69_j98ZWsqI5acioo-bwsYD/view"
+          "src": "https://drive.google.com/file/d/1c-zArIVSn69_j98ZWsqI5acioo-bwsYD/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1lpDKWAGc-1C4xK7xYHF5A7K0XOART8IZ&sz=w800",
+          "thumbId": "1lpDKWAGc-1C4xK7xYHF5A7K0XOART8IZ",
+          "w": 2792,
+          "h": 2094
         }
       ],
       "cover": 2,
       "createdAt": "2026-10-11T04:36:59.085Z",
-      "updatedAt": "2026-10-11T04:36:59.085Z"
+      "updatedAt": "2026-10-11T04:38:44.235Z"
     }
   ]
 }
