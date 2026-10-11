@@ -1558,6 +1558,46 @@
       "cover": 1,
       "createdAt": "2026-10-09T16:31:12.321Z",
       "updatedAt": "2026-10-09T17:15:56.628Z"
+    },
+    {
+      "id": "m-20261010-fx6fpg",
+      "date": "2026-10-10",
+      "title": "兩年前的回憶就這樣攻擊我",
+      "content": "261010 WOWOW\nIVE THE 1ST WORLD TOUR\n 'SHOW WHAT I HAVE' IN JAPAN\n\n時隔兩年的地上波來啦！",
+      "tags": [],
+      "media": [
+        {
+          "type": "drive",
+          "caption": "長女們的真實吵架等級：",
+          "id": "1cznDyBZLMTsqlwuA4074UDk5hc6m-v0h",
+          "kind": "video",
+          "name": "20261010_兩年前的回憶就這樣攻擊我_01.mp4",
+          "src": "https://drive.google.com/file/d/1cznDyBZLMTsqlwuA4074UDk5hc6m-v0h/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1IA2eVTVYJFEkwCsyLVepdccJFBWedTBF&sz=w800",
+          "thumbId": "1IA2eVTVYJFEkwCsyLVepdccJFBWedTBF",
+          "w": 1788,
+          "h": 1180
+        },
+        {
+          "type": "drive",
+          "caption": "Rapper與Rapper女友",
+          "id": "1XXsIQnp_md_ZaQczvn1q_pXiL_blcffA",
+          "kind": "video",
+          "name": "20261010_兩年前的回憶就這樣攻擊我_02.mp4",
+          "src": "https://drive.google.com/file/d/1XXsIQnp_md_ZaQczvn1q_pXiL_blcffA/view"
+        },
+        {
+          "type": "drive",
+          "caption": "\\ 貓狗雙全 /",
+          "id": "1c-zArIVSn69_j98ZWsqI5acioo-bwsYD",
+          "kind": "video",
+          "name": "20261010_兩年前的回憶就這樣攻擊我_03.mp4",
+          "src": "https://drive.google.com/file/d/1c-zArIVSn69_j98ZWsqI5acioo-bwsYD/view"
+        }
+      ],
+      "cover": 2,
+      "createdAt": "2026-10-11T04:36:59.085Z",
+      "updatedAt": "2026-10-11T04:36:59.085Z"
     }
   ]
 }
