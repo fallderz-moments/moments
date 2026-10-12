@@ -945,20 +945,20 @@
       "media": [
         {
           "type": "drive",
-          "caption": "原影片約11:56",
-          "id": "1DhWNu7ZATq8B5RTDArrN4GfsKaOR8rwE",
+          "caption": "",
+          "id": "1oklPP3QJsr7SZVRewb8U8hmjpe4O4IaH",
           "kind": "video",
           "name": "20260112_Zootopia2幕後互動_01.mp4",
-          "src": "https://drive.google.com/file/d/1DhWNu7ZATq8B5RTDArrN4GfsKaOR8rwE/view",
-          "thumb": "https://drive.google.com/thumbnail?id=1gG7bMDdcPr8UfvdltoqTasL4bVv0kaSe&sz=w800",
-          "thumbId": "1gG7bMDdcPr8UfvdltoqTasL4bVv0kaSe",
+          "src": "https://drive.google.com/file/d/1oklPP3QJsr7SZVRewb8U8hmjpe4O4IaH/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1KbH53CGNnuHjND-nh5PUK64kDkDna-cv&sz=w800",
+          "thumbId": "1KbH53CGNnuHjND-nh5PUK64kDkDna-cv",
           "w": 1920,
           "h": 1080
         }
       ],
       "cover": 0,
       "createdAt": "2026-10-12T15:01:43.384Z",
-      "updatedAt": "2026-10-12T15:07:13.246Z"
+      "updatedAt": "2026-10-12T15:14:05.371Z"
     },
     {
       "id": "m-20260206-hr8wvo",
