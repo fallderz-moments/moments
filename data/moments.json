@@ -1791,12 +1791,14 @@
       "updatedAt": "2026-10-11T12:22:52.889Z"
     },
     {
+      "source": "https://www.youtube.com/shorts/Nn9xiF83smM",
       "id": "m-20261019-p4c9tg",
       "date": "2026-10-19",
       "title": "💜 🔫 💚",
       "content": "Wonder Green 要偷走 Captain Purple 的心簡直輕而易舉",
-      "source": "https://www.youtube.com/shorts/Nn9xiF83smM",
-      "tags": [],
+      "tags": [
+        "短影片"
+      ],
       "media": [
         {
           "type": "drive",
@@ -1813,7 +1815,7 @@
       ],
       "cover": 0,
       "createdAt": "2026-10-19T14:42:16.159Z",
-      "updatedAt": "2026-10-19T14:42:16.159Z"
+      "updatedAt": "2026-10-19T14:45:11.593Z"
     },
     {
       "id": "m-20261019-bgjtil",
