@@ -1345,12 +1345,14 @@
       "updatedAt": "2026-10-20T22:47:36.533Z"
     },
     {
+      "source": "https://youtu.be/Wsmv555nL2k",
       "id": "m-20260215-ylx46h",
       "date": "2026-02-15",
       "title": "一起開吃播啊兩位",
       "content": "260215 IVE GAEUL 新年要收到滿滿的福氣 ⸜( ◜࿁◝ )⸝\n\n三句不離俞真尼的通常運轉（1/1）",
-      "source": "https://youtu.be/Wsmv555nL2k",
-      "tags": [],
+      "tags": [
+        "YouTube"
+      ],
       "media": [
         {
           "type": "drive",
@@ -1379,7 +1381,7 @@
       ],
       "cover": 0,
       "createdAt": "2026-10-20T23:00:14.216Z",
-      "updatedAt": "2026-10-20T23:00:14.216Z"
+      "updatedAt": "2026-10-20T23:02:19.401Z"
     },
     {
       "source": "https://x.com/IWSBINWB_05/status/2027376264181588331",
