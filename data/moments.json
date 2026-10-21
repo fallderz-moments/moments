@@ -1637,6 +1637,38 @@
       "updatedAt": "2026-10-21T04:04:00.677Z"
     },
     {
+      "id": "m-20260308-cqtc97",
+      "date": "2026-03-08",
+      "title": "小品喜劇DUO",
+      "content": "NY MUSIC 線下簽售會\n\n「不好意思，妳好像擋到我了( ◜𖥦◝ )」\n\n「模仿安俞真( ◜𖥦◝ )」",
+      "tags": [],
+      "media": [
+        {
+          "type": "drive",
+          "caption": "",
+          "id": "12WLeI9H1LfTwyLi1X3YJtTLvKwHPu3UK",
+          "kind": "video",
+          "name": "20260308_小品喜劇DUO_01.mp4",
+          "src": "https://drive.google.com/file/d/12WLeI9H1LfTwyLi1X3YJtTLvKwHPu3UK/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1LBGLVDGGq-pr1GvojMu9vBczxhuCstDa&sz=w800",
+          "thumbId": "1LBGLVDGGq-pr1GvojMu9vBczxhuCstDa",
+          "w": 3240,
+          "h": 2160
+        },
+        {
+          "type": "drive",
+          "caption": "",
+          "id": "1FJMIeDGcMH4Be4osQGmZPLzFfGYOKF1S",
+          "kind": "video",
+          "name": "20260308_小品喜劇DUO_02.mp4",
+          "src": "https://drive.google.com/file/d/1FJMIeDGcMH4Be4osQGmZPLzFfGYOKF1S/view"
+        }
+      ],
+      "cover": 0,
+      "createdAt": "2026-10-21T04:10:29.739Z",
+      "updatedAt": "2026-10-21T04:10:29.739Z"
+    },
+    {
       "source": "https://youtu.be/lL84mLDRr_M?si=7myJYljrx460uyEK&t=397",
       "id": "m-20260603-4o9n4x",
       "date": "2026-06-03",
