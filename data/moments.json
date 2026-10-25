@@ -2884,7 +2884,8 @@
       "title": "妳們談戀愛啊我是彈塗魚嗎？",
       "content": "MCD的短捲髮鮑伯頭俏麗鼠鼠\n在小狗的眼中就是最口愛ㄉ...\n\n為什麼還嗚啦啦呀哈！",
       "tags": [
-        "Bubble"
+        "Bubble",
+        "YouTube"
       ],
       "media": [
         {
@@ -2902,11 +2903,23 @@
           "kind": "image",
           "name": "20261022_妳們談戀愛啊我是彈塗魚嗎？_02.png",
           "src": "https://drive.google.com/file/d/1PYMtqvsSD7T6aIzB_qYVXBU0BckTLJJb/view"
+        },
+        {
+          "type": "drive",
+          "caption": "",
+          "id": "1RDpPfUMjbpwRqcd7-evfVWLelzMmDCyi",
+          "kind": "video",
+          "name": "20261022_妳們談戀愛啊我是彈塗魚嗎？_03.mp4",
+          "src": "https://drive.google.com/file/d/1RDpPfUMjbpwRqcd7-evfVWLelzMmDCyi/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1KSIPscGHQOoQpWE2ZiajHCyH9iG8n_to&sz=w800",
+          "thumbId": "1KSIPscGHQOoQpWE2ZiajHCyH9iG8n_to",
+          "w": 840,
+          "h": 942
         }
       ],
       "cover": 0,
       "createdAt": "2026-10-22T17:27:05.927Z",
-      "updatedAt": "2026-10-22T17:27:05.927Z"
+      "updatedAt": "2026-10-25T19:49:08.608Z"
     },
     {
       "id": "m-20261025-57id3t",
