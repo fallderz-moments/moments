@@ -1489,6 +1489,45 @@
       "updatedAt": "2026-10-27T06:21:15.742Z"
     },
     {
+      "id": "m-20260225-p3y30y",
+      "date": "2026-02-25",
+      "title": "呀！金秋天！",
+      "content": "藉著畢業企劃合理講著平語，豪爽大喊著姐姐的名字\n要不是因為在錄製節目...小心反擊啊🫵🏻\n說著畢業感言那身高差和對視，值得慢慢細品啊～",
+      "source": "https://youtu.be/Uu8MZDVypT4?si=_5iXWgQTZjxCJ_Pq&t=71",
+      "tags": [
+        "YouTube"
+      ],
+      "media": [
+        {
+          "type": "drive",
+          "caption": "原影片約1:11 抓到皮狗一隻",
+          "id": "1nH0HQQalGkH0Zhga2AAmhpD66UrQnytI",
+          "kind": "video",
+          "name": "20260225_呀！金秋天！_01.mov",
+          "src": "https://drive.google.com/file/d/1nH0HQQalGkH0Zhga2AAmhpD66UrQnytI/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1dgvv1Pj3EnJcjs6CzyOxTtNUplWKg9KF&sz=w800",
+          "thumbId": "1dgvv1Pj3EnJcjs6CzyOxTtNUplWKg9KF",
+          "w": 1920,
+          "h": 1080
+        },
+        {
+          "type": "drive",
+          "caption": "原影片約24:59 比粉髮更加閃耀",
+          "id": "1GustCbfCow7qgXGwZpafB2RvyMzhAhG2",
+          "kind": "video",
+          "name": "20260225_呀！金秋天！_02.mov",
+          "src": "https://drive.google.com/file/d/1GustCbfCow7qgXGwZpafB2RvyMzhAhG2/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1x1BDm6ReuTDMIoIvKFTa8txcdy1_K0vp&sz=w800",
+          "thumbId": "1x1BDm6ReuTDMIoIvKFTa8txcdy1_K0vp",
+          "w": 1920,
+          "h": 1080
+        }
+      ],
+      "cover": 0,
+      "createdAt": "2026-10-27T07:42:15.474Z",
+      "updatedAt": "2026-10-27T07:42:15.474Z"
+    },
+    {
       "id": "m-20260226-w3192l",
       "date": "2026-02-26",
       "title": "超愛姐姐的爬行舞蹈(?)",
