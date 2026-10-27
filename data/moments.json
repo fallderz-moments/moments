@@ -1438,17 +1438,18 @@
       "updatedAt": "2026-10-21T08:57:00.058Z"
     },
     {
+      "source": "https://youtu.be/jqEh_H1V1Rw?si=ErAnIeGMLS1Jt30S",
       "id": "m-20260222-vwwens",
       "date": "2026-02-22",
-      "title": "孔雀開屏是為了吸引伴侶",
-      "content": "每次姐姐對著鏡頭說話的時候，小狗幾乎都會待在姐姐旁邊。\n大概是因為平常就整天黏在姐姐身邊，所以這種時候也會跟著一起入鏡吧。",
+      "title": "Hot issue孔雀開屏是為了吸引伴侶",
+      "content": "「Hot issue究竟是誰？」\n每次姐姐對著鏡頭說話的時候，小狗幾乎都會待在姐姐旁邊。\n大概是因為平常就整天黏在姐姐身邊，所以這種時候也會跟著一起入鏡吧。",
       "tags": [
         "花絮"
       ],
       "media": [
         {
           "type": "drive",
-          "caption": "",
+          "caption": "孔雀開屏是為了吸引伴侶",
           "id": "1o9wiyYBRV4yjoUTTfucaW7bZQrQBh0hQ",
           "kind": "video",
           "name": "20260222_孔雀開屏是為了吸引伴侶_01.mp4",
@@ -1457,11 +1458,35 @@
           "thumbId": "11YILAs67WBq_VGGH_1HIYPuGQkpmAqmk",
           "w": 1280,
           "h": 720
+        },
+        {
+          "type": "drive",
+          "caption": "Hot issue究竟是誰",
+          "id": "1XQmkwaytCMopPg3NRTJVXbHrNRe52ROR",
+          "kind": "video",
+          "name": "20260222_Hot_issue孔雀開屏是為了吸引伴侶_02.mov",
+          "src": "https://drive.google.com/file/d/1XQmkwaytCMopPg3NRTJVXbHrNRe52ROR/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1J5lnMpPW2whFTJF7i5tpp7vYeT_C2UZr&sz=w800",
+          "thumbId": "1J5lnMpPW2whFTJF7i5tpp7vYeT_C2UZr",
+          "w": 1920,
+          "h": 1080
+        },
+        {
+          "type": "drive",
+          "caption": "期待吧",
+          "id": "1CAxWg43AJbNJB7GRWbl0eLJDwe22ibuO",
+          "kind": "video",
+          "name": "20260222_Hot_issue孔雀開屏是為了吸引伴侶_03.mov",
+          "src": "https://drive.google.com/file/d/1CAxWg43AJbNJB7GRWbl0eLJDwe22ibuO/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1v6DZA2RhOb85RZLxu5QFJiJpT8T72us9&sz=w800",
+          "thumbId": "1v6DZA2RhOb85RZLxu5QFJiJpT8T72us9",
+          "w": 1920,
+          "h": 1080
         }
       ],
       "cover": 0,
       "createdAt": "2026-10-20T23:05:20.815Z",
-      "updatedAt": "2026-10-20T23:05:37.953Z"
+      "updatedAt": "2026-10-27T06:21:15.742Z"
     },
     {
       "id": "m-20260226-w3192l",
