@@ -3808,6 +3808,36 @@
       "cover": 0,
       "createdAt": "2026-10-29T05:57:15.905Z",
       "updatedAt": "2026-10-29T05:57:15.905Z"
+    },
+    {
+      "id": "m-20261029-mvmd47",
+      "date": "2026-10-29",
+      "title": "快金師從快銀",
+      "content": "不如就一個快金一個快銀一起拍短影音吧？😍",
+      "tags": [
+        "Bubble"
+      ],
+      "media": [
+        {
+          "type": "drive",
+          "caption": "",
+          "id": "1bljtmydnVjJNbJEEEy_3dFdB6MaEy4Rz",
+          "kind": "image",
+          "name": "20261029_快金師從快銀_01.jpg",
+          "src": "https://drive.google.com/file/d/1bljtmydnVjJNbJEEEy_3dFdB6MaEy4Rz/view"
+        },
+        {
+          "type": "drive",
+          "caption": "",
+          "id": "1PBP-2X7dIdZPmhPMNdzmp0-pPrMjFnbK",
+          "kind": "image",
+          "name": "20261029_快金師從快銀_02.jpg",
+          "src": "https://drive.google.com/file/d/1PBP-2X7dIdZPmhPMNdzmp0-pPrMjFnbK/view"
+        }
+      ],
+      "cover": 0,
+      "createdAt": "2026-10-29T17:04:36.841Z",
+      "updatedAt": "2026-10-29T17:04:36.841Z"
     }
   ]
 }
