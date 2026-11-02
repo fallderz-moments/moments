@@ -4104,6 +4104,36 @@
       "cover": 1,
       "createdAt": "2026-10-29T17:21:54.479Z",
       "updatedAt": "2026-10-29T17:21:54.479Z"
+    },
+    {
+      "id": "m-20261101-gsbu3f",
+      "date": "2026-11-01",
+      "title": "未竟之志的 Trouble Maker",
+      "content": "雖說兩人並未配對成功\n但小狗認真選了姐姐且自己負責男位\n算是難能可貴的主動出擊了^^\n\n然而鼠：*選了別人*",
+      "tags": [
+        "FanSign"
+      ],
+      "media": [
+        {
+          "type": "drive",
+          "caption": "",
+          "id": "1spNHSK5kN_hGddNdGbqhD5h3vEaTR5Fn",
+          "kind": "image",
+          "name": "20261101_未竟之志的_Trouble_Maker_01.jpg",
+          "src": "https://drive.google.com/file/d/1spNHSK5kN_hGddNdGbqhD5h3vEaTR5Fn/view"
+        },
+        {
+          "type": "drive",
+          "caption": "",
+          "id": "1Gxz-azKeUwMHaRZQu7p4THUh6ZDEsDl2",
+          "kind": "image",
+          "name": "20261101_未竟之志的_Trouble_Maker_02.jpg",
+          "src": "https://drive.google.com/file/d/1Gxz-azKeUwMHaRZQu7p4THUh6ZDEsDl2/view"
+        }
+      ],
+      "cover": 1,
+      "createdAt": "2026-11-02T16:00:50.537Z",
+      "updatedAt": "2026-11-02T16:00:50.537Z"
     }
   ]
 }
