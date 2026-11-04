@@ -4182,6 +4182,33 @@
       "cover": 0,
       "createdAt": "2026-11-02T16:05:49.715Z",
       "updatedAt": "2026-11-02T16:05:49.715Z"
+    },
+    {
+      "id": "m-20261104-rk7o9l",
+      "date": "2026-11-04",
+      "title": "「俞真尼擅長展現那感覺」",
+      "content": "以提到的次數🐶算秋溫老常客了（實際未曾出演過）\n厚臉皮的感覺...秋天啊！這是在稱讚小狗對吧？\n既然常常提到，未來有機會一起上個節目呀～",
+      "source": "https://youtu.be/-iuhJy7Ka5o?si=DZSWrC4eJ9vU8oOI&t=466",
+      "tags": [
+        "YouTube"
+      ],
+      "media": [
+        {
+          "type": "drive",
+          "caption": "",
+          "id": "1cUo8rmDxwffmP8XWFMFmpk8jRVMslf2w",
+          "kind": "video",
+          "name": "20261104_「俞真尼擅長展現那感覺」_01.mp4",
+          "src": "https://drive.google.com/file/d/1cUo8rmDxwffmP8XWFMFmpk8jRVMslf2w/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1hKzChhjNhWNSE3pIoYxHX223ocI8f8vi&sz=w800",
+          "thumbId": "1hKzChhjNhWNSE3pIoYxHX223ocI8f8vi",
+          "w": 1920,
+          "h": 1080
+        }
+      ],
+      "cover": 0,
+      "createdAt": "2026-11-04T15:31:50.597Z",
+      "updatedAt": "2026-11-04T15:31:50.597Z"
     }
   ]
 }
