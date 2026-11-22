@@ -4283,6 +4283,45 @@
       "cover": 0,
       "createdAt": "2026-11-22T04:06:44.230Z",
       "updatedAt": "2026-11-22T04:06:44.230Z"
+    },
+    {
+      "id": "m-20261118-vm39jr",
+      "date": "2026-11-18",
+      "title": "IVE的搞笑擔當？",
+      "content": "看來各種皮皮狗狀態深得歐膩心(?)\n平常沒少聊，還知道對方使用AI的習慣～\nBTW狗兒在秋溫被提到的次數...\n值得本人來一下節目當嘉賓吧？\n（敲碗）",
+      "source": "https://youtu.be/XnOvkvw2gYA?si=qE817rftTNca7Sar&t=337",
+      "tags": [
+        "YouTube"
+      ],
+      "media": [
+        {
+          "type": "drive",
+          "caption": "原影片約5:37",
+          "id": "1hu20NmFTIuXKUrbkHpjKmKt76YPATmi9",
+          "kind": "video",
+          "name": "20261118_IVE的搞笑擔當？_01.mov",
+          "src": "https://drive.google.com/file/d/1hu20NmFTIuXKUrbkHpjKmKt76YPATmi9/view",
+          "thumb": "https://drive.google.com/thumbnail?id=19r3rYvHKHLcvYoQ_BZOsDryTNQF8jNrT&sz=w800",
+          "thumbId": "19r3rYvHKHLcvYoQ_BZOsDryTNQF8jNrT",
+          "w": 1920,
+          "h": 1080
+        },
+        {
+          "type": "drive",
+          "caption": "原影片約14:19",
+          "id": "1z9haOqUxVp3tGbz1LK3PtHoCZkJW_jPm",
+          "kind": "video",
+          "name": "20261118_IVE的搞笑擔當？_02.mov",
+          "src": "https://drive.google.com/file/d/1z9haOqUxVp3tGbz1LK3PtHoCZkJW_jPm/view",
+          "thumb": "https://drive.google.com/thumbnail?id=1Dq4So3Rn9RQLezdz89n0aBj5yVJb83vU&sz=w800",
+          "thumbId": "1Dq4So3Rn9RQLezdz89n0aBj5yVJb83vU",
+          "w": 1920,
+          "h": 1080
+        }
+      ],
+      "cover": 0,
+      "createdAt": "2026-11-22T06:10:42.277Z",
+      "updatedAt": "2026-11-22T06:10:42.277Z"
     }
   ]
 }
